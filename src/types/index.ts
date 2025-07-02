@@ -1,4 +1,4 @@
-import { TraderName } from '../data/traders';
+import { TraderName } from "../data/traders";
 
 export interface Task {
   id: string;
@@ -6,6 +6,9 @@ export interface Task {
   taskRequirements: TaskRequirement[];
   wikiLink: string;
   name: string;
+  map: {
+    name: string;
+  } | null;
   trader: {
     name: TraderName;
   };

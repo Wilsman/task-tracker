@@ -89,20 +89,28 @@ export const TaskNode: React.FC<TaskNodeProps> = ({
           {/* Expanded details */}
           {isExpanded && (
             <div className="mt-3 pt-3 border-t border-border/50 space-y-3">
-              {/* Trader and level */}
-              <div className="flex items-center gap-2">
-                <span
-                  className="px-2 py-1 rounded text-primary-foreground font-medium text-xs"
-                  style={{ 
-                    backgroundColor: isCompleted ? 'hsl(142, 76%, 36%)' : traderColor,
-                    opacity: isCompleted ? 0.9 : 1
-                  }}
-                >
-                  {task.trader.name}
-                </span>
-                <span className="text-muted-foreground/80 text-xs">
-                  Level {task.minPlayerLevel}
-                </span>
+              {/* Trader, level and map */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <span
+                    className="px-2 py-1 rounded text-primary-foreground font-medium text-xs"
+                    style={{ 
+                      backgroundColor: isCompleted ? 'hsl(142, 76%, 36%)' : traderColor,
+                      opacity: isCompleted ? 0.9 : 1
+                    }}
+                  >
+                    {task.trader.name}
+                  </span>
+                  <span className="text-muted-foreground/80 text-xs">
+                    Level {task.minPlayerLevel}
+                  </span>
+                </div>
+                {task.map?.name && (
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground/80">
+                    <span className="font-medium">Map:</span>
+                    <span>{task.map.name}</span>
+                  </div>
+                )}
               </div>
 
               {/* Kappa and Lightkeeper requirements */}
