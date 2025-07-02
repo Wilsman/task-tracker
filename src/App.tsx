@@ -22,8 +22,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from './components/ui/alert-dialog';
-
-
+import { ChecklistView } from './components/ChecklistView';
+import { Switch } from '@/components/ui/switch';
+import { BrainCircuit, ListChecks } from 'lucide-react';
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -32,18 +33,19 @@ function App() {
   const [showKappa, setShowKappa] = useState(false);
   const [showLightkeeper, setShowLightkeeper] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [viewMode, setViewMode] = useState('mindmap');
 
   const requirementFilterActive = showKappa || showLightkeeper;
-  
+
   // Calculate trader progress for the QuestProgressPanel
   const traderProgress = useMemo(() => {
     const traderMap: Record<string, { completed: number; total: number }> = {};
-    
+
     // Initialize all traders with 0/0
     (Object.keys(TRADER_COLORS) as Array<keyof typeof TRADER_COLORS>).forEach(traderName => {
       traderMap[traderName] = { completed: 0, total: 0 };
     });
-    
+
     // Count completed and total tasks per trader
     tasks.forEach(task => {
       const trader = task.trader.name as keyof typeof TRADER_COLORS;
@@ -54,7 +56,7 @@ function App() {
         }
       }
     });
-    
+
     // Convert to array of TraderProgress objects
     return Object.entries(traderMap).map(([name, { completed, total }]) => ({
       id: name.toLowerCase().replace(/\s+/g, '-'),
@@ -64,12 +66,12 @@ function App() {
       color: TRADER_COLORS[name as keyof typeof TRADER_COLORS] || '#6b7280',
     }));
   }, [tasks, completedTasks]);
-  
+
   // Calculate total quest stats
   const totalQuests = useMemo(() => {
     return tasks.length;
   }, [tasks]);
-  
+
   const completedQuests = useMemo(() => {
     return completedTasks.size;
   }, [completedTasks]);
@@ -80,7 +82,7 @@ function App() {
         await taskStorage.init();
         const savedCompletedTasks = await taskStorage.loadCompletedTasks();
         setCompletedTasks(savedCompletedTasks);
-        
+
         // Load sample data initially
         setTasks(sampleData.data.tasks);
       } catch (error) {
@@ -95,15 +97,15 @@ function App() {
 
   const handleToggleComplete = async (taskId: string) => {
     const newCompletedTasks = new Set(completedTasks);
-    
+
     if (newCompletedTasks.has(taskId)) {
       newCompletedTasks.delete(taskId);
     } else {
       newCompletedTasks.add(taskId);
     }
-    
+
     setCompletedTasks(newCompletedTasks);
-    
+
     try {
       await taskStorage.saveCompletedTasks(newCompletedTasks);
     } catch (error) {
@@ -113,13 +115,13 @@ function App() {
 
   const handleToggleTraderVisibility = (trader: string) => {
     const newHiddenTraders = new Set(hiddenTraders);
-    
+
     if (newHiddenTraders.has(trader)) {
       newHiddenTraders.delete(trader);
     } else {
       newHiddenTraders.add(trader);
     }
-    
+
     setHiddenTraders(newHiddenTraders);
   };
 
@@ -152,6 +154,16 @@ function App() {
           <div className="flex h-16 items-center justify-between">
             <h1 className="text-xl font-bold">Escape from Tarkov Task Tracker</h1>
             <div className="flex items-center gap-2">
+              <div className="flex items-center space-x-2">
+                <BrainCircuit className={`h-5 w-5 ${viewMode === 'mindmap' ? 'text-primary' : 'text-muted-foreground'}`} />
+                <Switch
+                  id="view-mode-switch"
+                  checked={viewMode === 'checklist'}
+                  onCheckedChange={(checked) => setViewMode(checked ? 'checklist' : 'mindmap')}
+                />
+                <ListChecks className={`h-5 w-5 ${viewMode === 'checklist' ? 'text-primary' : 'text-muted-foreground'}`} />
+              </div>
+
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="outline" size="sm">
@@ -268,23 +280,26 @@ function App() {
         </Sidebar>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-auto p-4">
-          <div className="relative h-full rounded-lg border bg-background">
-            {isLoading ? (
-              <div className="flex h-full items-center justify-center">
-                <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
-              </div>
-            ) : (
-              <MindMap
-                tasks={tasks}
-                completedTasks={completedTasks}
-                hiddenTraders={hiddenTraders}
-                onToggleComplete={handleToggleComplete}
-                showKappa={showKappa}
-                showLightkeeper={showLightkeeper}
-              />
-            )}
-          </div>
+        <main className="flex-1 bg-background relative overflow-hidden">
+          {viewMode === 'mindmap' ? (
+            <MindMap 
+              tasks={tasks}
+              completedTasks={completedTasks}
+              hiddenTraders={hiddenTraders}
+              onToggleComplete={handleToggleComplete}
+              showKappa={showKappa}
+              showLightkeeper={showLightkeeper}
+            />
+          ) : (
+            <ChecklistView
+              tasks={tasks}
+              completedTasks={completedTasks}
+              hiddenTraders={hiddenTraders}
+              onToggleComplete={handleToggleComplete}
+              showKappa={showKappa}
+              showLightkeeper={showLightkeeper}
+            />
+          )}
         </main>
 
         {/* Right Sidebar - Quest Progress */}
