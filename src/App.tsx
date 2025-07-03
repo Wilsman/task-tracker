@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useIsMobile } from './hooks/use-mobile';
 import { RotateCcw, Filter, Settings } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Task } from './types';
@@ -36,6 +37,14 @@ function App() {
   const [showLightkeeper, setShowLightkeeper] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'mindmap' | 'grouped'>('grouped');
+  const isMobile = useIsMobile();
+
+  // Always use checklist on mobile
+  useEffect(() => {
+    if (isMobile) {
+      setViewMode('grouped');
+    }
+  }, [isMobile]);
   const [highlightedTask, setHighlightedTask] = useState<string | null>(null);
 
   const requirementFilterActive = showKappa || showLightkeeper;
@@ -151,19 +160,20 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="h-screen bg-background text-foreground flex flex-col overflow-hidden">
       {/* Header */}
       <header className="border-b bg-card">
         <div className="container mx-auto px-4">
           <div className="flex h-16 items-center justify-between">
-            <h1 className="text-xl font-bold">Escape from Tarkov Task Tracker</h1>
+            <h1 className="text-xl font-bold">{isMobile ? 'EFT Tracker' : 'Escape from Tarkov Task Tracker'}</h1>
             <div className="flex items-center gap-2">
               <div className="flex items-center space-x-2">
                 <Button
                   variant={viewMode === 'mindmap' ? 'default' : 'ghost'}
                   size="sm"
                   onClick={() => setViewMode('mindmap')}
-                  className="gap-2"
+                  disabled={isMobile}
+                  className="gap-2 hidden md:flex"
                 >
                   <BrainCircuit size={16} />
                   Mind Map
@@ -172,8 +182,8 @@ function App() {
                   variant={viewMode === 'grouped' ? 'default' : 'ghost'}
                   size="sm"
                   onClick={() => setViewMode('grouped')}
-                  className="gap-2"
-                >
+                  className="gap-2 hidden md:flex"
+        >
                   <ListChecks size={16} />
                   Checklist View
                 </Button>
@@ -206,12 +216,7 @@ function App() {
       </header>
 
       {/* Sidebars + Main */}
-      <div
-        className={cn(
-          'flex flex-1',
-          viewMode === 'mindmap' ? 'overflow-auto' : 'overflow-hidden'
-        )}
-      >
+      <div className="flex flex-1 overflow-hidden">
         {/* Left Filters */}
         <Sidebar
           position="left"
@@ -224,6 +229,7 @@ function App() {
           defaultCollapsed={false}
           width="16rem"
           collapsedWidth="3rem"
+          className="hidden md:flex"
         >
           <Card className="border-0 shadow-none">
             <CardContent className="p-4">
@@ -244,10 +250,10 @@ function App() {
                         <label
                           htmlFor={`trader-${trader}`}
                           className={cn(
-                            'flex items-center gap-2 text-sm',
+                            'hidden md:flex items-center gap-2 text-sm',
                             requirementFilterActive && 'opacity-50 cursor-not-allowed'
                           )}
-                        >
+        >
                           <span
                             className="inline-block h-3 w-3 rounded-full"
                             style={{ backgroundColor: color }}
@@ -293,7 +299,12 @@ function App() {
         </Sidebar>
 
         {/* Main Content */}
-        <main className="flex-1 bg-background relative">
+        <main
+          className={cn(
+            'flex-1 bg-background relative',
+            viewMode === 'grouped' ? 'overflow-y-auto' : 'overflow-hidden'
+          )}
+        >
           {viewMode === 'grouped' ? (
             <CheckListView
               tasks={tasks}
@@ -329,6 +340,7 @@ function App() {
           defaultCollapsed={false}
           width="20rem"
           collapsedWidth="3rem"
+          className="hidden md:flex"
         >
           <div className="p-2">
             <QuestProgressPanel

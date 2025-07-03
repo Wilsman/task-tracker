@@ -32,7 +32,8 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [groupBy, setGroupBy] = useState<GroupBy>('trader');
-  const [isAllExpanded, setIsAllExpanded] = useState(true);
+  // Start with all groups collapsed by default
+  const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
 
   // Dependency map for completion logic
   const dependencyMap = useMemo(() => buildTaskDependencyMap(tasks), [tasks]);
@@ -80,8 +81,21 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
     [tasksByGroup],
   );
 
+  const allGroupNames = useMemo(() => sortedGroups.map(([name]) => name), [sortedGroups]);
+  // Only use the explicitly expanded groups
+  const finalExpandedGroups = expandedGroups;
+  const areAllExpanded = finalExpandedGroups.length === allGroupNames.length;
+
+  const handleToggleAll = () => {
+    if (areAllExpanded) {
+      setExpandedGroups([]);
+    } else {
+      setExpandedGroups(allGroupNames);
+    }
+  };
+
   return (
-    <div className="h-full overflow-y-auto p-4 bg-background text-foreground">
+    <div className="p-4 bg-background text-foreground">
       {/* Toggle grouping */}
       <div className="flex items-center gap-2 mb-4">
         <button
@@ -117,10 +131,10 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => setIsAllExpanded(!isAllExpanded)}
+          onClick={handleToggleAll}
           className="flex items-center gap-2"
         >
-          {isAllExpanded ? (
+          {areAllExpanded ? (
             <>
               <ChevronUp className="h-4 w-4" />
               Collapse All
@@ -135,11 +149,11 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
       </div>
 
       {/* Groups */}
-      <Accordion 
-        type="multiple" 
-        className="w-full space-y-2" 
-        value={isAllExpanded ? sortedGroups.map(([groupName]) => groupName) : []}
-        onValueChange={() => {}}
+      <Accordion
+        type="multiple"
+        className="w-full space-y-2"
+        value={finalExpandedGroups}
+        onValueChange={setExpandedGroups}
       >
         {sortedGroups.map(([groupName, groupTasks]) => {
           const completedCount = groupTasks.filter(t => completedTasks.has(t.id)).length;
@@ -160,7 +174,7 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
                 </div>
               </AccordionTrigger>
               <AccordionContent className="px-4 pb-4 border-t">
-                <div className="max-h-80 overflow-y-auto pr-2 space-y-3">
+                <div className="pr-2 space-y-3">
                   {groupTasks.map(task => {
                     const isCompletable = canComplete(task.id, completedTasks, dependencyMap);
                     const isCompleted = completedTasks.has(task.id);
