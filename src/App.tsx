@@ -50,7 +50,7 @@ function App() {
         }))
     ), []);
   const [isLoading, setIsLoading] = useState(true);
-  const [viewMode, setViewMode] = useState<'mindmap' | 'grouped' | 'collector'>('grouped');
+  const [viewMode, setViewMode] = useState<'tree' | 'grouped' | 'collector'>('tree');
   const isMobile = useIsMobile();
 
   // Always use checklist on mobile
@@ -212,14 +212,14 @@ function App() {
             <div className="flex items-center gap-2">
               <div className="flex items-center space-x-2">
                 <Button
-                  variant={viewMode === 'mindmap' ? 'default' : 'ghost'}
+                  variant={viewMode === 'tree' ? 'default' : 'ghost'}
                   size="sm"
-                  onClick={() => setViewMode('mindmap')}
+                  onClick={() => setViewMode('tree')}
                   disabled={isMobile}
                   className="gap-2 hidden md:flex"
                 >
                   <BrainCircuit size={16} />
-                  Mind Map
+                  Quest Tree
                 </Button>
                 <Button
                   variant={viewMode === 'grouped' ? 'default' : 'ghost'}
