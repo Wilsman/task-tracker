@@ -7,8 +7,7 @@ import { MindMap } from './components/MindMap';
 import { QuestProgressPanel } from './components/QuestProgressPanel';
 import { taskStorage } from './utils/indexedDB';
 import { buildTaskDependencyMap, getAllDependencies } from './utils/taskUtils';
-import { sampleData } from './data/sample-data';
-import collectorItems from './data/collectorItems.json';
+import { sampleData, collectorItemsData } from './data/sample-data';
 import { cn } from '@/lib/utils';
 import { Button } from './components/ui/button';
 import { Card, CardContent } from './components/ui/card';
@@ -26,7 +25,7 @@ import {
   AlertDialogTrigger,
 } from './components/ui/alert-dialog';
 import { CheckListView } from './components/CheckListView';
-import { CollectorView } from './components/CollectorView';
+import { CollectorView } from './components/ItemTrackerView';
 import { BrainCircuit, ListChecks, Package } from 'lucide-react';
 
 function App() {
@@ -38,6 +37,18 @@ function App() {
   );
   const [showKappa, setShowKappa] = useState(false);
   const [showLightkeeper, setShowLightkeeper] = useState(false);
+
+  // Transform collector items data to match the expected structure
+  const collectorItems = useMemo(() => 
+    collectorItemsData.data.task.objectives.flatMap(
+      (objective) => 
+        objective.items.map(item => ({
+          name: item.name,
+          order: 0, // Default order since it's not in the source data
+          img: item.iconLink,
+          id: item.id // Keep the id for reference if needed
+        }))
+    ), []);
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'mindmap' | 'grouped' | 'collector'>('grouped');
   const isMobile = useIsMobile();
@@ -131,8 +142,15 @@ function App() {
     [hiddenTraders]
   );
 
-  const handleToggleKappa = useCallback(() => setShowKappa(v => !v), []);
-  const handleToggleLightkeeper = useCallback(() => setShowLightkeeper(v => !v), []);
+  const handleToggleKappa = useCallback(() => {
+    setShowKappa(v => !v);
+    setShowLightkeeper(false);
+  }, []);
+
+  const handleToggleLightkeeper = useCallback(() => {
+    setShowLightkeeper(v => !v);
+    setShowKappa(false);
+  }, []);
 
   const handleToggleCollectorItem = useCallback(
     async (itemName: string) => {

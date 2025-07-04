@@ -1,4 +1,4 @@
-import { TaskData } from "../types";
+import { CollectorItemsData, TaskData } from "../types";
 
 // Sample data for demonstration
 export const sampleData: TaskData = {
@@ -11132,5 +11132,405 @@ export const sampleData: TaskData = {
         },
       },
     ],
+  },
+};
+
+// Collector items data
+export const collectorItemsData: CollectorItemsData = {
+  data: {
+    task: {
+      objectives: [
+        {
+          items: [
+            {
+              id: "5bc9c377d4351e3bac12251b",
+              name: "Old firesteel",
+              iconLink:
+                "https://assets.tarkov.dev/5bc9c377d4351e3bac12251b-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "5bc9c1e2d4351e00367fbcf0",
+              name: "Antique axe",
+              iconLink:
+                "https://assets.tarkov.dev/5bc9c1e2d4351e00367fbcf0-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "5bc9c049d4351e44f824d360",
+              name: "Battered antique book",
+              iconLink:
+                "https://assets.tarkov.dev/5bc9c049d4351e44f824d360-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "5bc9b355d4351e6d1509862a",
+              name: "#FireKlean gun lube",
+              iconLink:
+                "https://assets.tarkov.dev/5bc9b355d4351e6d1509862a-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "5bc9bc53d4351e00367fbcee",
+              name: "Golden rooster figurine",
+              iconLink:
+                "https://assets.tarkov.dev/5bc9bc53d4351e00367fbcee-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "5bc9bdb8d4351e003562b8a1",
+              name: "Silver Badge",
+              iconLink:
+                "https://assets.tarkov.dev/5bc9bdb8d4351e003562b8a1-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "5bc9b9ecd4351e3bac122519",
+              name: "Deadlyslob's beard oil",
+              iconLink:
+                "https://assets.tarkov.dev/5bc9b9ecd4351e3bac122519-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "5bc9b720d4351e450201234b",
+              name: "Golden 1GPhone smartphone",
+              iconLink:
+                "https://assets.tarkov.dev/5bc9b720d4351e450201234b-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "5bc9b156d4351e00367fbce9",
+              name: "Jar of DevilDog mayo",
+              iconLink:
+                "https://assets.tarkov.dev/5bc9b156d4351e00367fbce9-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "5bc9c29cd4351e003562b8a3",
+              name: "Can of sprats",
+              iconLink:
+                "https://assets.tarkov.dev/5bc9c29cd4351e003562b8a3-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "5bd073a586f7747e6f135799",
+              name: "Fake mustache",
+              iconLink:
+                "https://assets.tarkov.dev/5bd073a586f7747e6f135799-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "5bd073c986f7747f627e796c",
+              name: "Kotton beanie",
+              iconLink:
+                "https://assets.tarkov.dev/5bd073c986f7747f627e796c-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "5e54f62086f774219b0f1937",
+              name: "Raven figurine",
+              iconLink:
+                "https://assets.tarkov.dev/5e54f62086f774219b0f1937-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "5e54f79686f7744022011103",
+              name: "Pestily plague mask",
+              iconLink:
+                "https://assets.tarkov.dev/5e54f79686f7744022011103-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "5e54f76986f7740366043752",
+              name: "Shroud half-mask",
+              iconLink:
+                "https://assets.tarkov.dev/5e54f76986f7740366043752-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "5e54f6af86f7742199090bf3",
+              name: "Can of Dr. Lupo's coffee beans",
+              iconLink:
+                "https://assets.tarkov.dev/5e54f6af86f7742199090bf3-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "5bc9be8fd4351e00334cae6e",
+              name: "42 Signature Blend English Tea",
+              iconLink:
+                "https://assets.tarkov.dev/5bc9be8fd4351e00334cae6e-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "5f745ee30acaeb0d490d8c5b",
+              name: "Veritas guitar pick",
+              iconLink:
+                "https://assets.tarkov.dev/5f745ee30acaeb0d490d8c5b-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "60b0f988c4449e4cb624c1da",
+              name: "Armband (Evasion)",
+              iconLink:
+                "https://assets.tarkov.dev/60b0f988c4449e4cb624c1da-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "60b0f93284c20f0feb453da7",
+              name: "Can of RatCola soda",
+              iconLink:
+                "https://assets.tarkov.dev/60b0f93284c20f0feb453da7-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "60b0f7057897d47c5b04ab94",
+              name: "Loot Lord plushie",
+              iconLink:
+                "https://assets.tarkov.dev/60b0f7057897d47c5b04ab94-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "5fd8d28367cb5e077335170f",
+              name: "Smoke balaclava",
+              iconLink:
+                "https://assets.tarkov.dev/5fd8d28367cb5e077335170f-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "60b0f6c058e0b0481a09ad11",
+              name: "WZ Wallet",
+              iconLink:
+                "https://assets.tarkov.dev/60b0f6c058e0b0481a09ad11-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "60b0f561c4449e4cb624c1d7",
+              name: "LVNDMARK's rat poison",
+              iconLink:
+                "https://assets.tarkov.dev/60b0f561c4449e4cb624c1d7-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "62a09ec84f842e1bd12da3f2",
+              name: "Missam forklift key",
+              iconLink:
+                "https://assets.tarkov.dev/62a09ec84f842e1bd12da3f2-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "62a09e974f842e1bd12da3f0",
+              name: "Video cassette with the Cyborg Killer movie",
+              iconLink:
+                "https://assets.tarkov.dev/62a09e974f842e1bd12da3f0-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "62a09e73af34e73a266d932a",
+              name: "BakeEzy cook book",
+              iconLink:
+                "https://assets.tarkov.dev/62a09e73af34e73a266d932a-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "62a09e410b9d3c46de5b6e78",
+              name: "JohnB Liquid DNB glasses",
+              iconLink:
+                "https://assets.tarkov.dev/62a09e410b9d3c46de5b6e78-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "62a09dd4621468534a797ac7",
+              name: "Baddie's red beard",
+              iconLink:
+                "https://assets.tarkov.dev/62a09dd4621468534a797ac7-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "62a09d79de7ac81993580530",
+              name: "DRD body armor",
+              iconLink:
+                "https://assets.tarkov.dev/62a09d79de7ac81993580530-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "62a09d3bcf4a99369e262447",
+              name: "Gingy keychain",
+              iconLink:
+                "https://assets.tarkov.dev/62a09d3bcf4a99369e262447-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "62a09cfe4f842e1bd12da3e4",
+              name: "Golden egg",
+              iconLink:
+                "https://assets.tarkov.dev/62a09cfe4f842e1bd12da3e4-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "62a09cb7a04c0c5c6e0a84f8",
+              name: "Press pass (issued for NoiceGuy)",
+              iconLink:
+                "https://assets.tarkov.dev/62a09cb7a04c0c5c6e0a84f8-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "62a091170b9d3c46de5b6cf2",
+              name: "Axel parrot figurine",
+              iconLink:
+                "https://assets.tarkov.dev/62a091170b9d3c46de5b6cf2-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "62a08f4c4f842e1bd12d9d62",
+              name: "BEAR Buddy plush toy",
+              iconLink:
+                "https://assets.tarkov.dev/62a08f4c4f842e1bd12d9d62-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "62a09e08de7ac81993580532",
+              name: "Glorious E lightweight armored mask",
+              iconLink:
+                "https://assets.tarkov.dev/62a09e08de7ac81993580532-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "66b37f114410565a8f6789e2",
+              name: "Inseq gas pipe wrench",
+              iconLink:
+                "https://assets.tarkov.dev/66b37f114410565a8f6789e2-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "66b37eb4acff495a29492407",
+              name: "Viibiin sneaker",
+              iconLink:
+                "https://assets.tarkov.dev/66b37eb4acff495a29492407-icon.webp",
+            },
+          ],
+        },
+        {
+          items: [
+            {
+              id: "66b37ea4c5d72b0277488439",
+              name: "Tamatthi kunai knife replica",
+              iconLink:
+                "https://assets.tarkov.dev/66b37ea4c5d72b0277488439-icon.webp",
+            },
+          ],
+        },
+      ],
+    },
   },
 };

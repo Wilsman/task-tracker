@@ -28,6 +28,33 @@ export interface TaskData {
     tasks: Task[];
   };
 }
+//{
+//   "data": {
+//     "task": {
+//       "objectives": [
+//         {
+//           "items": [
+//             {
+//               "id": "5bc9c377d4351e3bac12251b",
+//               "name": "Old firesteel",
+//               "iconLink": "https://assets.tarkov.dev/5bc9c377d4351e3bac12251b-icon.webp"
+//             }
+//           ]
+//         },
+export interface CollectorItemsData {
+  data: {
+    task: {
+      objectives: {
+        items: {
+          id: string;
+          name: string;
+          iconLink: string;
+        }[];
+      }[];
+    };
+    
+  };
+}
 
 export interface TaskPosition {
   x: number;
