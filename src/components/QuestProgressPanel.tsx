@@ -19,6 +19,10 @@ interface QuestProgressPanelProps {
   traders: TraderProgress[];
   totalCollectorItems?: number;
   completedCollectorItems?: number;
+  totalKappaTasks?: number;
+  completedKappaTasks?: number;
+  totalLightkeeperTasks?: number;
+  completedLightkeeperTasks?: number;
 }
 
 export function QuestProgressPanel({
@@ -28,9 +32,15 @@ export function QuestProgressPanel({
   traders,
   totalCollectorItems = 0,
   completedCollectorItems = 0,
+  totalKappaTasks = 0,
+  completedKappaTasks = 0,
+  totalLightkeeperTasks = 0,
+  completedLightkeeperTasks = 0,
 }: QuestProgressPanelProps) {
   const progress = totalQuests > 0 ? (completedQuests / totalQuests) * 100 : 0;
   const itemProgress = totalCollectorItems > 0 ? (completedCollectorItems / totalCollectorItems) * 100 : 0;
+  const kappaProgress = totalKappaTasks > 0 ? (completedKappaTasks / totalKappaTasks) * 100 : 0;
+  const lightkeeperProgress = totalLightkeeperTasks > 0 ? (completedLightkeeperTasks / totalLightkeeperTasks) * 100 : 0;
 
   return (
     <div className={cn("bg-card border rounded-lg p-4 shadow-sm w-72", className)}>
@@ -61,6 +71,40 @@ export function QuestProgressPanel({
             className="h-2"
             indicatorClassName="bg-green-500"
           />
+        </div>
+      )}
+
+      {(totalKappaTasks > 0 || totalLightkeeperTasks > 0) && (
+        <div className="space-y-3 mb-6">
+          <h3 className="text-sm font-medium text-muted-foreground">Special Tasks</h3>
+          
+          {totalKappaTasks > 0 && (
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm text-muted-foreground">
+                <span>🎯 Kappa Required</span>
+                <span>{completedKappaTasks}/{totalKappaTasks}</span>
+              </div>
+              <Progress 
+                value={kappaProgress} 
+                className="h-2"
+                indicatorClassName="bg-yellow-500"
+              />
+            </div>
+          )}
+          
+          {totalLightkeeperTasks > 0 && (
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm text-muted-foreground">
+                <span>💡 Lightkeeper Required</span>
+                <span>{completedLightkeeperTasks}/{totalLightkeeperTasks}</span>
+              </div>
+              <Progress 
+                value={lightkeeperProgress} 
+                className="h-2"
+                indicatorClassName="bg-orange-500"
+              />
+            </div>
+          )}
         </div>
       )}
 

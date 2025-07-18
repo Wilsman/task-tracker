@@ -104,6 +104,19 @@ function App() {
     }));
   }, [tasks, completedTasks]);
 
+  // Calculate Kappa and Lightkeeper task totals
+  const { totalKappaTasks, completedKappaTasks, totalLightkeeperTasks, completedLightkeeperTasks } = useMemo(() => {
+    const kappaTasks = tasks.filter(task => task.kappaRequired);
+    const lightkeeperTasks = tasks.filter(task => task.lightkeeperRequired);
+    
+    return {
+      totalKappaTasks: kappaTasks.length,
+      completedKappaTasks: kappaTasks.filter(task => completedTasks.has(task.id)).length,
+      totalLightkeeperTasks: lightkeeperTasks.length,
+      completedLightkeeperTasks: lightkeeperTasks.filter(task => completedTasks.has(task.id)).length,
+    };
+  }, [tasks, completedTasks]);
+
   useEffect(() => {
     const init = async () => {
       try {
@@ -461,6 +474,10 @@ function App() {
                 traders={traderProgress}
                 totalCollectorItems={collectorItems.length}
                 completedCollectorItems={completedCollectorItems.size}
+                totalKappaTasks={totalKappaTasks}
+                completedKappaTasks={completedKappaTasks}
+                totalLightkeeperTasks={totalLightkeeperTasks}
+                completedLightkeeperTasks={completedLightkeeperTasks}
               />
             </div>
           </Sidebar>
