@@ -30,7 +30,7 @@ export const CollectorView: React.FC<CollectorViewProps> = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [groupBy, setGroupBy] = useState<GroupBy>('collector');
-  const [expandedGroups, setExpandedGroups] = useState<string[]>(['collector']);
+  const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
 
   // Filter items based on search
   const filteredItems = useMemo(() => {
@@ -135,6 +135,15 @@ export const CollectorView: React.FC<CollectorViewProps> = ({
 
   const allGroupNames = useMemo(() => sortedGroups.map(([name]) => name), [sortedGroups]);
   const areAllExpanded = expandedGroups.length === allGroupNames.length;
+
+  // Expand all groups on initial load and when switching grouping mode
+  const [initializedGroupBy, setInitializedGroupBy] = useState<GroupBy | null>(null);
+  useEffect(() => {
+    if (initializedGroupBy !== groupBy) {
+      setExpandedGroups(allGroupNames);
+      setInitializedGroupBy(groupBy);
+    }
+  }, [groupBy, allGroupNames, initializedGroupBy]);
 
   const handleToggleAll = () => {
     if (areAllExpanded) {

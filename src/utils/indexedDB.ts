@@ -1,7 +1,8 @@
 const DB_NAME = 'TarkovQuests';
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 const TASKS_STORE = 'completedTasks';
 const COLLECTOR_STORE = 'completedCollectorItems';
+const PRESTIGE_STORE = 'prestigeProgress';
 
 export class TaskStorage {
   private db: IDBDatabase | null = null;
@@ -23,6 +24,9 @@ export class TaskStorage {
         }
         if (!db.objectStoreNames.contains(COLLECTOR_STORE)) {
           db.createObjectStore(COLLECTOR_STORE, { keyPath: 'id' });
+        }
+        if (!db.objectStoreNames.contains(PRESTIGE_STORE)) {
+          db.createObjectStore(PRESTIGE_STORE, { keyPath: 'id' });
         }
       };
     });
@@ -92,6 +96,33 @@ export class TaskStorage {
       
       request.onerror = () => reject(request.error);
     });
+  }
+
+  async savePrestigeProgress(id: string, data: unknown): Promise<void> {
+    if (!this.db) await this.init();
+    const tx = this.db!.transaction([PRESTIGE_STORE], 'readwrite');
+    const store = tx.objectStore(PRESTIGE_STORE);
+    await store.put({ id, data });
+  }
+
+  async loadPrestigeProgress<T = unknown>(id: string): Promise<T | null> {
+    if (!this.db) await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction([PRESTIGE_STORE], 'readonly');
+      const store = tx.objectStore(PRESTIGE_STORE);
+      const req = store.get(id);
+      req.onsuccess = () => {
+        resolve((req.result?.data as T) ?? null);
+      };
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async clearAllPrestigeProgress(): Promise<void> {
+    if (!this.db) await this.init();
+    const tx = this.db!.transaction([PRESTIGE_STORE], 'readwrite');
+    const store = tx.objectStore(PRESTIGE_STORE);
+    await store.clear();
   }
 }
 

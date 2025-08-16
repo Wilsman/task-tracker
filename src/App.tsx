@@ -29,6 +29,7 @@ import {
 } from './components/ui/alert-dialog';
 import { CheckListView } from './components/CheckListView';
 import { CollectorView } from './components/ItemTrackerView';
+import { PrestigesView } from './components/PrestigesView';
 import { BrainCircuit, ListChecks, Package, GitBranch } from 'lucide-react';
 
 function App() {
@@ -56,7 +57,7 @@ function App() {
     );
   }, [apiCollectorItems]);
   const [isLoading, setIsLoading] = useState(true);
-  const [viewMode, setViewMode] = useState<'tree' | 'grouped' | 'collector' | 'flow'>('tree');
+  const [viewMode, setViewMode] = useState<'tree' | 'grouped' | 'collector' | 'flow' | 'prestiges'>('grouped');
   const isMobile = useIsMobile();
 
   // Always use checklist on mobile
@@ -216,6 +217,7 @@ function App() {
     try {
       await taskStorage.saveCompletedTasks(new Set());
       await taskStorage.saveCompletedCollectorItems(new Set());
+      await taskStorage.clearAllPrestigeProgress();
     } catch (err) {
       console.error('Reset error', err);
     }
@@ -274,6 +276,14 @@ function App() {
                   >
                     <Package size={16} />
                     Items
+                  </Button>
+                  <Button
+                    variant={viewMode === 'prestiges' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => setViewMode('prestiges')}
+                    className="rounded-full px-3"
+                  >
+                    Prestiges
                   </Button>
                 </div>
               </div>
@@ -371,13 +381,23 @@ function App() {
           <main
             className={cn(
               'flex-1 bg-background relative',
-              viewMode === 'grouped' || viewMode === 'collector' || viewMode === 'flow' ? 'overflow-y-auto' : 'overflow-hidden'
+              viewMode === 'grouped' || viewMode === 'collector' || viewMode === 'flow' || viewMode === 'prestiges' ? 'overflow-y-auto' : 'overflow-hidden'
             )}
           >
             {/* Quests sub-tabs below top pane */}
-            {viewMode !== 'collector' && (
+            {(viewMode === 'grouped' || viewMode === 'tree' || viewMode === 'flow') && (
               <div className="p-4 pt-3">
                 <div className="hidden md:flex items-center gap-1 p-1 rounded-full border bg-muted/30 w-fit">
+                  <button
+                    onClick={() => setViewMode('grouped')}
+                    className={cn(
+                      'px-3 py-1 rounded-full flex items-center gap-2 text-sm',
+                      viewMode === 'grouped' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
+                    )}
+                  >
+                    <ListChecks className="h-4 w-4" />
+                    Checklist
+                  </button>
                   <button
                     onClick={() => { if (!isMobile) setViewMode('tree'); }}
                     disabled={isMobile}
@@ -400,16 +420,6 @@ function App() {
                     <GitBranch className="h-4 w-4" />
                     Flow
                   </button>
-                  <button
-                    onClick={() => setViewMode('grouped')}
-                    className={cn(
-                      'px-3 py-1 rounded-full flex items-center gap-2 text-sm',
-                      viewMode === 'grouped' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
-                    )}
-                  >
-                    <ListChecks className="h-4 w-4" />
-                    Checklist
-                  </button>
                 </div>
                 {/* Mobile: show only Flow and Checklist */}
                 <div className="flex md:hidden items-center gap-1 p-1 rounded-full border bg-muted/30 w-fit">
@@ -422,16 +432,6 @@ function App() {
                   >
                     <GitBranch className="h-4 w-4" />
                     Flow
-                  </button>
-                  <button
-                    onClick={() => setViewMode('grouped')}
-                    className={cn(
-                      'px-3 py-1 rounded-full flex items-center gap-2 text-sm',
-                      viewMode === 'grouped' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
-                    )}
-                  >
-                    <ListChecks className="h-4 w-4" />
-                    Checklist
                   </button>
                 </div>
               </div>
@@ -452,6 +452,8 @@ function App() {
                 completedCollectorItems={completedCollectorItems}
                 onToggleCollectorItem={handleToggleCollectorItem}
               />
+            ) : viewMode === 'prestiges' ? (
+              <PrestigesView />
             ) : viewMode === 'flow' ? (
               <FlowView
                 tasks={tasks}
