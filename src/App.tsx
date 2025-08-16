@@ -3,8 +3,6 @@ import { NuqsAdapter } from 'nuqs/adapters/react';
 import { useIsMobile } from './hooks/use-mobile';
 import { RotateCcw, Filter, BarChart3 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
-import { Separator } from '@/components/ui/separator';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem } from '@/components/ui/dropdown-menu';
 import { Task, CollectorItemsData } from './types';
 import { MindMap } from './components/MindMap';
 import { FlowView } from './components/FlowView';
@@ -250,7 +248,8 @@ function App() {
         {/* Header */}
         <header className="border-b bg-card/80 backdrop-blur supports-[backdrop-filter]:bg-card/60">
           <div className="container mx-auto px-4">
-            <div className="flex h-16 items-center justify-between gap-4">
+            <div className="flex items-center justify-between gap-4 py-2">
+              {/* Left: title + primary section selector */}
               <div className="flex items-center gap-3 min-w-0">
                 <h1 className="text-xl font-semibold truncate">
                   {isMobile ? 'EFT Tracker' : 'Escape from Tarkov Task Tracker'}
@@ -258,14 +257,35 @@ function App() {
                 <span className="hidden md:inline-flex text-[10px] px-2 py-0.5 rounded-full bg-emerald-600/10 text-emerald-600 border border-emerald-600/20">
                   Live API
                 </span>
+                <div className="hidden md:flex items-center gap-1 p-1 rounded-full border bg-muted/30 ml-2">
+                  <Button
+                    variant={viewMode !== 'collector' ? 'default' : 'ghost'}
+                    size="sm"
+                    className="rounded-full px-3"
+                    onClick={() => setViewMode(isMobile ? 'grouped' : 'tree')}
+                  >
+                    Quests
+                  </Button>
+                  <Button
+                    variant={viewMode === 'collector' ? 'default' : 'ghost'}
+                    size="sm"
+                    onClick={() => setViewMode('collector')}
+                    className="gap-2 rounded-full px-3"
+                  >
+                    <Package size={16} />
+                    Items
+                  </Button>
+                </div>
               </div>
-              <div className="flex items-center gap-4">
-                {/* Focus Mode Switch */}
-                <div className="hidden md:flex items-center gap-1 mr-1">
-                  <span className="text-xs text-muted-foreground mr-1">Focus</span>
+
+              {/* Right: Focus segmented control */}
+              <div className="hidden md:flex items-center gap-2">
+                <span className="text-xs text-muted-foreground">Focus</span>
+                <div className="flex items-center gap-1 p-1 rounded-full border bg-muted/30">
                   <Button
                     variant={focusMode === 'all' ? 'default' : 'ghost'}
                     size="sm"
+                    className="rounded-full px-3"
                     onClick={() => handleSetFocus('all')}
                   >
                     All
@@ -273,6 +293,7 @@ function App() {
                   <Button
                     variant={focusMode === 'kappa' ? 'default' : 'ghost'}
                     size="sm"
+                    className="rounded-full px-3"
                     onClick={() => handleSetFocus('kappa')}
                   >
                     Kappa
@@ -280,56 +301,10 @@ function App() {
                   <Button
                     variant={focusMode === 'lightkeeper' ? 'default' : 'ghost'}
                     size="sm"
+                    className="rounded-full px-3"
                     onClick={() => handleSetFocus('lightkeeper')}
                   >
                     Lightkeeper
-                  </Button>
-                </div>
-                <Separator orientation="vertical" className="hidden md:block h-6 mx-2" />
-                <div className="hidden md:flex items-center space-x-3">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm" className="gap-2">Quests</Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start">
-                      <DropdownMenuRadioGroup
-                        value={viewMode === 'grouped' ? 'grouped' : viewMode === 'flow' ? 'flow' : 'tree'}
-                        onValueChange={(val) => {
-                          if (!val) return;
-                          if (val === 'tree') {
-                            if (isMobile) return; // keep Tree disabled on mobile
-                            setViewMode('tree');
-                          } else if (val === 'flow') {
-                            setViewMode('flow');
-                          } else {
-                            setViewMode('grouped');
-                          }
-                        }}
-                      >
-                        <DropdownMenuRadioItem value="tree" disabled={isMobile}>
-                          <BrainCircuit />
-                          Tree
-                        </DropdownMenuRadioItem>
-                        <DropdownMenuRadioItem value="flow">
-                          <GitBranch />
-                          Flow
-                        </DropdownMenuRadioItem>
-                        <DropdownMenuRadioItem value="grouped">
-                          <ListChecks />
-                          Checklist
-                        </DropdownMenuRadioItem>
-                      </DropdownMenuRadioGroup>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                  <Separator orientation="vertical" className="h-6 mx-2" />
-                  <Button
-                    variant={viewMode === 'collector' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setViewMode('collector')}
-                    className="gap-2"
-                  >
-                    <Package size={16} />
-                    Items
                   </Button>
                 </div>
               </div>
@@ -399,6 +374,68 @@ function App() {
               viewMode === 'grouped' || viewMode === 'collector' || viewMode === 'flow' ? 'overflow-y-auto' : 'overflow-hidden'
             )}
           >
+            {/* Quests sub-tabs below top pane */}
+            {viewMode !== 'collector' && (
+              <div className="p-4 pt-3">
+                <div className="hidden md:flex items-center gap-1 p-1 rounded-full border bg-muted/30 w-fit">
+                  <button
+                    onClick={() => { if (!isMobile) setViewMode('tree'); }}
+                    disabled={isMobile}
+                    className={cn(
+                      'px-3 py-1 rounded-full flex items-center gap-2 text-sm',
+                      viewMode === 'tree' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted',
+                      isMobile && 'opacity-50 cursor-not-allowed'
+                    )}
+                  >
+                    <BrainCircuit className="h-4 w-4" />
+                    Tree
+                  </button>
+                  <button
+                    onClick={() => setViewMode('flow')}
+                    className={cn(
+                      'px-3 py-1 rounded-full flex items-center gap-2 text-sm',
+                      viewMode === 'flow' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
+                    )}
+                  >
+                    <GitBranch className="h-4 w-4" />
+                    Flow
+                  </button>
+                  <button
+                    onClick={() => setViewMode('grouped')}
+                    className={cn(
+                      'px-3 py-1 rounded-full flex items-center gap-2 text-sm',
+                      viewMode === 'grouped' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
+                    )}
+                  >
+                    <ListChecks className="h-4 w-4" />
+                    Checklist
+                  </button>
+                </div>
+                {/* Mobile: show only Flow and Checklist */}
+                <div className="flex md:hidden items-center gap-1 p-1 rounded-full border bg-muted/30 w-fit">
+                  <button
+                    onClick={() => setViewMode('flow')}
+                    className={cn(
+                      'px-3 py-1 rounded-full flex items-center gap-2 text-sm',
+                      viewMode === 'flow' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
+                    )}
+                  >
+                    <GitBranch className="h-4 w-4" />
+                    Flow
+                  </button>
+                  <button
+                    onClick={() => setViewMode('grouped')}
+                    className={cn(
+                      'px-3 py-1 rounded-full flex items-center gap-2 text-sm',
+                      viewMode === 'grouped' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
+                    )}
+                  >
+                    <ListChecks className="h-4 w-4" />
+                    Checklist
+                  </button>
+                </div>
+              </div>
+            )}
             {viewMode === 'grouped' ? (
               <CheckListView
                 tasks={tasks}
