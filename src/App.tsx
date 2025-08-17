@@ -321,7 +321,7 @@ function App() {
                     }
                     size="sm"
                     className="rounded-full px-3"
-                    onClick={() => setViewMode(isMobile ? 'grouped' : 'tree')}
+                    onClick={() => setViewMode(isMobile ? 'grouped' : 'grouped')}
                   >
                     Quests
                   </Button>
