@@ -314,7 +314,11 @@ function App() {
                 </span>
                 <div className="hidden md:flex items-center gap-1 p-1 rounded-full border bg-muted/30 ml-2">
                   <Button
-                    variant={viewMode !== 'collector' ? 'default' : 'ghost'}
+                    variant={
+                      viewMode === 'grouped' || viewMode === 'tree' || viewMode === 'flow'
+                        ? 'default'
+                        : 'ghost'
+                    }
                     size="sm"
                     className="rounded-full px-3"
                     onClick={() => setViewMode(isMobile ? 'grouped' : 'tree')}
