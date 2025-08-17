@@ -1,7 +1,6 @@
 import React from 'react';
 import { Progress } from './ui/progress';
 import { cn } from '@/lib/utils';
-import { PRESTIGE_CONFIGS } from '@/utils/prestige';
 
 export interface TraderProgress {
   id: string;
