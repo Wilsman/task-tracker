@@ -213,13 +213,15 @@ function PrestigeCard(props: PrestigeCardProps): JSX.Element {
   const [state, setState] = useState<PrestigeProgress>(defaultState);
   const hasLoadedRef = useRef(false);
   const saveTimerRef = useRef<number | null>(null);
+  const lastPersistedRef = useRef<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
     (async () => {
       const saved = await taskStorage.loadPrestigeProgress<Partial<PrestigeProgress>>(id);
       if (mounted && saved) {
-        setState({
+        console.debug('[Prestige] load', { id, saved });
+        const merged = {
           ...defaultState,
           ...saved,
           quests: { collector: false, newBeginning: false, ...(saved.quests ?? {}) },
@@ -231,7 +233,10 @@ function PrestigeCard(props: PrestigeCardProps): JSX.Element {
               ...((saved.extras && saved.extras.figurines) ? saved.extras.figurines : {}),
             },
           },
-        });
+        } as PrestigeProgress;
+        setState(merged);
+        // record snapshot to avoid immediate re-save
+        lastPersistedRef.current = JSON.stringify(merged);
       }
       // mark initial load complete whether saved existed or not
       hasLoadedRef.current = true;
@@ -243,10 +248,19 @@ function PrestigeCard(props: PrestigeCardProps): JSX.Element {
 
   useEffect(() => {
     if (!hasLoadedRef.current) return; // avoid overwriting saved data on first mount
+    const currentSnapshot = JSON.stringify(state);
+    if (lastPersistedRef.current === currentSnapshot) {
+      // nothing changed since last persisted; skip scheduling save
+      return;
+    }
     if (saveTimerRef.current) window.clearTimeout(saveTimerRef.current);
+    console.debug('[Prestige] schedule save', { id, state });
     saveTimerRef.current = window.setTimeout(async () => {
+      console.debug('[Prestige] saving', { id, state });
       await taskStorage.savePrestigeProgress(id, state);
+      lastPersistedRef.current = currentSnapshot;
       window.dispatchEvent(new CustomEvent(PRESTIGE_UPDATED_EVENT, { detail: { id } }));
+      console.debug('[Prestige] saved + event dispatched', { id });
     }, 200);
     return () => {
       if (saveTimerRef.current) window.clearTimeout(saveTimerRef.current);
@@ -393,7 +407,10 @@ function PrestigeCard(props: PrestigeCardProps): JSX.Element {
               <Checkbox
                 id={`${id}-quest-collector`}
                 checked={state.quests.collector}
-                onCheckedChange={(c) => setState((s) => ({ ...s, quests: { ...s.quests, collector: c === true } }))}
+                onCheckedChange={(c) => {
+                  console.debug('[Prestige] toggle quest', { id, field: 'collector', value: c });
+                  setState((s) => ({ ...s, quests: { ...s.quests, collector: c === true } }));
+                }}
               />
               <label htmlFor={`${id}-quest-collector`} className="cursor-pointer select-none text-muted-foreground">
                 Complete "Collector"
@@ -403,7 +420,10 @@ function PrestigeCard(props: PrestigeCardProps): JSX.Element {
               <Checkbox
                 id={`${id}-quest-new-beginning`}
                 checked={state.quests.newBeginning}
-                onCheckedChange={(c) => setState((s) => ({ ...s, quests: { ...s.quests, newBeginning: c === true } }))}
+                onCheckedChange={(c) => {
+                  console.debug('[Prestige] toggle quest', { id, field: 'newBeginning', value: c });
+                  setState((s) => ({ ...s, quests: { ...s.quests, newBeginning: c === true } }));
+                }}
               />
               <label htmlFor={`${id}-quest-new-beginning`} className="cursor-pointer select-none text-muted-foreground">
                 Complete "New Beginning"
@@ -433,25 +453,25 @@ function PrestigeCard(props: PrestigeCardProps): JSX.Element {
                   {extra.requireLabsExtract ? (
                     <div className="rounded-md border p-3 flex items-center justify-between hover:bg-muted/30 transition-colors">
                       <p className="text-sm font-medium">Survive and Extract from Labs</p>
-                      <Checkbox checked={state.extras.labsExtracted} onCheckedChange={(c) => setState((s) => ({ ...s, extras: { ...s.extras, labsExtracted: c === true } }))} />
+                      <Checkbox checked={state.extras.labsExtracted} onCheckedChange={(c) => { console.debug('[Prestige] toggle extra', { id, field: 'labsExtracted', value: c }); setState((s) => ({ ...s, extras: { ...s.extras, labsExtracted: c === true } })); }} />
                     </div>
                   ) : null}
                   {extra.requireLabsTransitToStreets ? (
                     <div className="rounded-md border p-3 flex items-center justify-between hover:bg-muted/30 transition-colors">
                       <p className="text-sm font-medium">Use Labs Transit to Streets</p>
-                      <Checkbox checked={state.extras.labsTransitToStreets} onCheckedChange={(c) => setState((s) => ({ ...s, extras: { ...s.extras, labsTransitToStreets: c === true } }))} />
+                      <Checkbox checked={state.extras.labsTransitToStreets} onCheckedChange={(c) => { console.debug('[Prestige] toggle extra', { id, field: 'labsTransitToStreets', value: c }); setState((s) => ({ ...s, extras: { ...s.extras, labsTransitToStreets: c === true } })); }} />
                     </div>
                   ) : null}
                   {extra.requireStreetsExtract ? (
                     <div className="rounded-md border p-3 flex items-center justify-between hover:bg-muted/30 transition-colors">
                       <p className="text-sm font-medium">Survive and Extract from Streets</p>
-                      <Checkbox checked={state.extras.streetsExtracted} onCheckedChange={(c) => setState((s) => ({ ...s, extras: { ...s.extras, streetsExtracted: c === true } }))} />
+                      <Checkbox checked={state.extras.streetsExtracted} onCheckedChange={(c) => { console.debug('[Prestige] toggle extra', { id, field: 'streetsExtracted', value: c }); setState((s) => ({ ...s, extras: { ...s.extras, streetsExtracted: c === true } })); }} />
                     </div>
                   ) : null}
                   {extra.requireAnyLabyrinthFigurine ? (
                     <div className="rounded-md border p-3 flex items-center justify-between hover:bg-muted/30 transition-colors">
                       <p className="text-sm font-medium">Hand over any Labyrinth figurine</p>
-                      <Checkbox checked={state.extras.anyLabyrinthFigurine} onCheckedChange={(c) => setState((s) => ({ ...s, extras: { ...s.extras, anyLabyrinthFigurine: c === true } }))} />
+                      <Checkbox checked={state.extras.anyLabyrinthFigurine} onCheckedChange={(c) => { console.debug('[Prestige] toggle extra', { id, field: 'anyLabyrinthFigurine', value: c }); setState((s) => ({ ...s, extras: { ...s.extras, anyLabyrinthFigurine: c === true } })); }} />
                     </div>
                   ) : null}
                 </div>
@@ -466,7 +486,10 @@ function PrestigeCard(props: PrestigeCardProps): JSX.Element {
                         <Checkbox
                           id={`${id}-figurine-${f.id}`}
                           checked={state.extras.figurines[f.id]}
-                          onCheckedChange={(c) => setState((s) => ({ ...s, extras: { ...s.extras, figurines: { ...s.extras.figurines, [f.id]: c === true } } }))}
+                          onCheckedChange={(c) => {
+                            console.debug('[Prestige] toggle figurine', { id, figurine: f.id, value: c });
+                            setState((s) => ({ ...s, extras: { ...s.extras, figurines: { ...s.extras.figurines, [f.id]: c === true } } }));
+                          }}
                         />
                         <label htmlFor={`${id}-figurine-${f.id}`} className="cursor-pointer select-none text-muted-foreground">
                           {f.label}

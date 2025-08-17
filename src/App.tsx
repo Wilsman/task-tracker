@@ -9,7 +9,7 @@ import { MindMap } from './components/MindMap';
 import { FlowView } from './components/FlowView';
 import { QuestProgressPanel } from './components/QuestProgressPanel';
 import { taskStorage } from './utils/indexedDB';
-import { loadCurrentPrestigeSummary, PRESTIGE_UPDATED_EVENT } from '@/utils/prestige';
+import { loadCurrentPrestigeSummary, PRESTIGE_UPDATED_EVENT, PRESTIGE_CONFIGS } from '@/utils/prestige';
 import { buildTaskDependencyMap, getAllDependencies } from './utils/taskUtils';
 import { sampleData, collectorItemsData } from './data/sample-data';
 import { fetchCombinedData } from './services/tarkovApi';
@@ -146,13 +146,15 @@ function App() {
   }, []);
 
   // Compute "next" prestige progress (only one visible at a time)
-  const [prestigeProgress, setPrestigeProgress] = useState<{ completed: number; total: number } | null>(null);
+  const [prestigeProgress, setPrestigeProgress] = useState<{ id: string; completed: number; total: number } | null>(null);
 
   useEffect(() => {
     const refresh = async () => {
       try {
+        console.debug('[Prestige] App refresh summary:start');
         const current = await loadCurrentPrestigeSummary();
         setPrestigeProgress(current);
+        console.debug('[Prestige] App refresh summary:done', current);
       } catch (e) {
         console.error('Prestige progress load error', e);
         setPrestigeProgress(null);
@@ -160,7 +162,10 @@ function App() {
     };
 
     refresh();
-    const handler = () => { void refresh(); };
+    const handler = (evt: Event) => {
+      console.debug('[Prestige] App event received', evt);
+      void refresh();
+    };
     window.addEventListener(PRESTIGE_UPDATED_EVENT, handler as EventListener);
     return () => {
       window.removeEventListener(PRESTIGE_UPDATED_EVENT, handler as EventListener);
@@ -239,9 +244,17 @@ function App() {
     setCompletedTasks(new Set());
     setCompletedCollectorItems(new Set());
     try {
+      console.debug('[Prestige] Reset:start');
       await taskStorage.saveCompletedTasks(new Set());
       await taskStorage.saveCompletedCollectorItems(new Set());
-      await taskStorage.clearAllPrestigeProgress();
+      // Reset prestige by saving empty entries per prestige id, mirroring other save-based resets
+      for (const cfg of PRESTIGE_CONFIGS) {
+        await taskStorage.savePrestigeProgress(cfg.id, {});
+        console.debug('[Prestige] Reset:prestige saved empty', cfg.id);
+      }
+      // Notify listeners so UI refreshes immediately
+      window.dispatchEvent(new Event(PRESTIGE_UPDATED_EVENT));
+      console.debug('[Prestige] Reset:event dispatched');
     } catch (err) {
       console.error('Reset error', err);
     }
@@ -544,6 +557,7 @@ function App() {
                 completedLightkeeperTasks={completedLightkeeperTasks}
                 totalPrestigeSteps={prestigeProgress?.total}
                 completedPrestigeSteps={prestigeProgress?.completed}
+                currentPrestigeId={prestigeProgress?.id}
               />
               <AlertDialog>
                 <AlertDialogTrigger asChild>

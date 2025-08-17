@@ -1,6 +1,7 @@
 import React from 'react';
 import { Progress } from './ui/progress';
 import { cn } from '@/lib/utils';
+import { PRESTIGE_CONFIGS } from '@/utils/prestige';
 
 export interface TraderProgress {
   id: string;
@@ -25,6 +26,7 @@ interface QuestProgressPanelProps {
   completedLightkeeperTasks?: number;
   totalPrestigeSteps?: number;
   completedPrestigeSteps?: number;
+  currentPrestigeId?: string;
 }
 
 export function QuestProgressPanel({
@@ -40,12 +42,14 @@ export function QuestProgressPanel({
   completedLightkeeperTasks = 0,
   totalPrestigeSteps = 0,
   completedPrestigeSteps = 0,
+  currentPrestigeId,
 }: QuestProgressPanelProps) {
   const progress = totalQuests > 0 ? (completedQuests / totalQuests) * 100 : 0;
   const itemProgress = totalCollectorItems > 0 ? (completedCollectorItems / totalCollectorItems) * 100 : 0;
   const kappaProgress = totalKappaTasks > 0 ? (completedKappaTasks / totalKappaTasks) * 100 : 0;
   const lightkeeperProgress = totalLightkeeperTasks > 0 ? (completedLightkeeperTasks / totalLightkeeperTasks) * 100 : 0;
   const prestigeProgress = totalPrestigeSteps > 0 ? (completedPrestigeSteps / totalPrestigeSteps) * 100 : 0;
+  const prestigeLabel = currentPrestigeId ? `Prestige ${currentPrestigeId.split('-')[1]}` : 'Prestige';
 
   return (
     <div className={cn("bg-card border rounded-lg p-4 shadow-sm w-72", className)}>
@@ -82,7 +86,7 @@ export function QuestProgressPanel({
       {totalPrestigeSteps > 0 && (
         <div className="space-y-2 mb-6">
           <div className="flex justify-between text-sm text-muted-foreground">
-            <span>{completedPrestigeSteps}/{totalPrestigeSteps} Prestige Steps</span>
+            <span>{completedPrestigeSteps}/{totalPrestigeSteps} {prestigeLabel}</span>
             <span>{prestigeProgress.toFixed(1)}%</span>
           </div>
           <Progress 

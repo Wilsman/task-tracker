@@ -148,15 +148,15 @@ export function computePrestigeRequirements(saved: PrestigeSaved | null | undefi
 
 export async function loadCurrentPrestigeSummary() {
   // Find first incomplete prestige; else last one
-  let current: { completed: number; total: number } | null = null;
+  let current: { id: string; completed: number; total: number } | null = null;
   for (const cfg of PRESTIGE_CONFIGS) {
     const saved = await taskStorage.loadPrestigeProgress<PrestigeSaved>(cfg.id);
     const { done, total } = computePrestigeRequirements(saved, cfg);
     if (done < total) {
-      current = { completed: done, total };
+      current = { id: cfg.id, completed: done, total };
       break;
     }
-    current = { completed: done, total };
+    current = { id: cfg.id, completed: done, total };
   }
   return current;
 }
