@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Task } from '../types';
 import { Input } from './ui/input';
 import { Checkbox } from './ui/checkbox';
@@ -8,6 +8,8 @@ import { Button } from './ui/button';
 import { Link2, ChevronDown, ChevronUp, Award } from 'lucide-react';
 import { groupTasksByTrader } from '../utils/taskUtils';
 import { cn } from '@/lib/utils';
+import { Switch } from './ui/switch';
+import { Label } from './ui/label';
 
 interface CheckListViewProps {
   tasks: Task[];
@@ -35,8 +37,53 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   // Start with all groups collapsed by default
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
+  const [enableLevelFilter, setEnableLevelFilter] = useState<boolean>(() => {
+    try {
+      const stored = localStorage.getItem('taskTracker_enableLevelFilter');
+      return stored != null ? stored === '1' : false;
+    } catch {
+      return false;
+    }
+  });
+  const [playerLevel, setPlayerLevel] = useState<number>(() => {
+    try {
+      const stored = localStorage.getItem('taskTracker_playerLevel');
+      const lvl = Math.max(1, Number(stored) || 1);
+      return lvl;
+    } catch {
+      return 1;
+    }
+  });
 
   // (dependency map removed; checklist is always interactive)
+
+  // Persist player level and toggle
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('taskTracker_playerLevel', String(playerLevel));
+    } catch (e) {
+      console.warn('Failed to persist player level', e);
+    }
+  }, [playerLevel]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('taskTracker_enableLevelFilter', enableLevelFilter ? '1' : '0');
+    } catch (e) {
+      console.warn('Failed to persist level filter toggle', e);
+    }
+  }, [enableLevelFilter]);
+
+  // Listen for global reset event to reset level to 1
+  useEffect(() => {
+    const handler = () => {
+      setPlayerLevel(1);
+      setEnableLevelFilter(false);
+    };
+    window.addEventListener('taskTracker:reset', handler);
+    return () => window.removeEventListener('taskTracker:reset', handler);
+  }, []);
 
   // Apply filters
   const filteredTasks = useMemo(
@@ -53,6 +100,11 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
       if (mapFilter && task.map?.name !== mapFilter) return false;
       // Trader filter
       if (hiddenTraders.has(task.trader.name)) return false;
+      // Player level filter
+      if (enableLevelFilter) {
+        const lvl = Number.isFinite(playerLevel) ? playerLevel : 1;
+        if (task.minPlayerLevel > lvl) return false;
+      }
       // Search filter
       if (searchTerm.trim()) {
         const term = searchTerm.toLowerCase();
@@ -62,7 +114,7 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
       }
       return true;
     }),
-    [tasks, showKappa, showLightkeeper, hiddenTraders, searchTerm, mapFilter],
+    [tasks, showKappa, showLightkeeper, hiddenTraders, searchTerm, mapFilter, enableLevelFilter, playerLevel],
   );
 
   // Group tasks
@@ -128,6 +180,23 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
             </>
           )}
         </Button>
+        <div className="ml-auto flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <Label htmlFor="player-level" className="text-sm text-muted-foreground">Level</Label>
+            <Input
+              id="player-level"
+              type="number"
+              min={1}
+              value={Number.isFinite(playerLevel) ? playerLevel : ''}
+              onChange={e => setPlayerLevel(Math.max(1, Number(e.target.value) || 1))}
+              className="w-20 h-8"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <Label htmlFor="level-filter" className="text-sm">Enable</Label>
+            <Switch id="level-filter" checked={enableLevelFilter} onCheckedChange={setEnableLevelFilter} />
+          </div>
+        </div>
       </div>
 
       {/* Groups */}

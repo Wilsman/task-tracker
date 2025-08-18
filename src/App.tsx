@@ -343,6 +343,14 @@ function App() {
       }
       // Notify listeners so UI refreshes immediately
       window.dispatchEvent(new Event(PRESTIGE_UPDATED_EVENT));
+      // Also reset player level filter state persisted in localStorage and notify listeners
+      try {
+        localStorage.setItem('taskTracker_playerLevel', '1');
+        localStorage.setItem('taskTracker_enableLevelFilter', '0');
+      } catch (e) {
+        console.warn('LocalStorage reset failed', e);
+      }
+      window.dispatchEvent(new Event('taskTracker:reset'));
       console.debug("[Prestige] Reset:event dispatched");
     } catch (err) {
       console.error("Reset error", err);
