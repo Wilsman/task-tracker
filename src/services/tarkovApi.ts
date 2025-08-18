@@ -1,4 +1,4 @@
-import { TaskData, CollectorItemsData, HideoutStationsData } from '../types';
+import { TaskData, CollectorItemsData, HideoutStationsData, AchievementsData } from '../types';
 
 const TARKOV_API_URL = 'https://api.tarkov.dev/graphql';
 
@@ -8,6 +8,20 @@ interface CombinedApiData {
     task: CollectorItemsData['data']['task'];
   };
   errors?: { message: string }[];
+}
+
+export async function fetchAchievements(): Promise<AchievementsData> {
+  const response = await fetch(TARKOV_API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ query: ACHIEVEMENTS_QUERY }),
+  });
+  if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+  const result = await response.json();
+  if (result.errors) {
+    throw new Error(`GraphQL error: ${result.errors.map((e: { message: string }) => e.message).join(', ')}`);
+  }
+  return { data: { achievements: result.data.achievements ?? [] } };
 }
 
 const HIDEOUT_STATIONS_QUERY = `
@@ -40,6 +54,22 @@ const HIDEOUT_STATIONS_QUERY = `
       }
     }
   }`;
+
+const ACHIEVEMENTS_QUERY = `
+  query AchievementsQuery {
+    achievements {
+      id
+      imageLink
+      name
+      description
+      hidden
+      playersCompletedPercent
+      adjustedPlayersCompletedPercent
+      side
+      rarity
+    }
+  }
+`;
 
 const COMBINED_QUERY = `
 {

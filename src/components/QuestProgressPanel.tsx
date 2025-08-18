@@ -19,6 +19,8 @@ interface QuestProgressPanelProps {
   traders: TraderProgress[];
   totalCollectorItems?: number;
   completedCollectorItems?: number;
+  totalAchievements?: number;
+  completedAchievements?: number;
   totalKappaTasks?: number;
   completedKappaTasks?: number;
   totalLightkeeperTasks?: number;
@@ -35,6 +37,8 @@ export function QuestProgressPanel({
   traders,
   totalCollectorItems = 0,
   completedCollectorItems = 0,
+  totalAchievements = 0,
+  completedAchievements = 0,
   totalKappaTasks = 0,
   completedKappaTasks = 0,
   totalLightkeeperTasks = 0,
@@ -45,6 +49,7 @@ export function QuestProgressPanel({
 }: QuestProgressPanelProps) {
   const progress = totalQuests > 0 ? (completedQuests / totalQuests) * 100 : 0;
   const itemProgress = totalCollectorItems > 0 ? (completedCollectorItems / totalCollectorItems) * 100 : 0;
+  const achievementsProgress = totalAchievements > 0 ? (completedAchievements / totalAchievements) * 100 : 0;
   const kappaProgress = totalKappaTasks > 0 ? (completedKappaTasks / totalKappaTasks) * 100 : 0;
   const lightkeeperProgress = totalLightkeeperTasks > 0 ? (completedLightkeeperTasks / totalLightkeeperTasks) * 100 : 0;
   const prestigeProgress = totalPrestigeSteps > 0 ? (completedPrestigeSteps / totalPrestigeSteps) * 100 : 0;
@@ -78,6 +83,20 @@ export function QuestProgressPanel({
             value={itemProgress} 
             className="h-2"
             indicatorClassName="bg-green-500"
+          />
+        </div>
+      )}
+
+      {totalAchievements > 0 && (
+        <div className="space-y-2 mb-6">
+          <div className="flex justify-between text-sm text-muted-foreground">
+            <span>{completedAchievements}/{totalAchievements} Achievements</span>
+            <span>{achievementsProgress.toFixed(1)}%</span>
+          </div>
+          <Progress
+            value={achievementsProgress}
+            className="h-2"
+            indicatorClassName="bg-blue-500"
           />
         </div>
       )}

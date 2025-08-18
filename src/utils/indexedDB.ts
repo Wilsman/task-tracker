@@ -1,8 +1,9 @@
 const DB_NAME = 'TarkovQuests';
-const DB_VERSION = 3;
+const DB_VERSION = 4;
 const TASKS_STORE = 'completedTasks';
 const COLLECTOR_STORE = 'completedCollectorItems';
 const PRESTIGE_STORE = 'prestigeProgress';
+const ACHIEVEMENTS_STORE = 'completedAchievements';
 
 export class TaskStorage {
   private db: IDBDatabase | null = null;
@@ -27,6 +28,9 @@ export class TaskStorage {
         }
         if (!db.objectStoreNames.contains(PRESTIGE_STORE)) {
           db.createObjectStore(PRESTIGE_STORE, { keyPath: 'id' });
+        }
+        if (!db.objectStoreNames.contains(ACHIEVEMENTS_STORE)) {
+          db.createObjectStore(ACHIEVEMENTS_STORE, { keyPath: 'id' });
         }
       };
     });
@@ -123,6 +127,31 @@ export class TaskStorage {
     const tx = this.db!.transaction([PRESTIGE_STORE], 'readwrite');
     const store = tx.objectStore(PRESTIGE_STORE);
     await store.clear();
+  }
+
+  async saveCompletedAchievements(completed: Set<string>): Promise<void> {
+    if (!this.db) await this.init();
+    const tx = this.db!.transaction([ACHIEVEMENTS_STORE], 'readwrite');
+    const store = tx.objectStore(ACHIEVEMENTS_STORE);
+    await store.clear();
+    for (const id of completed) {
+      await store.add({ id, completed: true });
+    }
+  }
+
+  async loadCompletedAchievements(): Promise<Set<string>> {
+    if (!this.db) await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction([ACHIEVEMENTS_STORE], 'readonly');
+      const store = tx.objectStore(ACHIEVEMENTS_STORE);
+      const req = store.getAll();
+      req.onsuccess = () => {
+        const set = new Set<string>();
+        req.result.forEach((item: { id: string }) => set.add(item.id));
+        resolve(set);
+      };
+      req.onerror = () => reject(req.error);
+    });
   }
 }
 

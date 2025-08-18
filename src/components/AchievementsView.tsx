@@ -1,0 +1,79 @@
+import { useMemo } from 'react';
+import { Achievement } from '@/types';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
+
+interface AchievementsViewProps {
+  achievements: Achievement[];
+  completed: Set<string>;
+  onToggle: (id: string) => void;
+}
+
+export function AchievementsView({ achievements, completed, onToggle }: AchievementsViewProps): JSX.Element {
+  const total = achievements.length;
+  const done = completed.size;
+  const percent = total > 0 ? (done / total) * 100 : 0;
+
+  const groupedByRarity = useMemo(() => {
+    const map = new Map<string, Achievement[]>();
+    for (const a of achievements) {
+      const key = a.rarity || 'Unknown';
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(a);
+    }
+    return Array.from(map.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+  }, [achievements]);
+
+  return (
+    <div className="h-full min-h-0 overflow-y-auto p-4 space-y-6">
+      <div className="rounded-lg border bg-card p-4">
+        <div className="flex items-end justify-between gap-3">
+          <div>
+            <h2 className="text-lg font-semibold">Achievements</h2>
+            <p className="text-sm text-muted-foreground">{done}/{total} completed</p>
+          </div>
+          <div className="text-2xl font-bold tabular-nums">{percent.toFixed(0)}%</div>
+        </div>
+        <div className="mt-3">
+          <Progress value={percent} className="h-3" />
+        </div>
+      </div>
+
+      {groupedByRarity.map(([rarity, list]) => (
+        <section key={rarity} className="space-y-3">
+          <div className="flex items-center gap-2">
+            <h3 className="text-base font-semibold">{rarity}</h3>
+            <Badge variant="outline">{list.length}</Badge>
+          </div>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {list.map((a) => {
+              const isDone = completed.has(a.id);
+              return (
+                <li key={a.id} className="rounded-md border p-3 hover:bg-muted/30 transition-colors">
+                  <div className="flex items-start gap-3">
+                    <img src={a.imageLink} alt={a.name} className="w-12 h-12 rounded-md object-contain bg-muted/30" loading="lazy" />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <p className="font-medium truncate">{a.name}</p>
+                        {a.hidden ? (
+                          <span className="text-xs text-muted-foreground">(Hidden)</span>
+                        ) : null}
+                      </div>
+                      <p className="text-sm text-muted-foreground line-clamp-2">{a.description}</p>
+                      <div className="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
+                        <span>Side: {a.side}</span>
+                        <span>Players: {a.playersCompletedPercent}%</span>
+                      </div>
+                    </div>
+                    <Checkbox checked={isDone} onCheckedChange={() => onToggle(a.id)} />
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ))}
+    </div>
+  );
+}

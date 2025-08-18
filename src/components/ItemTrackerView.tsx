@@ -4,7 +4,7 @@ import { Checkbox } from './ui/checkbox';
 import { Progress } from './ui/progress';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { Button } from './ui/button';
-import { ChevronDown, ChevronUp, Package, Home, Minus, Plus } from 'lucide-react';
+import { ChevronDown, ChevronUp, Minus, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { fetchHideoutStations } from '@/services/tarkovApi';
 import { HideoutStation } from '@/types';
@@ -19,6 +19,7 @@ interface CollectorViewProps {
   collectorItems: CollectorItem[];
   completedCollectorItems: Set<string>;
   onToggleCollectorItem: (itemName: string) => void;
+  groupBy: GroupBy;
 }
 
 type GroupBy = 'collector' | 'hideout-stations';
@@ -27,9 +28,9 @@ export const CollectorView: React.FC<CollectorViewProps> = ({
   collectorItems,
   completedCollectorItems,
   onToggleCollectorItem,
+  groupBy,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [groupBy, setGroupBy] = useState<GroupBy>('collector');
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
 
   // Filter items based on search
@@ -155,29 +156,7 @@ export const CollectorView: React.FC<CollectorViewProps> = ({
 
   return (
     <div className="p-4 bg-background text-foreground">
-      {/* Toggle grouping */}
-      <div className="flex items-center gap-2 mb-4 flex-wrap">
-        <button
-          onClick={() => setGroupBy('collector')}
-          className={cn(
-            'px-3 py-1 rounded flex items-center gap-2 text-sm',
-            groupBy === 'collector' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted',
-          )}
-        >
-          <Package className="h-4 w-4" />
-          Collector Items
-        </button>
-        <button
-          onClick={() => setGroupBy('hideout-stations')}
-          className={cn(
-            'px-3 py-1 rounded flex items-center gap-2 text-sm',
-            groupBy === 'hideout-stations' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted',
-          )}
-        >
-          <Home className="h-4 w-4" />
-          Hideout Stations
-        </button>
-      </div>
+      {/* Grouping toggles moved to sidebar */}
 
       {/* Search and Controls */}
       <div className="mb-4 flex items-center gap-4">

@@ -5,7 +5,7 @@ import { Checkbox } from './ui/checkbox';
 import { Progress } from './ui/progress';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { Button } from './ui/button';
-import { ListChecks, MapPin, Link2, ChevronDown, ChevronUp, Award } from 'lucide-react';
+import { Link2, ChevronDown, ChevronUp, Award } from 'lucide-react';
 import { groupTasksByTrader } from '../utils/taskUtils';
 import { cn } from '@/lib/utils';
 
@@ -17,9 +17,9 @@ interface CheckListViewProps {
   showLightkeeper: boolean;
   onToggleComplete: (taskId: string) => void;
   onTaskClick: (taskId: string) => void;
+  mapFilter?: string | null;
+  groupBy: 'trader' | 'map';
 }
-
-type GroupBy = 'trader' | 'map';
 
 export const CheckListView: React.FC<CheckListViewProps> = ({
   tasks,
@@ -29,9 +29,10 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
   showLightkeeper,
   onToggleComplete,
   onTaskClick,
+  mapFilter,
+  groupBy,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [groupBy, setGroupBy] = useState<GroupBy>('trader');
   // Start with all groups collapsed by default
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
 
@@ -48,6 +49,8 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
       } else if (showLightkeeper && !task.lightkeeperRequired) {
         return false;
       }
+      // Map filter (from sidebar)
+      if (mapFilter && task.map?.name !== mapFilter) return false;
       // Trader filter
       if (hiddenTraders.has(task.trader.name)) return false;
       // Search filter
@@ -59,7 +62,7 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
       }
       return true;
     }),
-    [tasks, showKappa, showLightkeeper, hiddenTraders, searchTerm],
+    [tasks, showKappa, showLightkeeper, hiddenTraders, searchTerm, mapFilter],
   );
 
   // Group tasks
@@ -95,27 +98,7 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
 
   return (
     <div className="p-4 bg-background text-foreground">
-      {/* Toggle grouping */}
-      <div className="flex items-center gap-2 mb-4">
-        <button
-          onClick={() => setGroupBy('trader')}
-          className={cn(
-            'px-3 py-1 rounded',
-            groupBy === 'trader' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted',
-          )}
-        >
-          <ListChecks className="inline-block mr-1" /> By Trader
-        </button>
-        <button
-          onClick={() => setGroupBy('map')}
-          className={cn(
-            'px-3 py-1 rounded',
-            groupBy === 'map' ? 'bg-primary text-primary-foreground' : 'hover:bg-muted',
-          )}
-        >
-          <MapPin className="inline-block mr-1" /> By Map
-        </button>
-      </div>
+      {/* Grouping selection moved to sidebar under Quests > Checklist */}
 
       {/* Search and Controls */}
       <div className="mb-4 flex items-center gap-4">
@@ -163,7 +146,17 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
             <AccordionItem key={groupName} value={groupName} className="border rounded-lg bg-card">
               <AccordionTrigger className="px-4 py-2 hover:no-underline">
                 <div className="flex items-center justify-between w-full">
-                  <span className="text-lg font-semibold">{groupName}</span>
+                  <span className="text-lg font-semibold flex items-center gap-2">
+                    {groupBy === 'trader' && groupTasks[0]?.trader?.imageLink && (
+                      <img
+                        src={groupTasks[0].trader.imageLink}
+                        alt={groupName}
+                        loading="lazy"
+                        className="h-5 w-5 rounded-full object-cover"
+                      />
+                    )}
+                    {groupName}
+                  </span>
                   <div className="flex items-center gap-4">
                     <span className="text-sm text-muted-foreground">
                       {completedCount} / {totalCount}
@@ -204,7 +197,17 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
                               "flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px]",
                               isCompleted ? "text-foreground" : "text-muted-foreground"
                             )}>
-                              <span>{task.trader.name}</span>
+                              <span className="inline-flex items-center gap-1">
+                                {task.trader?.imageLink && (
+                                  <img
+                                    src={task.trader.imageLink}
+                                    alt={task.trader.name}
+                                    loading="lazy"
+                                    className="h-4 w-4 rounded-full object-cover"
+                                  />
+                                )}
+                                <span>{task.trader.name}</span>
+                              </span>
                               {task.map && <span>• {task.map.name}</span>}
                               {task.kappaRequired && (
                                 <span className="text-red-500">• Kappa</span>

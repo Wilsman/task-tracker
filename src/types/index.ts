@@ -130,3 +130,22 @@ export interface HideoutStation {
 export interface HideoutStationsData {
   hideoutStations: HideoutStation[];
 }
+
+// Achievements
+export interface Achievement {
+  id: string;
+  imageLink: string;
+  name: string;
+  description: string;
+  hidden: boolean;
+  playersCompletedPercent: number;
+  adjustedPlayersCompletedPercent: number;
+  side: string; // "PMC" | "Scav" | "All"; keep flexible
+  rarity: string; // "Common" | "Rare" | "Legendary"; keep flexible
+}
+
+export interface AchievementsData {
+  data: {
+    achievements: Achievement[];
+  };
+}
