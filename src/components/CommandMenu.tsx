@@ -34,19 +34,12 @@ export function CommandMenu(props: CommandMenuProps) {
     viewMode,
     groupBy,
     collectorGroupBy,
-    traders,
-    hiddenTraders,
-    maps,
-    selectedMap,
     tasks,
     achievements,
     collectorItems,
     onSetViewMode,
     onSetGroupBy,
     onSetCollectorGroupBy,
-    onClearTraderFilter,
-    onToggleTraderVisibility,
-    onSelectMap,
   } = props;
 
   const [open, setOpen] = React.useState(false);
@@ -105,19 +98,6 @@ export function CommandMenu(props: CommandMenuProps) {
       onSetViewMode("achievements");
       setOpen(false);
     },
-    showAllTraders() {
-      onClearTraderFilter();
-      setOpen(false);
-    },
-    selectMap(map: string | null) {
-      onSelectMap(map);
-      onSetViewMode("grouped");
-      setOpen(false);
-    },
-    toggleTrader(trader: string) {
-      onToggleTraderVisibility(trader);
-      setOpen(false);
-    },
     openStoryline() {
       window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", "_blank");
       setOpen(false);
@@ -169,8 +149,6 @@ export function CommandMenu(props: CommandMenuProps) {
             Achievements {viewMode === "achievements" ? "(current)" : ""}
           </CommandItem>
         </CommandGroup>
-
-        <CommandSeparator />
 
         {query.trim() && (
           <>
@@ -286,31 +264,6 @@ export function CommandMenu(props: CommandMenuProps) {
             )}
           </>
         )}
-
-        <CommandGroup heading="Filters • Traders">
-          <CommandItem value="show-all-traders" onSelect={handle.showAllTraders}>
-            Show All Traders
-          </CommandItem>
-          {traders.map((t) => {
-            const visible = !hiddenTraders.has(t);
-            return (
-              <CommandItem key={t} value={`trader-${t}`} onSelect={() => handle.toggleTrader(t)}>
-                {visible ? "Hide" : "Show"} {t}
-              </CommandItem>
-            );
-          })}
-        </CommandGroup>
-
-        <CommandGroup heading="Filters • Maps">
-          <CommandItem value="all-maps" onSelect={() => handle.selectMap(null)}>
-            All Maps {selectedMap === null ? "(current)" : ""}
-          </CommandItem>
-          {maps.map((m) => (
-            <CommandItem key={m} value={`map-${m}`} onSelect={() => handle.selectMap(m)}>
-              {m} {selectedMap === m ? "(current)" : ""}
-            </CommandItem>
-          ))}
-        </CommandGroup>
 
         <CommandSeparator />
 

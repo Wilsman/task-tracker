@@ -83,6 +83,88 @@ function App() {
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [completedAchievements, setCompletedAchievements] = useState<Set<string>>(new Set());
 
+  // Lightweight client-side routing for deep links like /Items/CollectorItems?search=...
+  function normalizePath(pathname: string) {
+    return pathname.replace(/\/+$/, "");
+  }
+  function parsePath(pathname: string) {
+    const parts = normalizePath(pathname).split("/").filter(Boolean).map(p => p.toLowerCase());
+    // Defaults
+    let nextView: typeof viewMode = "grouped";
+    let nextGroupBy: typeof groupBy | undefined;
+    let nextCollectorGroupBy: typeof collectorGroupBy | undefined;
+
+    if (parts.length === 0) {
+      // root -> Quests Checklist ByTrader
+      nextView = "grouped";
+      nextGroupBy = "trader";
+    } else if (parts[0] === "quests") {
+      nextView = "grouped";
+      // /Quests/Checklist/ByTrader | ByMap
+      if (parts[1] === "checklist") {
+        if (parts[2] === "bytrader") nextGroupBy = "trader";
+        else if (parts[2] === "bymap") nextGroupBy = "map";
+      }
+    } else if (parts[0] === "items") {
+      nextView = "collector";
+      if (parts[1] === "collectoritems") nextCollectorGroupBy = "collector";
+      else if (parts[1] === "hideoutstations") nextCollectorGroupBy = "hideout-stations";
+    } else if (parts[0] === "prestiges") {
+      nextView = "prestiges";
+    } else if (parts[0] === "achievements") {
+      nextView = "achievements";
+    }
+
+    return { nextView, nextGroupBy, nextCollectorGroupBy };
+  }
+  // buildPath removed in favor of inlined computation inside effect
+
+  // On initial load + popstate: sync state from URL path
+  useEffect(() => {
+    const applyFromLocation = () => {
+      const { pathname } = window.location;
+      const { nextView, nextGroupBy, nextCollectorGroupBy } = parsePath(pathname);
+      setViewMode(nextView);
+      if (nextGroupBy) setGroupBy(nextGroupBy);
+      if (nextCollectorGroupBy) setCollectorGroupBy(nextCollectorGroupBy);
+    };
+    applyFromLocation();
+    const onPop = () => applyFromLocation();
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // When state changes via UI, update the path (preserving existing query string like ?search=...)
+  useEffect(() => {
+    let nextPath = "/Quests/Checklist/ByTrader";
+    if (viewMode === "grouped") {
+      nextPath = groupBy === "map" ? "/Quests/Checklist/ByMap" : "/Quests/Checklist/ByTrader";
+    } else if (viewMode === "collector") {
+      nextPath = collectorGroupBy === "hideout-stations" ? "/Items/HideoutStations" : "/Items/CollectorItems";
+    } else if (viewMode === "prestiges") {
+      nextPath = "/Prestiges";
+    } else if (viewMode === "achievements") {
+      nextPath = "/Achievements";
+    } else if (viewMode === "flow") {
+      nextPath = "/Quests/Flow";
+    } else if (viewMode === "tree") {
+      nextPath = "/Quests/Tree";
+    }
+    const current = normalizePath(window.location.pathname);
+    if (normalizePath(nextPath) !== current) {
+      // Clear query string (e.g., ?search=...) when navigating to a new view/tab
+      window.history.pushState(null, "", nextPath);
+    }
+  }, [viewMode, groupBy, collectorGroupBy]);
+
+  // Extra guard: if any view/group change occurs, strip lingering ?search from current URL
+  useEffect(() => {
+    if (window.location.search) {
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+  }, [viewMode, groupBy, collectorGroupBy]);
+
   const handleToggleAchievement = useCallback(
     async (id: string) => {
       const next = new Set(completedAchievements);

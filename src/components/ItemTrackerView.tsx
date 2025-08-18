@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { useQueryState } from 'nuqs';
 import { Input } from './ui/input';
 import { Checkbox } from './ui/checkbox';
 import { Progress } from './ui/progress';
@@ -30,7 +31,7 @@ export const CollectorView: React.FC<CollectorViewProps> = ({
   onToggleCollectorItem,
   groupBy,
 }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useQueryState('search', { defaultValue: '' });
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
 
   // Filter items based on search
@@ -165,7 +166,7 @@ export const CollectorView: React.FC<CollectorViewProps> = ({
     };
     window.addEventListener('taskTracker:globalSearch', handler as EventListener);
     return () => window.removeEventListener('taskTracker:globalSearch', handler as EventListener);
-  }, [allGroupNames]);
+  }, [allGroupNames, setSearchTerm]);
 
   return (
     <div className="p-4 bg-background text-foreground">

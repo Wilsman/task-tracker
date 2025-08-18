@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { useQueryState } from 'nuqs';
 import { Task } from '../types';
 import { Input } from './ui/input';
 import { Checkbox } from './ui/checkbox';
@@ -34,7 +35,7 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
   mapFilter,
   groupBy,
 }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useQueryState('search', { defaultValue: '' });
   // Start with all groups collapsed by default
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
   const [enableLevelFilter, setEnableLevelFilter] = useState<boolean>(() => {
@@ -153,7 +154,7 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
     };
     window.addEventListener('taskTracker:globalSearch', handler as EventListener);
     return () => window.removeEventListener('taskTracker:globalSearch', handler as EventListener);
-  }, [allGroupNames]);
+  }, [allGroupNames, setSearchTerm]);
 
   const handleToggleAll = () => {
     if (areAllExpanded) {

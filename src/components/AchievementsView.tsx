@@ -1,4 +1,5 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useEffect } from 'react';
+import { useQueryState } from 'nuqs';
 import { Achievement } from '@/types';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Progress } from '@/components/ui/progress';
@@ -12,7 +13,7 @@ interface AchievementsViewProps {
 }
 
 export function AchievementsView({ achievements, completed, onToggle }: AchievementsViewProps): JSX.Element {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useQueryState('search', { defaultValue: '' });
 
   const total = achievements.length;
   const done = completed.size;
@@ -45,7 +46,7 @@ export function AchievementsView({ achievements, completed, onToggle }: Achievem
     };
     window.addEventListener('taskTracker:globalSearch', handler as EventListener);
     return () => window.removeEventListener('taskTracker:globalSearch', handler as EventListener);
-  }, []);
+  }, [setSearchTerm]);
 
   const groupedByRarity = useMemo(() => {
     const map = new Map<string, Achievement[]>();

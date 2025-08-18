@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useQueryState } from 'nuqs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
@@ -9,7 +10,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 
 export function PrestigesView(): JSX.Element {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useQueryState('search', { defaultValue: '' });
 
   // configs for all prestige cards
   const prestiges = useMemo(
@@ -125,7 +126,7 @@ export function PrestigesView(): JSX.Element {
     };
     window.addEventListener('taskTracker:globalSearch', handler as EventListener);
     return () => window.removeEventListener('taskTracker:globalSearch', handler as EventListener);
-  }, []);
+  }, [setSearchTerm]);
 
   return (
     <div className="container mx-auto p-4 space-y-6">
