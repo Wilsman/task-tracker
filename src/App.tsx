@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { NuqsAdapter } from "nuqs/adapters/react";
 import { useIsMobile } from "./hooks/use-mobile";
-import { RotateCcw, BarChart3 } from "lucide-react";
+import { RotateCcw, BarChart3, Search } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { TextShimmerWave } from "@/components/ui/text-shimmer-wave";
 import { Task, CollectorItemsData, Achievement } from "./types";
@@ -38,6 +38,7 @@ import { CheckListView } from "./components/CheckListView";
 import { CollectorView } from "./components/ItemTrackerView";
 import { PrestigesView } from "./components/PrestigesView";
 import { AchievementsView } from "./components/AchievementsView";
+import { CommandMenu } from "./components/CommandMenu";
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -449,8 +450,22 @@ function App() {
                     </span>
                   </div>
 
-                  {/* Right: Focus segmented control */}
-                  <div className="hidden md:flex items-center gap-2">
+                  {/* Right: Search hint + Focus segmented control */}
+                  <div className="hidden md:flex items-center gap-3">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="pl-2 pr-2.5 gap-2"
+                      onClick={() => window.dispatchEvent(new Event("open-command-menu"))}
+                    >
+                      <Search className="h-4 w-4" />
+                      <span className="text-xs text-muted-foreground">Search</span>
+                      <span className="ml-1 hidden lg:flex items-center gap-1 text-[10px] text-muted-foreground">
+                        <span className="px-1.5 py-0.5 rounded border bg-background">Ctrl</span>
+                        <span className="px-1.5 py-0.5 rounded border bg-background">K</span>
+                      </span>
+                    </Button>
+                    <span className="h-4 w-px bg-border/60" />
                     <span className="text-xs text-muted-foreground">Focus</span>
                     <div className="flex items-center gap-1 p-1 rounded-full border bg-muted/30">
                       <Button
@@ -608,6 +623,21 @@ function App() {
           </div>
         </SidebarInset>
       </SidebarProvider>
+      <CommandMenu
+        viewMode={viewMode}
+        groupBy={groupBy}
+        collectorGroupBy={collectorGroupBy}
+        traders={traderList}
+        hiddenTraders={hiddenTraders}
+        maps={mapList}
+        selectedMap={selectedMap}
+        onSetViewMode={setViewMode}
+        onSetGroupBy={setGroupBy}
+        onSetCollectorGroupBy={setCollectorGroupBy}
+        onClearTraderFilter={handleClearTraderFilter}
+        onToggleTraderVisibility={handleToggleTraderVisibility}
+        onSelectMap={handleSelectMap}
+      />
     </NuqsAdapter>
   );
 }
