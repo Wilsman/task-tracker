@@ -35,6 +35,7 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   onToggleTraderVisibility: (trader: string) => void
   onClearTraderFilter: () => void
   maps: string[]
+  selectedMap: string | null
   onSelectMap: (map: string | null) => void
   groupBy: 'trader' | 'map'
   onSetGroupBy: (mode: 'trader' | 'map') => void
@@ -50,6 +51,7 @@ export function AppSidebar({
   onToggleTraderVisibility,
   onClearTraderFilter,
   maps,
+  selectedMap,
   onSelectMap,
   groupBy,
   onSetGroupBy,
@@ -169,7 +171,7 @@ export function AppSidebar({
               <SidebarMenuItem>
                 <SidebarMenuButton onClick={() => setPerTraderOpen((v) => !v)}>
                   <Filter />
-                  <span>Per Trader</span>
+                  <span>Traders</span>
                   <ChevronRight className={`ml-auto h-4 w-4 transition-transform ${perTraderOpen ? 'rotate-90' : ''}`} />
                 </SidebarMenuButton>
                 {perTraderOpen && (
@@ -203,7 +205,7 @@ export function AppSidebar({
               <SidebarMenuItem>
                 <SidebarMenuButton onClick={() => setPerMapOpen((v) => !v)}>
                   <MapPin />
-                  <span>Per Map</span>
+                  <span>Maps</span>
                   <ChevronRight className={`ml-auto h-4 w-4 transition-transform ${perMapOpen ? 'rotate-90' : ''}`} />
                 </SidebarMenuButton>
                 {perMapOpen && (
@@ -211,7 +213,7 @@ export function AppSidebar({
                   <li>
                     <SidebarMenuSubButton asChild>
                       <a onClick={() => onSelectMap(null)}>
-                        <Filter />
+                        <span className={`inline-block h-2 w-2 rounded-full ${selectedMap === null ? "bg-green-500" : "bg-muted"}`} />
                         <span>All Maps</span>
                       </a>
                     </SidebarMenuSubButton>
@@ -223,7 +225,7 @@ export function AppSidebar({
                           onSelectMap(m)
                           onSetViewMode("grouped")
                         }}>
-                          <MapPin />
+                          <span className={`inline-block h-2 w-2 rounded-full ${selectedMap === m ? "bg-green-500" : "bg-muted"}`} />
                           <span>{m}</span>
                         </a>
                       </SidebarMenuSubButton>
@@ -251,7 +253,20 @@ export function AppSidebar({
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter />
+      <SidebarFooter>
+        <div className="px-2 py-2 text-[14px] text-center text-muted-foreground group-data-[collapsible=icon]:hidden">
+          Data from
+          {' '}
+          <a
+            href="https://tarkov.dev"
+            target="_blank"
+            rel="noreferrer"
+            className="underline hover:text-foreground"
+          >
+            tarkov.dev
+          </a>
+        </div>
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   )

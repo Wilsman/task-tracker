@@ -187,7 +187,7 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
                         <label
                           htmlFor={task.id}
                           className={cn(
-                            "flex-1 text-[13px] leading-tight flex items-start gap-1",
+                            "flex-1 text-[16px] leading-tight flex items-start gap-1",
                             "cursor-pointer"
                           )}
                         >

@@ -361,6 +361,32 @@ function App() {
     [viewMode]
   );
 
+  // Derive which totals to display in the right Progress panel based on Focus mode
+  const { displayTotalQuests, displayCompletedQuests } = useMemo(() => {
+    if (focusMode === "kappa") {
+      return {
+        displayTotalQuests: totalKappaTasks,
+        displayCompletedQuests: completedKappaTasks,
+      };
+    }
+    if (focusMode === "lightkeeper") {
+      return {
+        displayTotalQuests: totalLightkeeperTasks,
+        displayCompletedQuests: completedLightkeeperTasks,
+      };
+    }
+    return {
+      displayTotalQuests: totalQuests,
+      displayCompletedQuests: completedQuests,
+    };
+  }, [focusMode, totalQuests, completedQuests, totalKappaTasks, completedKappaTasks, totalLightkeeperTasks, completedLightkeeperTasks]);
+
+  const progressTitle = useMemo(() => {
+    if (focusMode === "kappa") return "Kappa Progress";
+    if (focusMode === "lightkeeper") return "Lightkeeper Progress";
+    return "Progress Overview";
+  }, [focusMode]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -398,6 +424,7 @@ function App() {
           onToggleTraderVisibility={handleToggleTraderVisibility}
           onClearTraderFilter={handleClearTraderFilter}
           maps={mapList}
+          selectedMap={selectedMap}
           onSelectMap={handleSelectMap}
           groupBy={groupBy}
           onSetGroupBy={setGroupBy}
@@ -537,8 +564,8 @@ function App() {
               >
                 <div className="p-2 space-y-3">
                   <QuestProgressPanel
-                    totalQuests={totalQuests}
-                    completedQuests={completedQuests}
+                    totalQuests={displayTotalQuests}
+                    completedQuests={displayCompletedQuests}
                     traders={traderProgress}
                     totalCollectorItems={collectorItems.length}
                     completedCollectorItems={completedCollectorItems.size}
@@ -551,6 +578,7 @@ function App() {
                     totalPrestigeSteps={prestigeProgress?.total}
                     completedPrestigeSteps={prestigeProgress?.completed}
                     currentPrestigeId={prestigeProgress?.id}
+                    progressTitle={progressTitle}
                   />
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
