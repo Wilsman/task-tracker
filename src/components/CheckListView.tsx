@@ -5,6 +5,7 @@ import { Input } from './ui/input';
 import { Checkbox } from './ui/checkbox';
 import { Progress } from './ui/progress';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
 import { Button } from './ui/button';
 import { Link2, ChevronDown, ChevronUp, Award } from 'lucide-react';
 import { groupTasksByTrader } from '../utils/taskUtils';
@@ -198,7 +199,7 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
         </Button>
         <div className="ml-auto flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <Label htmlFor="player-level" className="text-sm text-muted-foreground">Level</Label>
+            <Label htmlFor="player-level" className="text-sm text-muted-foreground">PMC Level</Label>
             <Input
               id="player-level"
               type="number"
@@ -251,119 +252,128 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
                 </div>
               </AccordionTrigger>
               <AccordionContent className="px-4 pb-4 border-t">
-                <div className="pr-2 space-y-3">
+                <div className="pr-2 space-y-1">
                   {groupTasks.map(task => {
                     const isCompleted = completedTasks.has(task.id);
                     return (
-                      <div
-                        key={task.id}
-                        className={cn(
-                          "flex items-start gap-2 p-1.5 rounded-md transition-colors group",
-                          "hover:bg-muted cursor-pointer"
-                        )}
-                        onClick={() => onTaskClick(task.id)}
-                      >
-                        <Checkbox
-                          id={task.id}
-                          checked={isCompleted}
-                          onCheckedChange={() => onToggleComplete(task.id)}
-                          disabled={false}
-                        />
-                        <label
-                          htmlFor={task.id}
-                          className={cn(
-                            "flex-1 text-[16px] leading-tight flex items-start gap-1",
-                            "cursor-pointer"
-                          )}
+                      <Collapsible key={task.id}>
+                        {/* Main single-row */}
+                        <div
+                          className={
+                            cn(
+                              "flex items-center gap-2 p-1.5 rounded-md transition-colors group",
+                              "hover:bg-muted"
+                            )
+                          }
+                          onClick={() => onTaskClick(task.id)}
                         >
-                          <div className="flex flex-col">
-                            <span className={cn("font-medium", isCompleted && "line-through")}>{task.name}</span>
-                            <div className={cn(
-                              "flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px]",
-                              isCompleted ? "text-foreground" : "text-muted-foreground"
-                            )}>
-                              <span className="inline-flex items-center gap-1">
-                                {task.trader?.imageLink && (
-                                  <img
-                                    src={task.trader.imageLink}
-                                    alt={task.trader.name}
-                                    loading="lazy"
-                                    className="h-4 w-4 rounded-full object-cover"
-                                  />
-                                )}
-                                <span>{task.trader.name}</span>
-                              </span>
-                              {task.map && <span>• {task.map.name}</span>}
-                              {task.kappaRequired && (
-                                <span className="text-red-500">• Kappa</span>
-                              )}
-                              {task.lightkeeperRequired && (
-                                <span className="text-green-500">• Lightkeeper</span>
-                              )}
-                              
-                              {/* Objectives and Rewards (inline lists) */}
-                              {/* moved out of the metadata row for better readability */}
-                            </div>
-                            {/* Objectives (compact inline) */}
-                            {task.objectives && task.objectives.length > 0 && (
-                              <div className={cn(
-                                "mt-0.5 text-xs flex flex-wrap items-start gap-x-3 gap-y-1",
-                                isCompleted ? "text-foreground" : "text-muted-foreground/25"
-                              )}>
-                                <span className="text-[11px] text-yellow-500/80">Objectives:</span>
-                                <div className="flex flex-wrap gap-x-3 gap-y-1">
-                                  {task.objectives.map((objective, index) => (
-                                    <span key={index} className="inline-flex items-start gap-2">
-                                      <span className="mt-1 inline-block h-1 w-1 rounded-full bg-yellow-500" />
-                                      <span className="whitespace-pre-wrap">
-                                        {'playerLevel' in objective
-                                          ? `Reach level ${objective.playerLevel}`
-                                          : objective.description}
-                                      </span>
-                                    </span>
-                                  ))}
-                                </div>
+                          <Checkbox
+                            id={task.id}
+                            checked={isCompleted}
+                            onCheckedChange={() => onToggleComplete(task.id)}
+                            disabled={false}
+                            onClick={e => e.stopPropagation()}
+                          />
+                          <CollapsibleTrigger asChild>
+                            <button
+                              aria-label="Toggle details"
+                              className="h-6 w-6 inline-flex items-center justify-center rounded hover:bg-muted/60 text-muted-foreground data-[state=open]:rotate-180 transition-transform"
+                              onClick={e => e.stopPropagation()}
+                            >
+                              <ChevronDown className="h-4 w-4" />
+                            </button>
+                          </CollapsibleTrigger>
+
+                          {task.wikiLink && (
+                            <a
+                              href={task.wikiLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-muted-foreground hover:text-foreground"
+                              onClick={e => e.stopPropagation()}
+                              aria-label="Open wiki"
+                            >
+                              <Link2 className="h-4 w-4" />
+                            </a>
+                          )}
+
+                          <label
+                            htmlFor={task.id}
+                            className={cn(
+                              "flex-1 min-w-0 text-[15px] leading-tight flex items-center gap-2",
+                              "cursor-pointer"
+                            )}
+                            onClick={e => e.stopPropagation()}
+                          >
+                            <span className={cn("truncate", isCompleted && "line-through")}>{task.name}</span>
+                          </label>
+
+                          {/* Right-side compact info */}
+                          <div className="ml-auto flex items-center gap-2">
+                            {task.trader?.imageLink && (
+                              <img
+                                src={task.trader.imageLink}
+                                alt={task.trader.name}
+                                loading="lazy"
+                                className="h-5 w-5 rounded-full object-cover"
+                              />
+                            )}
+                            {task.kappaRequired && (
+                              <span title="Kappa" className="text-[10px] px-1.5 py-0.5 rounded bg-red-500/10 text-red-500">K</span>
+                            )}
+                            {task.lightkeeperRequired && (
+                              <span title="Lightkeeper" className="text-[10px] px-1.5 py-0.5 rounded bg-green-500/10 text-green-500">LK</span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Compact dropdown details */}
+                        <CollapsibleContent>
+                          <div className="mx-7 mb-2 rounded-md border bg-muted/30 p-2 text-xs text-muted-foreground space-y-2">
+                            {task.map && (
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium text-foreground/80">Map:</span>
+                                <span>{task.map.name}</span>
                               </div>
                             )}
 
-                            {/* Rewards */}
+                            {task.objectives && task.objectives.length > 0 && (
+                              <div className="space-y-1">
+                                <div className="inline-flex items-center gap-1 text-foreground/80">
+                                  <span className="text-[11px] text-yellow-600">Objectives</span>
+                                </div>
+                                <ul className="list-disc pl-5 space-y-0.5">
+                                  {task.objectives.map((objective, index) => (
+                                    <li key={index}>
+                                      {'playerLevel' in objective
+                                        ? `Reach level ${objective.playerLevel}`
+                                        : objective.description}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+
                             {((task.startRewards?.items && task.startRewards.items.length > 0) ||
                               (task.finishRewards?.items && task.finishRewards.items.length > 0)) && (
-                              <div className={cn(
-                                "mt-0.5 text-xs flex flex-wrap items-start gap-x-3 gap-y-1",
-                                isCompleted ? "text-foreground" : "text-muted-foreground/25"
-                              )}>
-                                <span className="inline-flex items-center gap-1 text-[11px] text-blue-500/80">
+                              <div className="space-y-1">
+                                <div className="inline-flex items-center gap-1 text-foreground/80">
                                   <Award className="h-3 w-3" />
-                                  Rewards:
-                                </span>
-                                <div className="flex flex-wrap gap-x-3 gap-y-1">
-                                  {[...(task.startRewards?.items ?? []), ...(task.finishRewards?.items ?? [])].map((reward, index) => (
-                                    <span key={index} className="inline-flex items-start gap-2">
-                                      <span className="mt-1 inline-block h-1 w-1 rounded-full bg-green-500" />
-                                      <span>
-                                        {reward.item.name}
-                                        {reward.count > 1 ? ` (${reward.count})` : ''}
-                                      </span>
-                                    </span>
-                                  ))}
+                                  <span className="text-[11px]">Rewards</span>
                                 </div>
+                                <ul className="list-disc pl-5 space-y-0.5">
+                                  {[...(task.startRewards?.items ?? []), ...(task.finishRewards?.items ?? [])].map((reward, index) => (
+                                    <li key={index}>
+                                      {reward.item.name}
+                                      {reward.count > 1 ? ` (${reward.count})` : ''}
+                                    </li>
+                                  ))}
+                                </ul>
                               </div>
                             )}
                           </div>
-                        </label>
-                        {task.wikiLink && (
-                          <a
-                            href={task.wikiLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-muted-foreground hover:text-foreground"
-                            onClick={e => e.stopPropagation()}
-                          >
-                            <Link2 className="h-4 w-4" />
-                          </a>
-                        )}
-                      </div>
+                        </CollapsibleContent>
+                      </Collapsible>
                     );
                   })}
                 </div>
