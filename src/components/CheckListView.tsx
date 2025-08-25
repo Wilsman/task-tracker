@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { useQueryState } from 'nuqs';
 import { Task } from '../types';
 import { Input } from './ui/input';
@@ -89,6 +89,29 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
     window.addEventListener('taskTracker:reset', handler);
     return () => window.removeEventListener('taskTracker:reset', handler);
   }, []);
+
+  // Map of taskId -> DOM element to scroll into view when selected
+  const itemRefs = useRef<Map<string, HTMLDivElement | null>>(new Map());
+
+  // When selectedTaskId changes, scroll that task into view
+  useEffect(() => {
+    if (!selectedTaskId) return;
+    const el = itemRefs.current.get(selectedTaskId);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, [selectedTaskId]);
+
+  // Clicking a breadcrumb: expand proper group, select task (which opens its details)
+  const handleBreadcrumbClick = useCallback((taskId: string) => {
+    const task = tasks.find(t => t.id === taskId);
+    if (!task) return;
+    const groupName = groupBy === 'trader' ? task.trader.name : (task.map?.name || 'Anywhere');
+    setExpandedGroups(prev => (prev.includes(groupName) ? prev : [...prev, groupName]));
+    setSelectedTaskId(taskId);
+    // Also reflect the clicked task in the search bar to filter the view
+    setSearchTerm(task.name);
+  }, [tasks, groupBy, setSearchTerm]);
 
   // (moved global search listener below after allGroupNames is defined)
 
@@ -244,7 +267,7 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
             {(() => {
               const chain = getTaskDependencyChain(selectedTaskId, tasks);
               const taskMap = new Map(tasks.map(t => [t.id, t]));
-              return chain.map((tid, index) => {
+              const crumbs = chain.map((tid, index) => {
                 const t = taskMap.get(tid);
                 if (!t) return null;
                 const isLast = index === chain.length - 1;
@@ -257,7 +280,7 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
                         isLast ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300' : 'bg-gray-800 dark:bg-gray-800 hover:bg-gray-600 dark:hover:bg-gray-600',
                         isDone && 'line-through opacity-60'
                       )}
-                      onClick={() => setSelectedTaskId(tid)}
+                      onClick={() => handleBreadcrumbClick(tid)}
                     >
                       {t.name}
                     </span>
@@ -265,6 +288,32 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
                   </React.Fragment>
                 );
               });
+
+              // Compute a single next task (direct dependent of the current/last)
+              const lastId = chain[chain.length - 1];
+              const nextCandidates = tasks.filter(t => t.taskRequirements?.some(req => req.task.id === lastId));
+              const nextTask = nextCandidates.sort((a, b) => a.name.localeCompare(b.name))[0];
+
+              return (
+                <>
+                  {crumbs}
+                  {nextTask && (
+                    <>
+                      <ArrowRight className="h-3 w-3 text-muted-foreground" />
+                      <span
+                        className={cn(
+                          'text-xs px-2 py-1 rounded cursor-pointer transition-colors',
+                          'bg-gray-700 text-white dark:bg-gray-800 hover:bg-gray-600'
+                        )}
+                        onClick={() => handleBreadcrumbClick(nextTask.id)}
+                        title="Go to next task"
+                      >
+                        {nextTask.name}
+                      </span>
+                    </>
+                  )}
+                </>
+              );
             })()}
           </div>
         </div>
@@ -310,122 +359,128 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
                   {groupTasks.map(task => {
                     const isCompleted = completedTasks.has(task.id);
                     return (
-                      <Collapsible key={task.id} onOpenChange={(open) => {
-                        if (open) setSelectedTaskId(task.id); else if (selectedTaskId === task.id) setSelectedTaskId(null);
-                      }}>
-                        {/* Main single-row */}
-                        <div
-                          className={
-                            cn(
-                              "flex items-center gap-2 p-1.5 rounded-md transition-colors group",
-                              "hover:bg-muted"
-                            )
-                          }
+                      <div key={task.id} ref={el => itemRefs.current.set(task.id, el)}>
+                        <Collapsible
+                          open={selectedTaskId === task.id}
+                          onOpenChange={(open) => {
+                            if (open) setSelectedTaskId(task.id);
+                            else if (selectedTaskId === task.id) setSelectedTaskId(null);
+                          }}
                         >
-                          <Checkbox
-                            id={task.id}
-                            checked={isCompleted}
-                            onCheckedChange={() => onToggleComplete(task.id)}
-                            disabled={false}
-                            onClick={e => e.stopPropagation()}
-                          />
-                          {task.wikiLink && (
-                            <a
-                              href={task.wikiLink}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-muted-foreground hover:text-foreground"
+                          {/* Main single-row */}
+                          <div
+                            className={
+                              cn(
+                                "flex items-center gap-2 p-1.5 rounded-md transition-colors group",
+                                "hover:bg-muted"
+                              )
+                            }
+                          >
+                            <Checkbox
+                              id={task.id}
+                              checked={isCompleted}
+                              onCheckedChange={() => onToggleComplete(task.id)}
+                              disabled={false}
                               onClick={e => e.stopPropagation()}
-                              aria-label="Open wiki"
-                            >
-                              <Link2 className="h-4 w-4" />
-                            </a>
-                          )}
-
-                          {/* Trigger wraps most of the row (except checkbox & wiki link) */}
-                          <CollapsibleTrigger asChild>
-                            <div
-                              className="flex flex-1 min-w-0 items-center gap-2 cursor-pointer select-none"
-                              role="button"
-                              aria-label="Toggle details"
-                            >
-                              <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform data-[state=open]:rotate-180" />
-                              <span
-                                className={cn(
-                                  "flex-1 min-w-0 text-[15px] leading-tight flex items-center gap-2",
-                                )}
+                            />
+                            {task.wikiLink && (
+                              <a
+                                href={task.wikiLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-muted-foreground hover:text-foreground"
+                                onClick={e => e.stopPropagation()}
+                                aria-label="Open wiki"
                               >
-                                <span className={cn("truncate", isCompleted && "line-through")}>{task.name}</span>
-                              </span>
-
-                              {/* Right-side compact info */}
-                              <div className="ml-auto flex items-center gap-2">
-                                {task.trader?.imageLink && (
-                                  <img
-                                    src={task.trader.imageLink}
-                                    alt={task.trader.name}
-                                    loading="lazy"
-                                    className="h-5 w-5 rounded-full object-cover"
-                                  />
-                                )}
-                                {task.kappaRequired && (
-                                  <span title="Kappa" className="text-[10px] px-1.5 py-0.5 rounded bg-red-500/10 text-red-500">K</span>
-                                )}
-                                {task.lightkeeperRequired && (
-                                  <span title="Lightkeeper" className="text-[10px] px-1.5 py-0.5 rounded bg-green-500/10 text-green-500">LK</span>
-                                )}
-                              </div>
-                            </div>
-                          </CollapsibleTrigger>
-                        </div>
-
-                        {/* Compact dropdown details */}
-                        <CollapsibleContent>
-                          <div className="mx-7 mb-2 rounded-md border bg-muted/30 p-2 text-xs text-muted-foreground space-y-2">
-                            {task.map && (
-                              <div className="flex items-center gap-2">
-                                <span className="font-medium text-foreground/80">Map:</span>
-                                <span>{task.map.name}</span>
-                              </div>
+                                <Link2 className="h-4 w-4" />
+                              </a>
                             )}
 
-                            {task.objectives && task.objectives.length > 0 && (
-                              <div className="space-y-1">
-                                <div className="inline-flex items-center gap-1 text-foreground/80">
-                                  <span className="text-[11px] text-yellow-600">Objectives</span>
+                            {/* Trigger wraps most of the row (except checkbox & wiki link) */}
+                            <CollapsibleTrigger asChild>
+                              <div
+                                className="flex flex-1 min-w-0 items-center gap-2 cursor-pointer select-none"
+                                role="button"
+                                aria-label="Toggle details"
+                              >
+                                <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform data-[state=open]:rotate-180" />
+                                <span
+                                  className={cn(
+                                    "flex-1 min-w-0 text-[15px] leading-tight flex items-center gap-2",
+                                  )}
+                                >
+                                  <span className={cn("truncate", isCompleted && "line-through")}>{task.name}</span>
+                                </span>
+
+                                {/* Right-side compact info */}
+                                <div className="ml-auto flex items-center gap-2">
+                                  {task.trader?.imageLink && (
+                                    <img
+                                      src={task.trader.imageLink}
+                                      alt={task.trader.name}
+                                      loading="lazy"
+                                      className="h-5 w-5 rounded-full object-cover"
+                                    />
+                                  )}
+                                  {task.kappaRequired && (
+                                    <span title="Kappa" className="text-[10px] px-1.5 py-0.5 rounded bg-red-500/10 text-red-500">K</span>
+                                  )}
+                                  {task.lightkeeperRequired && (
+                                    <span title="Lightkeeper" className="text-[10px] px-1.5 py-0.5 rounded bg-green-500/10 text-green-500">LK</span>
+                                  )}
                                 </div>
-                                <ul className="list-disc pl-5 space-y-0.5">
-                                  {task.objectives.map((objective, index) => (
-                                    <li key={index}>
-                                      {'playerLevel' in objective
-                                        ? `Reach level ${objective.playerLevel}`
-                                        : objective.description}
-                                    </li>
-                                  ))}
-                                </ul>
                               </div>
-                            )}
-
-                            {((task.startRewards?.items && task.startRewards.items.length > 0) ||
-                              (task.finishRewards?.items && task.finishRewards.items.length > 0)) && (
-                              <div className="space-y-1">
-                                <div className="inline-flex items-center gap-1 text-foreground/80">
-                                  <Award className="h-3 w-3" />
-                                  <span className="text-[11px]">Rewards</span>
-                                </div>
-                                <ul className="list-disc pl-5 space-y-0.5">
-                                  {[...(task.startRewards?.items ?? []), ...(task.finishRewards?.items ?? [])].map((reward, index) => (
-                                    <li key={index}>
-                                      {reward.item.name}
-                                      {reward.count > 1 ? ` (${reward.count})` : ''}
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
+                            </CollapsibleTrigger>
                           </div>
-                        </CollapsibleContent>
-                      </Collapsible>
+
+                          {/* Compact dropdown details */}
+                          <CollapsibleContent>
+                            <div className="mx-7 mb-2 rounded-md border bg-muted/30 p-2 text-xs text-muted-foreground space-y-2">
+                              {task.map && (
+                                <div className="flex items-center gap-2">
+                                  <span className="font-medium text-foreground/80">Map:</span>
+                                  <span>{task.map.name}</span>
+                                </div>
+                              )}
+
+                              {task.objectives && task.objectives.length > 0 && (
+                                <div className="space-y-1">
+                                  <div className="inline-flex items-center gap-1 text-foreground/80">
+                                    <span className="text-[11px] text-yellow-600">Objectives</span>
+                                  </div>
+                                  <ul className="list-disc pl-5 space-y-0.5">
+                                    {task.objectives.map((objective, index) => (
+                                      <li key={index}>
+                                        {'playerLevel' in objective
+                                          ? `Reach level ${objective.playerLevel}`
+                                          : objective.description}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+
+                              {((task.startRewards?.items && task.startRewards.items.length > 0) ||
+                                (task.finishRewards?.items && task.finishRewards.items.length > 0)) && (
+                                <div className="space-y-1">
+                                  <div className="inline-flex items-center gap-1 text-foreground/80">
+                                    <Award className="h-3 w-3" />
+                                    <span className="text-[11px]">Rewards</span>
+                                  </div>
+                                  <ul className="list-disc pl-5 space-y-0.5">
+                                    {[...(task.startRewards?.items ?? []), ...(task.finishRewards?.items ?? [])].map((reward, index) => (
+                                      <li key={index}>
+                                        {reward.item.name}
+                                        {reward.count > 1 ? ` (${reward.count})` : ''}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                            </div>
+                          </CollapsibleContent>
+                        </Collapsible>
+                      </div>
                     );
                   })}
                 </div>
