@@ -30,6 +30,7 @@ export interface TaskObjective {
   items?: {
     id: string;
     name: string;
+    iconLink?: string;
   }[];
   count?: number;
 }
@@ -37,6 +38,7 @@ export interface TaskObjective {
 export interface RewardItem {
   item: {
     name: string;
+    iconLink?: string;
   };
   count: number;
 }

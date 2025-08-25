@@ -94,15 +94,15 @@ const COMBINED_QUERY = `
     wikiLink
     name
     startRewards {
-      items { item { name } count }
+      items { item { name iconLink } count }
     }
     finishRewards {
-      items { item { name } count }
+      items { item { name iconLink } count }
     }
     objectives {
       description
       ... on TaskObjectiveItem {
-        items { id name }
+        items { id name iconLink }
         count
       }
       ... on TaskObjectivePlayerLevel {

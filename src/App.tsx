@@ -15,7 +15,6 @@ import {
   PRESTIGE_CONFIGS,
 } from "@/utils/prestige";
 import { buildTaskDependencyMap, getAllDependencies } from "./utils/taskUtils";
-import { sampleData, collectorItemsData } from "./data/sample-data";
 import { fetchCombinedData, fetchAchievements } from "./services/tarkovApi";
 import { cn } from "@/lib/utils";
 import { Button } from "./components/ui/button";
@@ -54,15 +53,15 @@ function App() {
   const [apiCollectorItems, setApiCollectorItems] =
     useState<CollectorItemsData | null>(null);
 
-  // Transform collector items data to match the expected structure
+  // Transform collector items data to match the expected structure (Live API only)
   const collectorItems = useMemo(() => {
-    const sourceData = apiCollectorItems ?? collectorItemsData;
-    return sourceData.data.task.objectives.flatMap((objective) =>
+    if (!apiCollectorItems) return [] as { name: string; order: number; img: string; id: string }[];
+    return apiCollectorItems.data.task.objectives.flatMap((objective) =>
       objective.items.map((item) => ({
         name: item.name,
-        order: 0, // Default order since it's not in the source data
-        img: item.iconLink,
-        id: item.id, // Keep the id for reference if needed
+        order: 0,
+        img: item.iconLink || "",
+        id: item.id,
       }))
     );
   }, [apiCollectorItems]);
@@ -262,27 +261,21 @@ function App() {
         setCompletedCollectorItems(savedCollectorItems);
         setCompletedAchievements(savedAchievements);
 
-        // Always try Live API first; fallback to static on error
+        // Live API only
+        const { tasks: tasksData, collectorItems: collectorData } = await fetchCombinedData();
+        setTasks(tasksData.data.tasks);
+        setApiCollectorItems(collectorData);
         try {
-          const { tasks: tasksData, collectorItems: collectorData } = await fetchCombinedData();
-          setTasks(tasksData.data.tasks);
-          setApiCollectorItems(collectorData);
-          try {
-            const achievementsData = await fetchAchievements();
-            setAchievements(achievementsData.data.achievements);
-          } catch (e) {
-            console.error("Achievements API error", e);
-            setAchievements([]);
-          }
-        } catch (apiErr) {
-          console.error("API error, falling back to static", apiErr);
-          setTasks(sampleData.data.tasks);
-          setApiCollectorItems(null);
+          const achievementsData = await fetchAchievements();
+          setAchievements(achievementsData.data.achievements);
+        } catch (e) {
+          console.error("Achievements API error", e);
           setAchievements([]);
         }
       } catch (err) {
-        console.error("Init error", err);
-        setTasks(sampleData.data.tasks);
+        console.error("Init/API error", err);
+        // Live API only path: show empty state on error
+        setTasks([]);
         setApiCollectorItems(null);
         setAchievements([]);
       } finally {
