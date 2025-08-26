@@ -317,7 +317,7 @@ export function CommandMenu(props: CommandMenuProps) {
                     setTimeout(() => {
                       window.dispatchEvent(
                         new CustomEvent("taskTracker:globalSearch", {
-                          detail: { term: t.name, scope: "tasks" },
+                          detail: { term: t.name, scope: "tasks", taskId: t.id },
                         })
                       );
                     }, 0);

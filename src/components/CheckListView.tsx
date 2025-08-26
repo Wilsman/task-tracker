@@ -174,16 +174,26 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
 
   // Listen for global command search and apply to local search box (tasks scope)
   useEffect(() => {
-    type GlobalSearchDetail = { term?: string; scope?: 'tasks' | 'achievements' | 'items' };
+    type GlobalSearchDetail = { term?: string; scope?: 'tasks' | 'achievements' | 'items'; taskId?: string };
     const handler = (evt: Event) => {
       const detail = (evt as CustomEvent<GlobalSearchDetail>).detail;
       if (!detail || detail.scope !== 'tasks' || typeof detail.term !== 'string') return;
       setSearchTerm(detail.term);
+      // Keep current UX of expanding all groups so results are visible
       setExpandedGroups(allGroupNames);
+      // If a specific task was chosen, open its details and ensure its group is expanded
+      if (detail.taskId) {
+        const t = tasks.find(x => x.id === detail.taskId);
+        if (t) {
+          const groupName = groupBy === 'trader' ? t.trader.name : (t.map?.name || 'Anywhere');
+          setExpandedGroups(prev => (prev.includes(groupName) ? prev : [...prev, groupName]));
+          setSelectedTaskId(detail.taskId);
+        }
+      }
     };
     window.addEventListener('taskTracker:globalSearch', handler as EventListener);
     return () => window.removeEventListener('taskTracker:globalSearch', handler as EventListener);
-  }, [allGroupNames, setSearchTerm]);
+  }, [allGroupNames, setSearchTerm, tasks, groupBy]);
 
   // Build the dependency chain (from root to the selected task)
   const getTaskDependencyChain = useCallback((taskId: string, allTasks: Task[]): string[] => {
