@@ -38,6 +38,7 @@ import { CollectorView } from "./components/ItemTrackerView";
 import { PrestigesView } from "./components/PrestigesView";
 import { AchievementsView } from "./components/AchievementsView";
 import { CommandMenu } from "./components/CommandMenu";
+import { NotesWidget } from "./components/NotesWidget";
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -817,6 +818,7 @@ function App() {
         onToggleTraderVisibility={handleToggleTraderVisibility}
         onSelectMap={handleSelectMap}
       />
+      <NotesWidget />
     </NuqsAdapter>
   );
 }
