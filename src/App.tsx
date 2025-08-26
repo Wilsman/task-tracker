@@ -107,20 +107,14 @@ function App() {
     const parts = normalizePath(pathname).split("/").filter(Boolean).map(p => p.toLowerCase());
     // Defaults
     let nextView: typeof viewMode = "grouped";
-    let nextGroupBy: typeof groupBy | undefined;
     let nextCollectorGroupBy: typeof collectorGroupBy | undefined;
 
     if (parts.length === 0) {
-      // root -> Quests Checklist ByTrader
+      // root -> default to Quests Checklist
       nextView = "grouped";
-      nextGroupBy = "trader";
     } else if (parts[0] === "quests") {
+      // Both /Quests and /Quests/Checklist route to grouped checklist
       nextView = "grouped";
-      // /Quests/Checklist/ByTrader | ByMap
-      if (parts[1] === "checklist") {
-        if (parts[2] === "bytrader") nextGroupBy = "trader";
-        else if (parts[2] === "bymap") nextGroupBy = "map";
-      }
     } else if (parts[0] === "items") {
       nextView = "collector";
       if (parts[1] === "collectoritems") nextCollectorGroupBy = "collector";
@@ -131,7 +125,7 @@ function App() {
       nextView = "achievements";
     }
 
-    return { nextView, nextGroupBy, nextCollectorGroupBy };
+    return { nextView, nextCollectorGroupBy };
   }
   // buildPath removed in favor of inlined computation inside effect
 
@@ -139,12 +133,16 @@ function App() {
   useEffect(() => {
     const applyFromLocation = () => {
       const { pathname } = window.location;
-      const { nextView, nextGroupBy, nextCollectorGroupBy } = parsePath(pathname);
+      const { nextView, nextCollectorGroupBy } = parsePath(pathname);
       setViewMode(nextView);
-      if (nextGroupBy) setGroupBy(nextGroupBy);
       if (nextCollectorGroupBy) setCollectorGroupBy(nextCollectorGroupBy);
     };
     applyFromLocation();
+    // Normalize root or /Quests to canonical /Quests/Checklist, preserving query
+    const { pathname: initialPathname, search: initialSearch } = window.location;
+    if (initialPathname === "/" || /^\/quests\/?$/i.test(initialPathname)) {
+      window.history.replaceState(null, "", `/Quests/Checklist${initialSearch}`);
+    }
     const onPop = () => applyFromLocation();
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
@@ -153,9 +151,10 @@ function App() {
 
   // When state changes via UI, update the path (preserving existing query string like ?search=...)
   useEffect(() => {
-    let nextPath = "/Quests/Checklist/ByTrader";
+    let nextPath = "/Quests/Checklist";
     if (viewMode === "grouped") {
-      nextPath = groupBy === "map" ? "/Quests/Checklist/ByMap" : "/Quests/Checklist/ByTrader";
+      // Canonical checklist URL no longer encodes groupBy
+      nextPath = "/Quests/Checklist";
     } else if (viewMode === "collector") {
       nextPath = collectorGroupBy === "hideout-stations" ? "/Items/HideoutStations" : "/Items/CollectorItems";
     } else if (viewMode === "prestiges") {
@@ -564,8 +563,6 @@ function App() {
           maps={mapList}
           selectedMap={selectedMap}
           onSelectMap={handleSelectMap}
-          groupBy={groupBy}
-          onSetGroupBy={setGroupBy}
           collectorGroupBy={collectorGroupBy}
           onSetCollectorGroupBy={setCollectorGroupBy}
           side="left"
@@ -575,7 +572,7 @@ function App() {
             {/* Header */}
             <header className="border-b bg-card/80 backdrop-blur supports-[backdrop-filter]:bg-card/60">
               <div className="px-2">
-                <div className="flex items-center justify-between gap-3 py-2">
+                <div className="grid grid-cols-3 items-center gap-3 py-2">
                   {/* Left: title */}
                   <div className="flex items-center gap-2 min-w-0">
                     <SidebarTrigger className="-ml-1" />
@@ -587,22 +584,8 @@ function App() {
                     </span>
                   </div>
 
-                  {/* Right: Search hint + Focus segmented control */}
-                  <div className="hidden md:flex items-center gap-3">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="pl-2 pr-2.5 gap-2"
-                      onClick={() => window.dispatchEvent(new Event("open-command-menu"))}
-                    >
-                      <Search className="h-4 w-4" />
-                      <span className="text-xs text-muted-foreground">Search</span>
-                      <span className="ml-1 hidden lg:flex items-center gap-1 text-[10px] text-muted-foreground">
-                        <span className="px-1.5 py-0.5 rounded border bg-background">Ctrl</span>
-                        <span className="px-1.5 py-0.5 rounded border bg-background">K</span>
-                      </span>
-                    </Button>
-                    <span className="h-4 w-px bg-border/60" />
+                  {/* Center: Focus segmented control */}
+                  <div className="hidden md:flex items-center justify-center gap-2">
                     <span className="text-xs text-muted-foreground">Focus</span>
                     <div className="flex items-center gap-1 p-1 rounded-full border bg-muted/30">
                       <Button
@@ -616,20 +599,61 @@ function App() {
                       <Button
                         variant={focusMode === "kappa" ? "default" : "ghost"}
                         size="sm"
-                        className="rounded-full px-3"
+                        className={cn(
+                          "rounded-full px-3",
+                          focusMode === "kappa"
+                            ? "bg-violet-600 text-white hover:bg-violet-600"
+                            : "text-violet-600 hover:text-violet-700 border border-violet-500/30"
+                        )}
                         onClick={() => handleSetFocus("kappa")}
                       >
+                        <span
+                          className={cn(
+                            "mr-2 h-2 w-2 rounded-full",
+                            focusMode === "kappa" ? "bg-white" : "bg-violet-500"
+                          )}
+                          aria-hidden
+                        />
                         Kappa
                       </Button>
                       <Button
                         variant={focusMode === "lightkeeper" ? "default" : "ghost"}
                         size="sm"
-                        className="rounded-full px-3"
+                        className={cn(
+                          "rounded-full px-3",
+                          focusMode === "lightkeeper"
+                            ? "bg-amber-600 text-white hover:bg-amber-600"
+                            : "text-amber-600 hover:text-amber-700 border border-amber-500/30"
+                        )}
                         onClick={() => handleSetFocus("lightkeeper")}
                       >
+                        <span
+                          className={cn(
+                            "mr-2 h-2 w-2 rounded-full",
+                            focusMode === "lightkeeper" ? "bg-white" : "bg-amber-500"
+                          )}
+                          aria-hidden
+                        />
                         Lightkeeper
                       </Button>
                     </div>
+                  </div>
+
+                  {/* Right: Search hint + Refresh */}
+                  <div className="hidden md:flex items-center justify-end gap-3">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="pl-2 pr-2.5 gap-2"
+                      onClick={() => window.dispatchEvent(new Event("open-command-menu"))}
+                    >
+                      <Search className="h-4 w-4" />
+                      <span className="text-xs text-muted-foreground">Search</span>
+                      <span className="ml-1 hidden lg:flex items-center gap-1 text-[10px] text-muted-foreground">
+                        <span className="px-1.5 py-0.5 rounded border bg-background">Ctrl</span>
+                        <span className="px-1.5 py-0.5 rounded border bg-background">K</span>
+                      </span>
+                    </Button>
                     <span className="h-4 w-px bg-border/60" />
                     <Button
                       variant="outline"
@@ -673,6 +697,7 @@ function App() {
                     onTaskClick={handleTaskClick}
                     mapFilter={selectedMap}
                     groupBy={groupBy}
+                    onSetGroupBy={setGroupBy}
                   />
                 ) : viewMode === "collector" ? (
                   <CollectorView

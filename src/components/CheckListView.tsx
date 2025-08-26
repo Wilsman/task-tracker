@@ -7,7 +7,7 @@ import { Progress } from './ui/progress';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
 import { Button } from './ui/button';
-import { Link2, ChevronDown, ChevronUp, Award, ArrowRight } from 'lucide-react';
+import { Link2, ChevronDown, ChevronUp, Award, ArrowRight, MapPin, UserCheck } from 'lucide-react';
 import { groupTasksByTrader } from '../utils/taskUtils';
 import { cn } from '@/lib/utils';
 import { Switch } from './ui/switch';
@@ -23,6 +23,7 @@ interface CheckListViewProps {
   onTaskClick: (taskId: string) => void;
   mapFilter?: string | null;
   groupBy: 'trader' | 'map';
+  onSetGroupBy: (mode: 'trader' | 'map') => void;
 }
 
 export const CheckListView: React.FC<CheckListViewProps> = ({
@@ -35,6 +36,7 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
   onTaskClick: _onTaskClick,
   mapFilter,
   groupBy,
+  onSetGroupBy,
 }) => {
   // Mark intentionally unused while preserving external API
   void _onTaskClick;
@@ -240,6 +242,29 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
             </>
           )}
         </Button>
+        {/* Group By controls moved here from sidebar */}
+        <div className="flex items-center gap-2">
+          <Button
+            variant={groupBy === 'trader' ? 'default' : 'outline'}
+            size="sm"
+            className="px-2"
+            onClick={() => onSetGroupBy('trader')}
+            aria-label="Group by Trader"
+            title="Group by Trader"
+          >
+            <UserCheck className="h-4 w-4" />
+          </Button>
+          <Button
+            variant={groupBy === 'map' ? 'default' : 'outline'}
+            size="sm"
+            className="px-2"
+            onClick={() => onSetGroupBy('map')}
+            aria-label="Group by Map"
+            title="Group by Map"
+          >
+            <MapPin className="h-4 w-4" />
+          </Button>
+        </div>
         <div className="ml-auto flex items-center gap-3">
           <div className="flex items-center gap-2">
             <Label htmlFor="player-level" className="text-sm text-muted-foreground">PMC Level</Label>

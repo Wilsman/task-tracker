@@ -7,7 +7,6 @@ import {
   Filter,
   Database,
   ChevronRight,
-  UserCheck,
   ListTodo,
 } from "lucide-react"
 
@@ -37,8 +36,6 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   maps: string[]
   selectedMap: string | null
   onSelectMap: (map: string | null) => void
-  groupBy: 'trader' | 'map'
-  onSetGroupBy: (mode: 'trader' | 'map') => void
   collectorGroupBy: 'collector' | 'hideout-stations'
   onSetCollectorGroupBy: (mode: 'collector' | 'hideout-stations') => void
 }
@@ -53,8 +50,6 @@ export function AppSidebar({
   maps,
   selectedMap,
   onSelectMap,
-  groupBy,
-  onSetGroupBy,
   collectorGroupBy,
   onSetCollectorGroupBy,
   ...props
@@ -99,23 +94,7 @@ export function AppSidebar({
                     </a>
                   </SidebarMenuSubButton>
                 </li>
-                {/* Grouping options under Checklist */}
-                <li>
-                  <SidebarMenuSubButton asChild isActive={viewMode === 'grouped' && groupBy === 'trader'}>
-                    <a className={`pl-6 ${viewMode === 'grouped' && groupBy === 'trader' ? 'border-l-2 border-emerald-500' : ''}`} onClick={() => { onSetGroupBy('trader'); onSetViewMode('grouped'); }}>
-                      <UserCheck />
-                      <span>By Trader</span>
-                    </a>
-                  </SidebarMenuSubButton>
-                </li>
-                <li>
-                  <SidebarMenuSubButton asChild isActive={viewMode === 'grouped' && groupBy === 'map'}>
-                    <a className={`pl-6 ${viewMode === 'grouped' && groupBy === 'map' ? 'border-l-2 border-emerald-500' : ''}`} onClick={() => { onSetGroupBy('map'); onSetViewMode('grouped'); }}>
-                      <MapPin />
-                      <span>By Map</span>
-                    </a>
-                  </SidebarMenuSubButton>
-                </li>
+                {/* Grouping controls moved into CheckListView header */}
               </SidebarMenuSub>
 
               <SidebarMenuItem>
