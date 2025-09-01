@@ -49,7 +49,7 @@ export function NotesWidget() {
   return (
     <TooltipProvider delayDuration={250}>
       {/* Floating trigger */}
-      <div className="fixed z-50 bottom-4 right-4 flex flex-col items-end gap-2">
+      <div className="fixed z-50 bottom-12 left-4 flex flex-col items-end gap-2">
         {/* Panel */}
         {isOpen && (
           <div

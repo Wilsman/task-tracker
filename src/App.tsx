@@ -33,12 +33,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "./components/ui/alert-dialog";
-import { CheckListView } from "./components/CheckListView";
-import { CollectorView } from "./components/ItemTrackerView";
-import { PrestigesView } from "./components/PrestigesView";
-import { AchievementsView } from "./components/AchievementsView";
-import { CommandMenu } from "./components/CommandMenu";
-import { NotesWidget } from "./components/NotesWidget";
+import { CheckListView } from './components/CheckListView';
+import { CollectorView } from './components/ItemTrackerView';
+import { PrestigesView } from './components/PrestigesView';
+import { AchievementsView } from './components/AchievementsView';
+import { CommandMenu } from './components/CommandMenu';
+import { NotesWidget } from './components/NotesWidget';
+import { OnboardingModal } from './components/OnboardingModal';
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -50,6 +51,8 @@ function App() {
     new Set(["Ref", "Fence", "BTR Driver", "Lightkeeper"])
   );
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   const handleRefresh = useCallback(async () => {
     try {
@@ -82,7 +85,7 @@ function App() {
       }))
     );
   }, [apiCollectorItems]);
-  const [isLoading, setIsLoading] = useState(true);
+
   const [viewMode, setViewMode] = useState<
     "tree" | "grouped" | "collector" | "flow" | "prestiges" | "achievements"
   >("grouped");
@@ -486,6 +489,19 @@ function App() {
     }
   }, []);
 
+  // Check if onboarding should be shown (only once)
+  useEffect(() => {
+    const onboardingShown = localStorage.getItem('taskTracker_onboarding_shown');
+    if (!onboardingShown && !isLoading) {
+      setShowOnboarding(true);
+    }
+  }, [isLoading]);
+
+  const handleCloseOnboarding = useCallback(() => {
+    setShowOnboarding(false);
+    localStorage.setItem('taskTracker_onboarding_shown', 'true');
+  }, []);
+
   const handleTaskClick = useCallback(
     (taskId: string) => {
       setHighlightedTask(taskId);
@@ -557,6 +573,8 @@ function App() {
         <AppSidebar
           viewMode={viewMode}
           onSetViewMode={setViewMode}
+          onSetFocus={handleSetFocus}
+          focusMode={focusMode}
           traders={traderList}
           hiddenTraders={hiddenTraders}
           onToggleTraderVisibility={handleToggleTraderVisibility}
@@ -819,6 +837,10 @@ function App() {
         onSelectMap={handleSelectMap}
       />
       <NotesWidget />
+      <OnboardingModal
+        isOpen={showOnboarding}
+        onClose={handleCloseOnboarding}
+      />
     </NuqsAdapter>
   );
 }

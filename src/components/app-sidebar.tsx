@@ -29,6 +29,8 @@ import {
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   viewMode: "tree" | "grouped" | "collector" | "flow" | "prestiges" | "achievements"
   onSetViewMode: (mode: AppSidebarProps["viewMode"]) => void
+  onSetFocus: (mode: "all" | "kappa" | "lightkeeper") => void
+  focusMode: "all" | "kappa" | "lightkeeper"
   traders: string[]
   hiddenTraders: Set<string>
   onToggleTraderVisibility: (trader: string) => void
@@ -43,6 +45,8 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 export function AppSidebar({
   viewMode,
   onSetViewMode,
+  onSetFocus,
+  focusMode,
   traders,
   hiddenTraders,
   onToggleTraderVisibility,
@@ -86,11 +90,53 @@ export function AppSidebar({
                 <li>
                   <SidebarMenuSubButton
                     asChild
-                    isActive={viewMode === "grouped"}
+                    isActive={viewMode === "grouped" && focusMode === "all"}
                   >
-                    <a onClick={() => onSetViewMode("grouped")}>
+                    <a
+                      className={`${viewMode === 'grouped' && focusMode === 'all' ? 'border-l-2 border-emerald-500 pl-6' : 'pl-6'} cursor-pointer`}
+                      onClick={() => {
+                        onSetViewMode("grouped");
+                        onSetFocus("all");
+                      }}
+                    >
                       <ListTodo />
-                      <span>Checklist View</span>
+                      <span>All Tasks</span>
+                    </a>
+                  </SidebarMenuSubButton>
+                </li>
+                {/* Kappa focus (Checklist + Kappa filter) */}
+                <li>
+                  <SidebarMenuSubButton
+                    asChild
+                    isActive={viewMode === "grouped" && focusMode === "kappa"}
+                  >
+                    <a
+                      className={`${viewMode === 'grouped' && focusMode === 'kappa' ? 'border-l-2 border-emerald-500 pl-6' : 'pl-6'} cursor-pointer`}
+                      onClick={() => {
+                        onSetViewMode("grouped");
+                        onSetFocus("kappa");
+                      }}
+                    >
+                      <ListTodo />
+                      <span>Kappa</span>
+                    </a>
+                  </SidebarMenuSubButton>
+                </li>
+                {/* Lightkeeper focus (Checklist + Lightkeeper filter) */}
+                <li>
+                  <SidebarMenuSubButton
+                    asChild
+                    isActive={viewMode === "grouped" && focusMode === "lightkeeper"}
+                  >
+                    <a
+                      className={`${viewMode === 'grouped' && focusMode === 'lightkeeper' ? 'border-l-2 border-emerald-500 pl-6' : 'pl-6'} cursor-pointer`}
+                      onClick={() => {
+                        onSetViewMode("grouped");
+                        onSetFocus("lightkeeper");
+                      }}
+                    >
+                      <ListTodo />
+                      <span>Lightkeeper</span>
                     </a>
                   </SidebarMenuSubButton>
                 </li>
@@ -107,7 +153,7 @@ export function AppSidebar({
                   <div aria-hidden className="pointer-events-none absolute left-2 top-2 bottom-2 border-l border-border/30" />
                   <li>
                     <SidebarMenuSubButton asChild isActive={viewMode === 'collector' && collectorGroupBy === 'collector'}>
-                      <a className={`${viewMode === 'collector' && collectorGroupBy === 'collector' ? 'border-l-2 border-emerald-500 pl-6' : 'pl-6'}`} onClick={() => { onSetCollectorGroupBy('collector'); onSetViewMode('collector'); }}>
+                      <a className={`${viewMode === 'collector' && collectorGroupBy === 'collector' ? 'border-l-2 border-emerald-500 pl-6' : 'pl-6'} cursor-pointer`} onClick={() => { onSetCollectorGroupBy('collector'); onSetViewMode('collector'); }}>
                         <Package />
                         <span>Collector Items</span>
                       </a>
@@ -115,7 +161,7 @@ export function AppSidebar({
                   </li>
                   <li>
                     <SidebarMenuSubButton asChild isActive={viewMode === 'collector' && collectorGroupBy === 'hideout-stations'}>
-                      <a className={`${viewMode === 'collector' && collectorGroupBy === 'hideout-stations' ? 'border-l-2 border-emerald-500 pl-6' : 'pl-6'}`} onClick={() => { onSetCollectorGroupBy('hideout-stations'); onSetViewMode('collector'); }}>
+                      <a className={`${viewMode === 'collector' && collectorGroupBy === 'hideout-stations' ? 'border-l-2 border-emerald-500 pl-6' : 'pl-6'} cursor-pointer`} onClick={() => { onSetCollectorGroupBy('hideout-stations'); onSetViewMode('collector'); }}>
                         <Database />
                         <span>Hideout Stations</span>
                       </a>
