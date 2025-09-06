@@ -59,9 +59,8 @@ function App() {
   const [completedCollectorItems, setCompletedCollectorItems] = useState<
     Set<string>
   >(new Set());
-  const [hiddenTraders, setHiddenTraders] = useState<Set<string>>(
-    new Set(["Ref", "Fence", "BTR Driver", "Lightkeeper"])
-  );
+  // Show all traders by default (no hidden traders initially)
+  const [hiddenTraders, setHiddenTraders] = useState<Set<string>>(new Set());
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showOnboarding, setShowOnboarding] = useState(false);
