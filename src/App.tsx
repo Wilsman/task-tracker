@@ -153,10 +153,10 @@ function App() {
       if (nextCollectorGroupBy) setCollectorGroupBy(nextCollectorGroupBy);
     };
     applyFromLocation();
-    // Normalize root or /Quests to canonical /Quests/Checklist, preserving query
+    // Normalize legacy checklist routes to root (default view), preserving query
     const { pathname: initialPathname, search: initialSearch } = window.location;
-    if (initialPathname === "/" || /^\/quests\/?$/i.test(initialPathname)) {
-      window.history.replaceState(null, "", `/Quests/Checklist${initialSearch}`);
+    if (/^\/(quests\/(checklist)?)\/?$/i.test(initialPathname)) {
+      window.history.replaceState(null, "", `/${initialSearch}`);
     }
     const onPop = () => applyFromLocation();
     window.addEventListener("popstate", onPop);
@@ -166,10 +166,10 @@ function App() {
 
   // When state changes via UI, update the path (preserving existing query string like ?search=...)
   useEffect(() => {
-    let nextPath = "/Quests/Checklist";
+    let nextPath = "/";
     if (viewMode === "grouped") {
-      // Canonical checklist URL no longer encodes groupBy
-      nextPath = "/Quests/Checklist";
+      // Default checklist view lives at root
+      nextPath = "/";
     } else if (viewMode === "collector") {
       nextPath = collectorGroupBy === "hideout-stations" ? "/Items/HideoutStations" : "/Items/CollectorItems";
     } else if (viewMode === "prestiges") {
@@ -188,12 +188,8 @@ function App() {
     }
   }, [viewMode, groupBy, collectorGroupBy]);
 
-  // Extra guard: if any view/group change occurs, strip lingering ?search from current URL
-  useEffect(() => {
-    if (window.location.search) {
-      window.history.replaceState(null, "", window.location.pathname);
-    }
-  }, [viewMode, groupBy, collectorGroupBy]);
+  // Note: preserve query params (e.g., ?tasksSearch=...) to enable deep links
+  // When navigating between views we already replace the path without query above.
 
   const handleToggleAchievement = useCallback(
     async (id: string) => {
