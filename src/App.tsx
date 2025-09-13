@@ -7,6 +7,7 @@ import { TextShimmerWave } from "@/components/ui/text-shimmer-wave";
 import { Task, CollectorItemsData, Achievement, HideoutStation } from "./types";
 import { QuestProgressPanel } from "./components/QuestProgressPanel";
 import { Skeleton } from "@/components/ui/skeleton";
+import SEO from "./components/SEO";
 import { taskStorage, migrateLegacyDataIfNeeded } from "./utils/indexedDB";
 import {
   ensureProfiles,
@@ -645,6 +646,7 @@ function App() {
 
   return (
     <NuqsAdapter>
+      <SEO />
       <SidebarProvider>
         <AppSidebar
           viewMode={viewMode}
