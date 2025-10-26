@@ -62,6 +62,9 @@ function App() {
   const [completedCollectorItems, setCompletedCollectorItems] = useState<
     Set<string>
   >(new Set());
+  const [completedHideoutItems, setCompletedHideoutItems] = useState<
+    Set<string>
+  >(new Set());
   // Show all traders by default (no hidden traders initially)
   const [hiddenTraders, setHiddenTraders] = useState<Set<string>>(new Set());
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -264,9 +267,11 @@ function App() {
       await taskStorage.init();
       const savedTasks = await taskStorage.loadCompletedTasks();
       const savedCollectorItems = await taskStorage.loadCompletedCollectorItems();
+      const savedHideoutItems = await taskStorage.loadCompletedHideoutItems();
       const savedAchievements = await taskStorage.loadCompletedAchievements();
       setCompletedTasks(savedTasks);
       setCompletedCollectorItems(savedCollectorItems);
+      setCompletedHideoutItems(savedHideoutItems);
       setCompletedAchievements(savedAchievements);
       // Notify components like NotesWidget to update their per-profile state
       window.dispatchEvent(new Event('taskTracker:profileChanged'));
@@ -353,9 +358,11 @@ function App() {
         await taskStorage.init();
         const savedTasks = await taskStorage.loadCompletedTasks();
         const savedCollectorItems = await taskStorage.loadCompletedCollectorItems();
+        const savedHideoutItems = await taskStorage.loadCompletedHideoutItems();
         const savedAchievements = await taskStorage.loadCompletedAchievements();
         setCompletedTasks(savedTasks);
         setCompletedCollectorItems(savedCollectorItems);
+        setCompletedHideoutItems(savedHideoutItems);
         setCompletedAchievements(savedAchievements);
 
         // Load cached API data instantly if present
@@ -536,14 +543,39 @@ function App() {
     [completedCollectorItems]
   );
 
+  const handleToggleHideoutItem = useCallback(
+    async (itemKey: string) => {
+      console.log('[Hideout] Toggling item key:', itemKey);
+      const next = new Set(completedHideoutItems);
+      if (next.has(itemKey)) {
+        next.delete(itemKey);
+        console.log('[Hideout] Removed from set');
+      } else {
+        next.add(itemKey);
+        console.log('[Hideout] Added to set');
+      }
+      console.log('[Hideout] Current set size:', next.size);
+      setCompletedHideoutItems(next);
+      try {
+        await taskStorage.saveCompletedHideoutItems(next);
+        console.log('[Hideout] Saved to storage');
+      } catch (err) {
+        console.error("Save hideout items error", err);
+      }
+    },
+    [completedHideoutItems]
+  );
+
   const handleResetProgress = useCallback(async () => {
     setCompletedTasks(new Set());
     setCompletedCollectorItems(new Set());
+    setCompletedHideoutItems(new Set());
     setCompletedAchievements(new Set());
     try {
       console.debug("[Prestige] Reset:start");
       await taskStorage.saveCompletedTasks(new Set());
       await taskStorage.saveCompletedCollectorItems(new Set());
+      await taskStorage.saveCompletedHideoutItems(new Set());
       await taskStorage.saveCompletedAchievements(new Set());
       // Reset prestige by saving empty entries per prestige id, mirroring other save-based resets
       for (const cfg of PRESTIGE_CONFIGS) {
@@ -683,6 +715,9 @@ function App() {
                     <h1 className="text-xl font-semibold truncate md:peer-data-[state=collapsed]:hidden">
                       {isMobile ? "EFT Tracker" : "Escape from Tarkov Task Tracker"}
                     </h1>
+                    <span className="inline-flex text-[10px] px-2 py-0.5 rounded-full bg-orange-600/10 text-orange-600 border border-orange-600/20 font-semibold">
+                      BETA
+                    </span>
                     <span className="hidden md:inline-flex md:peer-data-[state=collapsed]:hidden text-[10px] px-2 py-0.5 rounded-full bg-emerald-600/10 text-emerald-600 border border-emerald-600/20">
                       Live API
                     </span>
@@ -823,6 +858,8 @@ function App() {
                     collectorItems={collectorItems}
                     completedCollectorItems={completedCollectorItems}
                     onToggleCollectorItem={handleToggleCollectorItem}
+                    completedHideoutItems={completedHideoutItems}
+                    onToggleHideoutItem={handleToggleHideoutItem}
                     groupBy={collectorGroupBy}
                     hideoutStations={hideoutStations}
                   />

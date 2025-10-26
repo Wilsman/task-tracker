@@ -128,6 +128,21 @@ export function AppSidebar({
             <Database className="h-4 w-4" />
             <span className="text-sm font-medium group-data-[collapsible=icon]:hidden">EFT Tracker</span>
           </div>
+          {/* Beta notice */}
+          <div className="group-data-[collapsible=icon]:hidden p-2 rounded-md bg-orange-600/10 border border-orange-600/20">
+            <div className="font-semibold text-orange-600 mb-1 text-xs">⚠️ BETA</div>
+            <div className="text-[10px] leading-relaxed text-muted-foreground">
+              Report bugs on{' '}
+              <a
+                href="https://discord.gg/X6v7RVQAC8"
+                target="_blank"
+                rel="noreferrer"
+                className="underline hover:text-foreground font-medium"
+              >
+                Discord
+              </a>
+            </div>
+          </div>
           {/* Profile selector */}
           <div className="group-data-[collapsible=icon]:hidden">
             <label className="block text-[11px] text-muted-foreground mb-1">Character</label>
@@ -446,9 +461,8 @@ export function AppSidebar({
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <div className="px-2 py-2 text-[14px] text-center text-muted-foreground group-data-[collapsible=icon]:hidden">
-          Data from
-          {' '}
+        <div className="px-2 py-2 text-[11px] text-center text-muted-foreground group-data-[collapsible=icon]:hidden">
+          Data from{' '}
           <a
             href="https://tarkov.dev"
             target="_blank"

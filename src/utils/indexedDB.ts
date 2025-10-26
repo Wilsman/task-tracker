@@ -1,9 +1,10 @@
 const DB_BASE_NAME = 'TarkovQuests';
-const DB_VERSION = 4;
+const DB_VERSION = 5;
 const TASKS_STORE = 'completedTasks';
 const COLLECTOR_STORE = 'completedCollectorItems';
 const PRESTIGE_STORE = 'prestigeProgress';
 const ACHIEVEMENTS_STORE = 'completedAchievements';
+const HIDEOUT_ITEMS_STORE = 'completedHideoutItems';
 
 export class TaskStorage {
   private db: IDBDatabase | null = null;
@@ -46,6 +47,9 @@ export class TaskStorage {
         }
         if (!db.objectStoreNames.contains(ACHIEVEMENTS_STORE)) {
           db.createObjectStore(ACHIEVEMENTS_STORE, { keyPath: 'id' });
+        }
+        if (!db.objectStoreNames.contains(HIDEOUT_ITEMS_STORE)) {
+          db.createObjectStore(HIDEOUT_ITEMS_STORE, { keyPath: 'id' });
         }
       };
     });
@@ -164,6 +168,33 @@ export class TaskStorage {
         const set = new Set<string>();
         req.result.forEach((item: { id: string }) => set.add(item.id));
         resolve(set);
+      };
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async saveCompletedHideoutItems(completedItems: Set<string>): Promise<void> {
+    if (!this.db) await this.init();
+    const tx = this.db!.transaction([HIDEOUT_ITEMS_STORE], 'readwrite');
+    const store = tx.objectStore(HIDEOUT_ITEMS_STORE);
+    await store.clear();
+    for (const id of completedItems) {
+      await store.add({ id, completed: true });
+    }
+  }
+
+  async loadCompletedHideoutItems(): Promise<Set<string>> {
+    if (!this.db) await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction([HIDEOUT_ITEMS_STORE], 'readonly');
+      const store = tx.objectStore(HIDEOUT_ITEMS_STORE);
+      const req = store.getAll();
+      req.onsuccess = () => {
+        const completed = new Set<string>();
+        req.result.forEach((item: { id: string }) => {
+          completed.add(item.id);
+        });
+        resolve(completed);
       };
       req.onerror = () => reject(req.error);
     });

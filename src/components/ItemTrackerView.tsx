@@ -5,7 +5,7 @@ import { Checkbox } from './ui/checkbox';
 import { Progress } from './ui/progress';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { Button } from './ui/button';
-import { ChevronDown, ChevronUp, Minus, Plus } from 'lucide-react';
+import { ChevronDown, ChevronUp, Minus, Plus, CheckCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { HideoutStation } from '@/types';
 
@@ -19,6 +19,8 @@ interface CollectorViewProps {
   collectorItems: CollectorItem[];
   completedCollectorItems: Set<string>;
   onToggleCollectorItem: (itemName: string) => void;
+  completedHideoutItems: Set<string>;
+  onToggleHideoutItem: (itemKey: string) => void;
   groupBy: GroupBy;
   hideoutStations: HideoutStation[];
 }
@@ -29,6 +31,8 @@ export const CollectorView: React.FC<CollectorViewProps> = ({
   collectorItems,
   completedCollectorItems,
   onToggleCollectorItem,
+  completedHideoutItems,
+  onToggleHideoutItem,
   groupBy,
   hideoutStations,
 }) => {
@@ -91,6 +95,16 @@ export const CollectorView: React.FC<CollectorViewProps> = ({
     return /(Roubles|Euros|Dollars)$/i.test(itemName);
   };
 
+  // Mark all items in a level as complete
+  const handleMarkLevelComplete = (stationName: string, levelNum: number, level: { itemRequirements: { item: { name: string } }[] }) => {
+    level.itemRequirements.forEach(req => {
+      const itemKey = `${stationName}-${levelNum}-${req.item.name}`;
+      if (!completedHideoutItems.has(itemKey)) {
+        onToggleHideoutItem(itemKey);
+      }
+    });
+  };
+
 
   // Group items based on the current view mode
   const itemsByGroup = useMemo(() => {
@@ -112,14 +126,20 @@ export const CollectorView: React.FC<CollectorViewProps> = ({
     [itemsByGroup]
   );
 
-  const allGroupNames = useMemo(() => sortedGroups.map(([name]) => name), [sortedGroups]);
+  const allGroupNames = useMemo(() => {
+    if (groupBy === 'hideout-stations') {
+      return filteredHideoutStations.map(station => station.name);
+    }
+    return sortedGroups.map(([name]) => name);
+  }, [groupBy, filteredHideoutStations, sortedGroups]);
+  
   const areAllExpanded = expandedGroups.length === allGroupNames.length;
 
-  // Expand all groups on initial load and when switching grouping mode
+  // Start collapsed by default, track initialization
   const [initializedGroupBy, setInitializedGroupBy] = useState<GroupBy | null>(null);
   useEffect(() => {
     if (initializedGroupBy !== groupBy) {
-      setExpandedGroups(allGroupNames);
+      setExpandedGroups([]);
       setInitializedGroupBy(groupBy);
     }
   }, [groupBy, allGroupNames, initializedGroupBy]);
@@ -182,42 +202,63 @@ export const CollectorView: React.FC<CollectorViewProps> = ({
       {/* Loading and Error States */}
       {/* Hideout Stations View */}
       {groupBy === 'hideout-stations' && (
-        <div className="space-y-6">
+        <Accordion
+          type="multiple"
+          className="w-full space-y-2"
+          value={expandedGroups}
+          onValueChange={setExpandedGroups}
+        >
           {filteredHideoutStations.length === 0 && searchTerm.trim() && (
             <div className="text-center py-8 text-muted-foreground">
               No stations or items found matching "{searchTerm}"
             </div>
           )}
-          {filteredHideoutStations.map((station) => (
-            <div key={station.name} className="border rounded-lg overflow-hidden bg-card">
-              <div className="bg-muted/50 p-4 font-medium flex justify-between items-center border-b">
-                <div className="flex items-center gap-3">
-                  {station.imageLink && (
-                    <img
-                      src={station.imageLink}
-                      alt={station.name}
-                      className="h-10 w-10 object-contain"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                      }}
-                    />
-                  )}
-                  <h3 className="text-lg font-semibold">{station.name}</h3>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">
-                    {station.levels.length} Level{station.levels.length !== 1 ? 's' : ''}
-                  </span>
-                </div>
-              </div>
-              <div className="p-4 space-y-4">
+          {filteredHideoutStations.map((station) => {
+            // Calculate total completion for this station
+            const totalStationItems = station.levels.reduce((sum, level) => sum + level.itemRequirements.length, 0);
+            const completedStationItems = station.levels.reduce((sum, level) => {
+              return sum + level.itemRequirements.filter(req => {
+                const itemKey = `${station.name}-${level.level}-${req.item.name}`;
+                return completedHideoutItems.has(itemKey);
+              }).length;
+            }, 0);
+            const stationProgress = totalStationItems > 0 ? (completedStationItems / totalStationItems) * 100 : 0;
+
+            return (
+              <AccordionItem key={station.name} value={station.name} className="border rounded-lg bg-card">
+                <AccordionTrigger className="px-4 py-3 hover:no-underline">
+                  <div className="flex items-center justify-between w-full">
+                    <div className="flex items-center gap-4">
+                      {station.imageLink && (
+                        <img
+                          src={station.imageLink}
+                          alt={station.name}
+                          className="h-16 w-16 object-contain"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                          }}
+                        />
+                      )}
+                      <h3 className="text-lg font-semibold">{station.name}</h3>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <span className="text-sm text-muted-foreground">
+                        {completedStationItems} / {totalStationItems}
+                      </span>
+                      <Progress value={stationProgress} className="w-24 h-2" />
+                    </div>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="p-4 border-t">
+                  <div className="space-y-4">
                 {station.levels.map((level) => {
                   // Calculate completion for this level
                   const totalItems = level.itemRequirements.length;
-                  const completedItems = level.itemRequirements.filter(req => 
-                    completedCollectorItems.has(req.item.name)
-                  ).length;
+                  const completedItems = level.itemRequirements.filter(req => {
+                    const itemKey = `${station.name}-${level.level}-${req.item.name}`;
+                    return completedHideoutItems.has(itemKey);
+                  }).length;
                   const progress = totalItems > 0 ? (completedItems / totalItems) * 100 : 0;
 
                   return (
@@ -226,6 +267,17 @@ export const CollectorView: React.FC<CollectorViewProps> = ({
                       <div className="flex items-center justify-between">
                         <h4 className="font-medium text-base">Level {level.level}</h4>
                         <div className="flex items-center gap-2">
+                          {totalItems > 0 && completedItems < totalItems && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleMarkLevelComplete(station.name, level.level, level)}
+                              className="h-7 gap-1.5 text-xs"
+                            >
+                              <CheckCheck className="h-3.5 w-3.5" />
+                              <span className="hidden sm:inline">Mark All</span>
+                            </Button>
+                          )}
                           <span className="text-sm text-muted-foreground">
                             {completedItems} / {totalItems}
                           </span>
@@ -262,94 +314,107 @@ export const CollectorView: React.FC<CollectorViewProps> = ({
                       )}
 
                       {/* Item Requirements */}
-                        <div className="space-y-2">
+                        <div className="space-y-3">
                           <h5 className="text-sm font-medium text-muted-foreground">Required Items</h5>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                           {level.itemRequirements.map((req, idx) => {
+                            const itemKey = `${station.name}-${level.level}-${req.item.name}`;
                             const isCurrency = isCurrencyItem(req.item.name);
                             const currentQty = itemQuantities[req.item.name] || 0;
-                            const isCompleted = completedCollectorItems.has(req.item.name) || (!isCurrency && currentQty >= req.count);
+                            const isCompleted = completedHideoutItems.has(itemKey) || (!isCurrency && currentQty >= req.count);
                             const progressText = isCurrency ? '' : `${currentQty}/${req.count}`;
                             
                             return (
                               <div 
                                 key={`${station.name}-${level.level}-${idx}`} 
                                 className={cn(
-                                  'flex items-center gap-3 p-2 rounded-md hover:bg-muted/30 transition-colors',
-                                  isCompleted && 'opacity-75'
+                                  'flex flex-col gap-2 p-3 rounded-lg border hover:bg-muted/50 transition-colors',
+                                  isCompleted && 'opacity-60'
                                 )}
                               >
-                                <Checkbox
-                                  id={`${station.name}-${level.level}-${req.item.name}`}
-                                  checked={isCompleted}
-                                  onCheckedChange={() => onToggleCollectorItem(req.item.name)}
-                                  className="h-4 w-4 flex-shrink-0"
-                                />
-                                <label
-                                  htmlFor={`${station.name}-${level.level}-${req.item.name}`}
-                                  className={cn(
-                                    'flex-1 flex items-center gap-2 cursor-pointer text-sm',
-                                    isCompleted && 'line-through text-muted-foreground'
-                                  )}
-                                >
-                                  {isCurrency ? (
-                                    <span className="font-medium text-foreground/90">{req.count}x</span>
-                                  ) : (
-                                    <div className="flex items-center gap-1 bg-muted/30 rounded-md px-1 py-0.5">
-                                      <button
-                                        type="button"
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleQuantityChange(req.item.name, -1, req.count);
-                                        }}
-                                        className={cn(
-                                          "w-6 h-6 flex items-center justify-center rounded hover:bg-background/80 transition-colors",
-                                          currentQty <= 0 && "opacity-50 cursor-not-allowed"
-                                        )}
-                                        disabled={currentQty <= 0}
-                                      >
-                                        <Minus className="h-3 w-3" />
-                                      </button>
-                                      <span className="w-12 text-center text-sm font-medium">{progressText}</span>
-                                      <button
-                                        type="button"
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleQuantityChange(req.item.name, 1, req.count);
-                                        }}
-                                        className={cn(
-                                          "w-6 h-6 flex items-center justify-center rounded hover:bg-background/80 transition-colors",
-                                          currentQty >= req.count && "opacity-50 cursor-not-allowed"
-                                        )}
-                                        disabled={currentQty >= req.count}
-                                      >
-                                        <Plus className="h-3 w-3" />
-                                      </button>
+                                <div className="flex items-start gap-2">
+                                  <Checkbox
+                                    id={`${station.name}-${level.level}-${req.item.name}`}
+                                    checked={isCompleted}
+                                    onCheckedChange={() => onToggleHideoutItem(itemKey)}
+                                    className="h-5 w-5 flex-shrink-0 mt-1"
+                                  />
+                                  <label
+                                    htmlFor={`${station.name}-${level.level}-${req.item.name}`}
+                                    className="flex-1 cursor-pointer"
+                                  >
+                                    <div className="flex items-center justify-center mb-2">
+                                      {req.item.iconLink && (
+                                        <img
+                                          src={req.item.iconLink}
+                                          alt={req.item.name}
+                                          className="h-16 w-16 object-contain"
+                                          onError={(e) => {
+                                            const target = e.target as HTMLImageElement;
+                                            target.style.display = 'none';
+                                          }}
+                                        />
+                                      )}
                                     </div>
-                                  )}
-                                  <span className="flex-1">{req.item.name}</span>
-                                  {req.item.iconLink && (
-                                    <img
-                                      src={req.item.iconLink}
-                                      alt={req.item.name}
-                                      className="h-5 w-5 object-contain flex-shrink-0"
-                                      onError={(e) => {
-                                        const target = e.target as HTMLImageElement;
-                                        target.style.display = 'none';
-                                      }}
-                                    />
-                                  )}
-                                </label>
+                                    <div className={cn(
+                                      'text-sm font-medium text-center mb-2',
+                                      isCompleted && 'line-through text-muted-foreground'
+                                    )}>
+                                      {req.item.name}
+                                    </div>
+                                    {isCurrency ? (
+                                      <div className="text-center text-sm font-semibold text-foreground/90">
+                                        {req.count.toLocaleString()}x
+                                      </div>
+                                    ) : (
+                                      <div className="flex items-center justify-center gap-1 bg-muted/30 rounded-md px-2 py-1">
+                                        <button
+                                          type="button"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleQuantityChange(req.item.name, -1, req.count);
+                                          }}
+                                          className={cn(
+                                            "w-6 h-6 flex items-center justify-center rounded hover:bg-background/80 transition-colors",
+                                            currentQty <= 0 && "opacity-50 cursor-not-allowed"
+                                          )}
+                                          disabled={currentQty <= 0}
+                                        >
+                                          <Minus className="h-3 w-3" />
+                                        </button>
+                                        <span className="w-16 text-center text-sm font-medium">{progressText}</span>
+                                        <button
+                                          type="button"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleQuantityChange(req.item.name, 1, req.count);
+                                          }}
+                                          className={cn(
+                                            "w-6 h-6 flex items-center justify-center rounded hover:bg-background/80 transition-colors",
+                                            currentQty >= req.count && "opacity-50 cursor-not-allowed"
+                                          )}
+                                          disabled={currentQty >= req.count}
+                                        >
+                                          <Plus className="h-3 w-3" />
+                                        </button>
+                                      </div>
+                                    )}
+                                  </label>
+                                </div>
                               </div>
                             );
                           })}
+                          </div>
                       </div>
                     </div>
                   );
                 })}
               </div>
-            </div>
-          ))}
-        </div>
+                </AccordionContent>
+              </AccordionItem>
+            );
+          })}
+        </Accordion>
       )}
 
       {/* Regular Items View */}
