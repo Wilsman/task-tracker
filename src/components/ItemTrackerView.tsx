@@ -83,10 +83,10 @@ export const CollectorView: React.FC<CollectorViewProps> = ({
   const [itemQuantities, setItemQuantities] = useState<Record<string, number>>({});
 
   // Handle quantity changes for items
-  const handleQuantityChange = (itemName: string, delta: number, maxQuantity: number) => {
+  const handleQuantityChange = (itemKey: string, delta: number, maxQuantity: number) => {
     setItemQuantities(prev => ({
       ...prev,
-      [itemName]: Math.max(0, Math.min(maxQuantity, (prev[itemName] || 0) + delta))
+      [itemKey]: Math.max(0, Math.min(maxQuantity, (prev[itemKey] || 0) + delta))
     }));
   };
 
@@ -320,7 +320,7 @@ export const CollectorView: React.FC<CollectorViewProps> = ({
                           {level.itemRequirements.map((req, idx) => {
                             const itemKey = `${station.name}-${level.level}-${req.item.name}`;
                             const isCurrency = isCurrencyItem(req.item.name);
-                            const currentQty = itemQuantities[req.item.name] || 0;
+                            const currentQty = itemQuantities[itemKey] || 0;
                             const isCompleted = completedHideoutItems.has(itemKey) || (!isCurrency && currentQty >= req.count);
                             const progressText = isCurrency ? '' : `${currentQty}/${req.count}`;
                             
@@ -372,7 +372,7 @@ export const CollectorView: React.FC<CollectorViewProps> = ({
                                           type="button"
                                           onClick={(e) => {
                                             e.stopPropagation();
-                                            handleQuantityChange(req.item.name, -1, req.count);
+                                            handleQuantityChange(itemKey, -1, req.count);
                                           }}
                                           className={cn(
                                             "w-6 h-6 flex items-center justify-center rounded hover:bg-background/80 transition-colors",
@@ -387,7 +387,7 @@ export const CollectorView: React.FC<CollectorViewProps> = ({
                                           type="button"
                                           onClick={(e) => {
                                             e.stopPropagation();
-                                            handleQuantityChange(req.item.name, 1, req.count);
+                                            handleQuantityChange(itemKey, 1, req.count);
                                           }}
                                           className={cn(
                                             "w-6 h-6 flex items-center justify-center rounded hover:bg-background/80 transition-colors",
