@@ -137,6 +137,7 @@ const COMBINED_QUERY = `
     startRewards { items { item { name iconLink } count } }
     finishRewards { items { item { name iconLink } count } }
     objectives {
+      maps { name }
       description
       ... on TaskObjectiveItem { items { id name iconLink } count }
       ... on TaskObjectivePlayerLevel { playerLevel }
@@ -196,9 +197,29 @@ export async function fetchCombinedData(): Promise<{
   }
 
   // Transform the combined result into separate TaskData and CollectorItemsData
+  // Aggregate maps from objectives into task.maps array
+  const tasksWithMaps = result.data.tasks.map(task => {
+    const mapsSet = new Set<string>();
+    
+    // Collect unique map names from all objectives
+    task.objectives?.forEach(objective => {
+      objective.maps?.forEach(map => {
+        if (map.name) mapsSet.add(map.name);
+      });
+    });
+    
+    // Convert Set to array of map objects
+    const maps = Array.from(mapsSet).map(name => ({ name }));
+    
+    return {
+      ...task,
+      maps
+    };
+  });
+  
   const tasks: TaskData = {
     data: {
-      tasks: result.data.tasks
+      tasks: tasksWithMaps
     }
   };
 

@@ -79,15 +79,21 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
     try {
       const storedLvl = localStorage.getItem(`taskTracker_playerLevel::${activeProfileId}`);
       setPlayerLevel(Math.max(1, Number(storedLvl) || 1));
-    } catch {}
+    } catch {
+      // Ignore localStorage errors
+    }
     try {
       const storedEnable = localStorage.getItem(`taskTracker_enableLevelFilter::${activeProfileId}`);
       setEnableLevelFilter(storedEnable != null ? storedEnable === '1' : false);
-    } catch {}
+    } catch {
+      // Ignore localStorage errors
+    }
     try {
       const storedShow = localStorage.getItem(`taskTracker_showCompleted::${activeProfileId}`);
       setShowCompleted(storedShow != null ? storedShow === '1' : true);
-    } catch {}
+    } catch {
+      // Ignore localStorage errors
+    }
   }, [activeProfileId]);
 
   // (dependency map removed; checklist is always interactive)
@@ -144,8 +150,27 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
   const handleBreadcrumbClick = useCallback((taskId: string) => {
     const task = tasks.find(t => t.id === taskId);
     if (!task) return;
-    const groupName = groupBy === 'trader' ? task.trader.name : (task.map?.name || 'Anywhere');
-    setExpandedGroups(prev => (prev.includes(groupName) ? prev : [...prev, groupName]));
+    
+    if (groupBy === 'trader') {
+      const groupName = task.trader.name;
+      setExpandedGroups(prev => (prev.includes(groupName) ? prev : [...prev, groupName]));
+    } else {
+      // For map grouping, expand all maps the task belongs to
+      if (task.maps && task.maps.length > 0) {
+        const mapNames = task.maps.map(m => m.name);
+        setExpandedGroups(prev => {
+          const newGroups = [...prev];
+          mapNames.forEach(name => {
+            if (!newGroups.includes(name)) newGroups.push(name);
+          });
+          return newGroups;
+        });
+      } else {
+        const groupName = task.map?.name || 'Anywhere';
+        setExpandedGroups(prev => (prev.includes(groupName) ? prev : [...prev, groupName]));
+      }
+    }
+    
     setSelectedTaskId(taskId);
     // Also reflect the clicked task in the search bar to filter the view
     setSearchTerm(task.name);
@@ -165,7 +190,14 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
         return false;
       }
       // Map filter (from sidebar)
-      if (mapFilter && task.map?.name !== mapFilter) return false;
+      if (mapFilter) {
+        // Check if task has multiple maps
+        if (task.maps && task.maps.length > 0) {
+          if (!task.maps.some(m => m.name === mapFilter)) return false;
+        } else if (task.map?.name !== mapFilter) {
+          return false;
+        }
+      }
       // Trader filter
       if (hiddenTraders.has(task.trader.name)) return false;
       // Player level filter
@@ -178,8 +210,13 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
       // Search filter
       if (searchTerm.trim()) {
         const term = searchTerm.toLowerCase();
-        if (!task.name.toLowerCase().includes(term) && !task.trader.name.toLowerCase().includes(term)) {
-          if (!task.map?.name.toLowerCase().includes(term)) return false;
+        const nameMatch = task.name.toLowerCase().includes(term);
+        const traderMatch = task.trader.name.toLowerCase().includes(term);
+        const singleMapMatch = task.map?.name.toLowerCase().includes(term);
+        const multiMapMatch = task.maps?.some(m => m.name.toLowerCase().includes(term));
+        
+        if (!nameMatch && !traderMatch && !singleMapMatch && !multiMapMatch) {
+          return false;
         }
       }
       return true;
@@ -192,10 +229,19 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
     if (groupBy === 'trader') {
       return groupTasksByTrader(filteredTasks);
     }
-    // groupBy map
+    // groupBy map - tasks with multiple maps appear under each map
     return filteredTasks.reduce<Record<string, Task[]>>((acc, task) => {
-      const mapName = task.map?.name || 'Anywhere';
-      (acc[mapName] ||= []).push(task);
+      // Check if task has multiple maps
+      if (task.maps && task.maps.length > 0) {
+        // Add task to each map it belongs to
+        task.maps.forEach(map => {
+          (acc[map.name] ||= []).push(task);
+        });
+      } else {
+        // Fallback to single map or 'Anywhere'
+        const mapName = task.map?.name || 'Anywhere';
+        (acc[mapName] ||= []).push(task);
+      }
       return acc;
     }, {});
   }, [filteredTasks, groupBy]);
@@ -223,8 +269,25 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
       if (detail.taskId) {
         const t = tasks.find(x => x.id === detail.taskId);
         if (t) {
-          const groupName = groupBy === 'trader' ? t.trader.name : (t.map?.name || 'Anywhere');
-          setExpandedGroups(prev => (prev.includes(groupName) ? prev : [...prev, groupName]));
+          if (groupBy === 'trader') {
+            const groupName = t.trader.name;
+            setExpandedGroups(prev => (prev.includes(groupName) ? prev : [...prev, groupName]));
+          } else {
+            // For map grouping, expand all maps the task belongs to
+            if (t.maps && t.maps.length > 0) {
+              const mapNames = t.maps.map(m => m.name);
+              setExpandedGroups(prev => {
+                const newGroups = [...prev];
+                mapNames.forEach(name => {
+                  if (!newGroups.includes(name)) newGroups.push(name);
+                });
+                return newGroups;
+              });
+            } else {
+              const groupName = t.map?.name || 'Anywhere';
+              setExpandedGroups(prev => (prev.includes(groupName) ? prev : [...prev, groupName]));
+            }
+          }
           setSelectedTaskId(detail.taskId);
         }
       }

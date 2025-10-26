@@ -9,6 +9,9 @@ export interface Task {
   map: {
     name: string;
   } | null;
+  maps: {
+    name: string;
+  }[];
   trader: {
     name: TraderName;
     imageLink?: string;
@@ -27,6 +30,9 @@ export interface Task {
 export interface TaskObjective {
   description: string;
   playerLevel?: number;
+  maps?: {
+    name: string;
+  }[];
   items?: {
     id: string;
     name: string;

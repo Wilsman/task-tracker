@@ -15,6 +15,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Ground Zero",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -30,6 +31,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Ground Zero",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -45,6 +47,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Ground Zero",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -60,6 +63,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Ground Zero",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -70,6 +74,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Debut",
         name: "Debut",
         trader: {
@@ -90,6 +95,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Shortage",
         name: "Shortage",
         trader: {
@@ -114,6 +120,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Ground Zero",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -136,6 +143,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -154,6 +162,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Gunsmith_-_Part_1",
         name: "Gunsmith - Part 1",
         trader: {
@@ -174,6 +183,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/The_Tarkov_Shooter_-_Part_1",
         name: "The Tarkov Shooter - Part 1",
@@ -195,6 +205,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/The_Tarkov_Shooter_-_Part_2",
         name: "The Tarkov Shooter - Part 2",
@@ -216,6 +227,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/The_Tarkov_Shooter_-_Part_3",
         name: "The Tarkov Shooter - Part 3",
@@ -237,6 +249,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/The_Tarkov_Shooter_-_Part_4",
         name: "The Tarkov Shooter - Part 4",
@@ -263,6 +276,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -281,6 +295,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/The_Tarkov_Shooter_-_Part_6",
         name: "The Tarkov Shooter - Part 6",
@@ -302,6 +317,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/The_Tarkov_Shooter_-_Part_7",
         name: "The Tarkov Shooter - Part 7",
@@ -323,6 +339,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/The_Tarkov_Shooter_-_Part_8",
         name: "The Tarkov Shooter - Part 8",
@@ -348,6 +365,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Woods",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -366,6 +384,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Acquaintance",
         name: "Acquaintance",
         trader: {
@@ -391,6 +410,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Woods",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -414,6 +434,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Woods",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -432,6 +453,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/The_Survivalist_Path_-_Zhivchik",
         name: "The Survivalist Path - Zhivchik",
@@ -453,6 +475,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/The_Survivalist_Path_-_Wounded_Beast",
         name: "The Survivalist Path - Wounded Beast",
@@ -479,6 +502,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Woods",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -497,6 +521,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/The_Survivalist_Path_-_Cold_Blooded",
         name: "The Survivalist Path - Cold Blooded",
@@ -518,6 +543,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/The_Survivalist_Path_-_Eagle-Owl",
         name: "The Survivalist Path - Eagle-Owl",
@@ -539,6 +565,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/The_Survivalist_Path_-_Combat_Medic",
         name: "The Survivalist Path - Combat Medic",
@@ -565,6 +592,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -583,6 +611,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/The_Huntsman_Path_-_Forest_Cleaning",
         name: "The Huntsman Path - Forest Cleaning",
@@ -604,6 +633,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/The_Huntsman_Path_-_Controller",
         name: "The Huntsman Path - Controller",
@@ -625,6 +655,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/The_Huntsman_Path_-_Justice",
         name: "The Huntsman Path - Justice",
@@ -651,6 +682,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -674,6 +706,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Woods",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -696,6 +729,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Factory",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -714,6 +748,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Rough_Tarkov",
         name: "Rough Tarkov",
         trader: {
@@ -734,6 +769,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Every_Hunter_Knows_This",
         name: "Every Hunter Knows This",
@@ -759,6 +795,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -781,6 +818,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -804,6 +842,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Factory",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -833,6 +872,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -855,6 +895,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Woods",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -873,6 +914,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Easy_Money_-_Part_2",
         name: "Easy Money - Part 2",
@@ -894,6 +936,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Balancing_-_Part_1",
         name: "Balancing - Part 1",
         trader: {
@@ -914,6 +957,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Balancing_-_Part_2",
         name: "Balancing - Part 2",
         trader: {
@@ -934,6 +978,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Surprise",
         name: "Surprise",
         trader: {
@@ -959,6 +1004,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Ground Zero 21+",
         },
+        maps: [],
         trader: {
           name: "Ref",
         },
@@ -982,6 +1028,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Ref",
         },
@@ -1000,6 +1047,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/To_Great_Heights!_-_Part_1",
         name: "To Great Heights! - Part 1",
@@ -1021,6 +1069,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/To_Great_Heights!_-_Part_2",
         name: "To Great Heights! - Part 2",
@@ -1042,6 +1091,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/To_Great_Heights!_-_Part_3",
         name: "To Great Heights! - Part 3",
@@ -1063,6 +1113,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/To_Great_Heights!_-_Part_4",
         name: "To Great Heights! - Part 4",
@@ -1084,6 +1135,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/To_Great_Heights!_-_Part_5",
         name: "To Great Heights! - Part 5",
@@ -1105,6 +1157,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Against_the_Conscience_-_Part_2",
         name: "Against the Conscience - Part 2",
@@ -1130,6 +1183,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Fence",
         },
@@ -1148,6 +1202,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Decisions%2C_Decisions",
         name: "Decisions, Decisions",
@@ -1173,6 +1228,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Ref",
         },
@@ -1196,6 +1252,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Ref",
         },
@@ -1225,6 +1282,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Factory",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -1243,6 +1301,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Supplier",
         name: "Supplier",
         trader: {
@@ -1267,6 +1326,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Woods",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -1285,6 +1345,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Delivery_From_the_Past",
         name: "Delivery From the Past",
@@ -1306,6 +1367,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Gunsmith_-_Part_2",
         name: "Gunsmith - Part 2",
         trader: {
@@ -1331,6 +1393,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -1353,6 +1416,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -1375,6 +1439,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -1398,6 +1463,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -1416,6 +1482,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Bad_Rep_Evidence",
         name: "Bad Rep Evidence",
         trader: {
@@ -1441,6 +1508,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -1459,6 +1527,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Gunsmith_-_Part_3",
         name: "Gunsmith - Part 3",
         trader: {
@@ -1483,6 +1552,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -1501,6 +1571,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Sanitary_Standards_-_Part_2",
         name: "Sanitary Standards - Part 2",
@@ -1522,6 +1593,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Stirrup",
         name: "Stirrup",
         trader: {
@@ -1542,6 +1614,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/What%E2%80%99s_on_the_Flash_Drive%3F",
         name: "What’s on the Flash Drive?",
@@ -1563,6 +1636,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Painkiller",
         name: "Painkiller",
         trader: {
@@ -1587,6 +1661,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -1605,6 +1680,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Friend_From_the_West_-_Part_1",
         name: "Friend From the West - Part 1",
@@ -1630,6 +1706,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Woods",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -1648,6 +1725,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Friend_From_the_West_-_Part_2",
         name: "Friend From the West - Part 2",
@@ -1669,6 +1747,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Gunsmith_-_Part_4",
         name: "Gunsmith - Part 4",
         trader: {
@@ -1700,6 +1779,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Reserve",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -1722,6 +1802,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -1744,6 +1825,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -1766,6 +1848,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -1789,6 +1872,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Factory",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -1811,6 +1895,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Peacekeeper",
         },
@@ -1829,6 +1914,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Gunsmith_-_Part_5",
         name: "Gunsmith - Part 5",
         trader: {
@@ -1849,6 +1935,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Postman_Pat_-_Part_2",
         name: "Postman Pat - Part 2",
@@ -1870,6 +1957,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/General_Wares",
         name: "General Wares",
         trader: {
@@ -1890,6 +1978,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Car_Repair",
         name: "Car Repair",
         trader: {
@@ -1914,6 +2003,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -1936,6 +2026,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -1958,6 +2049,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Peacekeeper",
         },
@@ -1980,6 +2072,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Peacekeeper",
         },
@@ -2002,6 +2095,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Factory",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -2024,6 +2118,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Factory",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -2046,6 +2141,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Peacekeeper",
         },
@@ -2068,6 +2164,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -2090,6 +2187,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -2112,6 +2210,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -2130,6 +2229,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Trust_Regain",
         name: "Trust Regain",
         trader: {
@@ -2150,6 +2250,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Loyalty_Buyout",
         name: "Loyalty Buyout",
         trader: {
@@ -2170,6 +2271,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/No_Offence",
         name: "No Offence",
         trader: {
@@ -2195,6 +2297,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Peacekeeper",
         },
@@ -2213,6 +2316,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Seizing_the_Initiative",
         name: "Seizing the Initiative",
@@ -2238,6 +2342,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Factory",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -2260,6 +2365,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -2282,6 +2388,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -2304,6 +2411,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Peacekeeper",
         },
@@ -2326,6 +2434,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Peacekeeper",
         },
@@ -2348,6 +2457,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Peacekeeper",
         },
@@ -2366,6 +2476,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Spa_Tour_-_Part_3",
         name: "Spa Tour - Part 3",
         trader: {
@@ -2390,6 +2501,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Peacekeeper",
         },
@@ -2412,6 +2524,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Peacekeeper",
         },
@@ -2430,6 +2543,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Spa_Tour_-_Part_6",
         name: "Spa Tour - Part 6",
         trader: {
@@ -2450,6 +2564,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Spa_Tour_-_Part_7",
         name: "Spa Tour - Part 7",
         trader: {
@@ -2474,6 +2589,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Peacekeeper",
         },
@@ -2496,6 +2612,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Peacekeeper",
         },
@@ -2518,6 +2635,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Peacekeeper",
         },
@@ -2536,6 +2654,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Farming_-_Part_2",
         name: "Farming - Part 2",
         trader: {
@@ -2556,6 +2675,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Signal_-_Part_2",
         name: "Signal - Part 2",
         trader: {
@@ -2576,6 +2696,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Bad_Habit",
         name: "Bad Habit",
         trader: {
@@ -2600,6 +2721,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Factory",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -2622,6 +2744,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Lighthouse",
         },
+        maps: [],
         trader: {
           name: "Peacekeeper",
         },
@@ -2644,6 +2767,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Lighthouse",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -2667,6 +2791,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -2690,6 +2815,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -2712,6 +2838,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Factory",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -2734,6 +2861,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Factory",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -2756,6 +2884,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Factory",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -2779,6 +2908,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Factory",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -2801,6 +2931,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Factory",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -2819,6 +2950,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Secrets_of_Polikhim",
         name: "Secrets of Polikhim",
@@ -2840,6 +2972,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Beneath_The_Streets",
         name: "Beneath The Streets",
@@ -2866,6 +2999,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -2889,6 +3023,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Factory",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -2913,6 +3048,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Insider",
         name: "Insider",
         trader: {
@@ -2943,6 +3079,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Factory",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -2971,6 +3108,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Woods",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -2989,6 +3127,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Kind_of_Sabotage",
         name: "Kind of Sabotage",
         trader: {
@@ -3014,6 +3153,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Woods",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -3038,6 +3178,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Gunsmith_-_Part_6",
         name: "Gunsmith - Part 6",
         trader: {
@@ -3062,6 +3203,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Reserve",
         },
+        maps: [],
         trader: {
           name: "Peacekeeper",
         },
@@ -3084,6 +3226,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Peacekeeper",
         },
@@ -3106,6 +3249,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -3128,6 +3272,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Reserve",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -3150,6 +3295,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Peacekeeper",
         },
@@ -3172,6 +3318,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Peacekeeper",
         },
@@ -3194,6 +3341,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Peacekeeper",
         },
@@ -3216,6 +3364,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Peacekeeper",
         },
@@ -3234,6 +3383,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Wet_Job_-_Part_6",
         name: "Wet Job - Part 6",
         trader: {
@@ -3254,6 +3404,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Farming_-_Part_4",
         name: "Farming - Part 4",
         trader: {
@@ -3274,6 +3425,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/A_Shooter_Born_in_Heaven",
         name: "A Shooter Born in Heaven",
@@ -3295,6 +3447,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Mentor",
         name: "Mentor",
         trader: {
@@ -3320,6 +3473,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Reserve",
         },
+        maps: [],
         trader: {
           name: "Peacekeeper",
         },
@@ -3342,6 +3496,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Reserve",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -3365,6 +3520,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Lighthouse",
         },
+        maps: [],
         trader: {
           name: "Peacekeeper",
         },
@@ -3383,6 +3539,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         taskRequirements: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Only_Business",
         name: "Only Business",
@@ -3400,6 +3557,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Ground Zero",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -3422,6 +3580,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -3445,6 +3604,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -3468,6 +3628,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Reserve",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -3490,6 +3651,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Reserve",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -3512,6 +3674,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -3534,6 +3697,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Reserve",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -3556,6 +3720,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -3578,6 +3743,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Lighthouse",
         },
+        maps: [],
         trader: {
           name: "Peacekeeper",
         },
@@ -3600,6 +3766,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -3622,6 +3789,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -3640,6 +3808,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Gunsmith_-_Part_7",
         name: "Gunsmith - Part 7",
         trader: {
@@ -3660,6 +3829,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Signal_-_Part_4",
         name: "Signal - Part 4",
         trader: {
@@ -3684,6 +3854,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -3706,6 +3877,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Woods",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -3724,6 +3896,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Thirsty_-_Breadwinner",
         name: "Thirsty - Breadwinner",
@@ -3745,6 +3918,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Thirsty_-_Delivery",
         name: "Thirsty - Delivery",
         trader: {
@@ -3769,6 +3943,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -3787,6 +3962,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Thirsty_-_Secrets",
         name: "Thirsty - Secrets",
         trader: {
@@ -3807,6 +3983,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/One_Less_Loose_End",
         name: "One Less Loose End",
         trader: {
@@ -3827,6 +4004,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/A_Healthy_Alternative",
         name: "A Healthy Alternative",
@@ -3852,6 +4030,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Factory",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -3870,6 +4049,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Needle_in_a_Haystack",
         name: "Needle in a Haystack",
@@ -3891,6 +4071,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Hidden_Layer",
         name: "Hidden Layer",
         trader: {
@@ -3911,6 +4092,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Forced_Alliance",
         name: "Forced Alliance",
         trader: {
@@ -3931,6 +4113,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/The_Tarkov_Butcher",
         name: "The Tarkov Butcher",
         trader: {
@@ -3951,6 +4134,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Sensory_Analysis_-_Part_1",
         name: "Sensory Analysis - Part 1",
@@ -3972,6 +4156,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Sensory_Analysis_-_Part_2",
         name: "Sensory Analysis - Part 2",
@@ -3993,6 +4178,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Hot_Zone",
         name: "Hot Zone",
         trader: {
@@ -4013,6 +4199,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Offensive_Reconnaissance",
         name: "Offensive Reconnaissance",
@@ -4038,6 +4225,7 @@ export const sampleData: TaskData = {
         map: {
           name: "The Labyrinth",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -4060,6 +4248,7 @@ export const sampleData: TaskData = {
         map: {
           name: "The Labyrinth",
         },
+        maps: [],
         trader: {
           name: "Peacekeeper",
         },
@@ -4082,6 +4271,7 @@ export const sampleData: TaskData = {
         map: {
           name: "The Labyrinth",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -4105,6 +4295,7 @@ export const sampleData: TaskData = {
         map: {
           name: "The Labyrinth",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -4128,6 +4319,7 @@ export const sampleData: TaskData = {
         map: {
           name: "The Labyrinth",
         },
+        maps: [],
         trader: {
           name: "Ragman",
         },
@@ -4150,6 +4342,7 @@ export const sampleData: TaskData = {
         map: {
           name: "The Labyrinth",
         },
+        maps: [],
         trader: {
           name: "Lightkeeper",
         },
@@ -4214,6 +4407,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -4236,6 +4430,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Lighthouse",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -4259,6 +4454,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Peacekeeper",
         },
@@ -4282,6 +4478,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -4300,6 +4497,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Gunsmith_-_Part_8",
         name: "Gunsmith - Part 8",
         trader: {
@@ -4325,6 +4523,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Interchange",
         },
+        maps: [],
         trader: {
           name: "Ragman",
         },
@@ -4347,6 +4546,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Interchange",
         },
+        maps: [],
         trader: {
           name: "Ragman",
         },
@@ -4370,6 +4570,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Reserve",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -4392,6 +4593,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Lighthouse",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -4414,6 +4616,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Ragman",
         },
@@ -4437,6 +4640,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -4455,6 +4659,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Gunsmith_-_Old_Friend's_Request",
         name: "Gunsmith - Old Friend's Request",
@@ -4476,6 +4681,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Dressed_to_Kill",
         name: "Dressed to Kill",
         trader: {
@@ -4500,6 +4706,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Interchange",
         },
+        maps: [],
         trader: {
           name: "Ragman",
         },
@@ -4522,6 +4729,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Reserve",
         },
+        maps: [],
         trader: {
           name: "Ragman",
         },
@@ -4544,6 +4752,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Reserve",
         },
+        maps: [],
         trader: {
           name: "Ragman",
         },
@@ -4567,6 +4776,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Ragman",
         },
@@ -4585,6 +4795,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/New_Day%2C_New_Paths",
         name: "New Day, New Paths",
@@ -4610,6 +4821,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -4632,6 +4844,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -4655,6 +4868,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -4677,6 +4891,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Ragman",
         },
@@ -4700,6 +4915,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -4728,6 +4944,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -4757,6 +4974,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Interchange",
         },
+        maps: [],
         trader: {
           name: "Ragman",
         },
@@ -4785,6 +5003,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Interchange",
         },
+        maps: [],
         trader: {
           name: "Ragman",
         },
@@ -4813,6 +5032,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Woods",
         },
+        maps: [],
         trader: {
           name: "Ragman",
         },
@@ -4841,6 +5061,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -4859,6 +5080,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/The_Cult_-_Part_2",
         name: "The Cult - Part 2",
         trader: {
@@ -4884,6 +5106,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Reserve",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -4906,6 +5129,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Lighthouse",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -4928,6 +5152,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Lighthouse",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -4950,6 +5175,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Lighthouse",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -4972,6 +5198,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Reserve",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -4990,6 +5217,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Gunsmith_-_Part_9",
         name: "Gunsmith - Part 9",
         trader: {
@@ -5015,6 +5243,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -5033,6 +5262,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Special_Comms",
         name: "Special Comms",
         trader: {
@@ -5053,6 +5283,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         taskRequirements: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Grenadier",
         name: "Grenadier",
@@ -5070,6 +5301,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Woods",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -5092,6 +5324,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -5114,6 +5347,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Reserve",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -5136,6 +5370,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Lighthouse",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -5159,6 +5394,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -5177,6 +5413,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Shady_Business",
         name: "Shady Business",
         trader: {
@@ -5207,6 +5444,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -5229,6 +5467,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Peacekeeper",
         },
@@ -5251,6 +5490,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -5273,6 +5513,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -5295,6 +5536,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Ragman",
         },
@@ -5318,6 +5560,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Lighthouse",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -5336,6 +5579,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Gunsmith_-_Part_10",
         name: "Gunsmith - Part 10",
         trader: {
@@ -5356,6 +5600,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/The_Punisher_-_Part_5",
         name: "The Punisher - Part 5",
@@ -5382,6 +5627,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -5405,6 +5651,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Woods",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -5423,6 +5670,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Health_Care_Privacy_-_Part_4",
         name: "Health Care Privacy - Part 4",
@@ -5449,6 +5697,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Night Factory",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -5472,6 +5721,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Reserve",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -5490,6 +5740,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/An_Apple_a_Day_Keeps_the_Doctor_Away",
         name: "An Apple a Day Keeps the Doctor Away",
@@ -5515,6 +5766,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Reserve",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -5537,6 +5789,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Lighthouse",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -5560,6 +5813,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Factory",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -5583,6 +5837,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Woods",
         },
+        maps: [],
         trader: {
           name: "BTR Driver",
         },
@@ -5606,6 +5861,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Woods",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -5624,6 +5880,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Hot_Wheels",
         name: "Hot Wheels",
         trader: {
@@ -5649,6 +5906,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Reserve",
         },
+        maps: [],
         trader: {
           name: "BTR Driver",
         },
@@ -5667,6 +5925,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Inevitable_Response",
         name: "Inevitable Response",
@@ -5688,6 +5947,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Order_From_Outside",
         name: "Order From Outside",
         trader: {
@@ -5708,6 +5968,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Building_Foundations",
         name: "Building Foundations",
@@ -5733,6 +5994,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "BTR Driver",
         },
@@ -5751,6 +6013,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Half-Empty",
         name: "Half-Empty",
         trader: {
@@ -5771,6 +6034,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Stick_in_the_Wheel",
         name: "Stick in the Wheel",
         trader: {
@@ -5795,6 +6059,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Lighthouse",
         },
+        maps: [],
         trader: {
           name: "BTR Driver",
         },
@@ -5817,6 +6082,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Ground Zero",
         },
+        maps: [],
         trader: {
           name: "Ragman",
         },
@@ -5835,6 +6101,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Battery_Change",
         name: "Battery Change",
         trader: {
@@ -5855,6 +6122,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Battery_Change",
         name: "Battery Change",
         trader: {
@@ -5879,6 +6147,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Woods",
         },
+        maps: [],
         trader: {
           name: "BTR Driver",
         },
@@ -5901,6 +6170,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Woods",
         },
+        maps: [],
         trader: {
           name: "BTR Driver",
         },
@@ -5924,6 +6194,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Woods",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -5946,6 +6217,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Woods",
         },
+        maps: [],
         trader: {
           name: "BTR Driver",
         },
@@ -5964,6 +6236,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Simple_Side_Job",
         name: "Simple Side Job",
         trader: {
@@ -5988,6 +6261,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -6010,6 +6284,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Woods",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -6028,6 +6303,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Key_Partner",
         name: "Key Partner",
         trader: {
@@ -6052,6 +6328,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Woods",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -6074,6 +6351,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -6103,6 +6381,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Woods",
         },
+        maps: [],
         trader: {
           name: "Ragman",
         },
@@ -6127,6 +6406,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/The_Price_of_Independence",
         name: "The Price of Independence",
@@ -6154,6 +6434,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/The_Price_of_Independence",
         name: "The Price of Independence",
@@ -6181,6 +6462,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Choose_Your_Friends_Wisely",
         name: "Choose Your Friends Wisely",
@@ -6213,6 +6495,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -6235,6 +6518,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -6253,6 +6537,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/The_Punisher_-_Part_6",
         name: "The Punisher - Part 6",
@@ -6279,6 +6564,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -6301,6 +6587,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -6324,6 +6611,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -6347,6 +6635,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -6370,6 +6659,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -6388,6 +6678,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Samples",
         name: "Samples",
         trader: {
@@ -6419,6 +6710,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Lighthouse",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -6437,6 +6729,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Vitamins_-_Part_1",
         name: "Vitamins - Part 1",
         trader: {
@@ -6462,6 +6755,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -6485,6 +6779,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -6503,6 +6798,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Gunsmith_-_Part_11",
         name: "Gunsmith - Part 11",
         trader: {
@@ -6523,6 +6819,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Vitamins_-_Part_2",
         name: "Vitamins - Part 2",
         trader: {
@@ -6543,6 +6840,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Colleagues_-_Part_3",
         name: "Colleagues - Part 3",
@@ -6569,6 +6867,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -6592,6 +6891,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -6615,6 +6915,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -6637,6 +6938,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -6666,6 +6968,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -6701,6 +7004,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -6719,6 +7023,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Gunsmith_-_Part_12",
         name: "Gunsmith - Part 12",
         trader: {
@@ -6744,6 +7049,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -6767,6 +7073,7 @@ export const sampleData: TaskData = {
         map: {
           name: "The Lab",
         },
+        maps: [],
         trader: {
           name: "Peacekeeper",
         },
@@ -6795,6 +7102,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Interchange",
         },
+        maps: [],
         trader: {
           name: "Ragman",
         },
@@ -6813,6 +7121,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Informed_Means_Armed",
         name: "Informed Means Armed",
@@ -6834,6 +7143,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Chumming",
         name: "Chumming",
         trader: {
@@ -6858,6 +7168,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -6876,6 +7187,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Drip-Out_-_Part_1",
         name: "Drip-Out - Part 1",
         trader: {
@@ -6896,6 +7208,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Drip-Out_-_Part_1",
         name: "Drip-Out - Part 1",
         trader: {
@@ -6920,6 +7233,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -6938,6 +7252,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         taskRequirements: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Is_This_a_Reference%3F",
@@ -6952,6 +7267,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Lend-Lease_-_Part_1",
         name: "Lend-Lease - Part 1",
@@ -6973,6 +7289,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Regulated_Materials",
         name: "Regulated Materials",
@@ -6994,6 +7311,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Insomnia",
         name: "Insomnia",
         trader: {
@@ -7018,6 +7336,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Lighthouse",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -7036,6 +7355,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Sew_it_Good_-_Part_1",
         name: "Sew it Good - Part 1",
@@ -7057,6 +7377,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Ambulance",
         name: "Ambulance",
         trader: {
@@ -7077,6 +7398,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Gunsmith_-_Part_13",
         name: "Gunsmith - Part 13",
         trader: {
@@ -7101,6 +7423,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -7119,6 +7442,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Sew_it_Good_-_Part_2",
         name: "Sew it Good - Part 2",
@@ -7140,6 +7464,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Sew_it_Good_-_Part_3",
         name: "Sew it Good - Part 3",
@@ -7161,6 +7486,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Sew_it_Good_-_Part_4",
         name: "Sew it Good - Part 4",
@@ -7187,6 +7513,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -7210,6 +7537,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -7228,6 +7556,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Worst_Job_in_the_World",
         name: "Worst Job in the World",
@@ -7259,6 +7588,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -7283,6 +7613,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Charisma_Brings_Success",
         name: "Charisma Brings Success",
@@ -7310,6 +7641,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/The_Blood_of_War_-_Part_2",
         name: "The Blood of War - Part 2",
@@ -7337,6 +7669,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Best_Job_in_the_World",
         name: "Best Job in the World",
@@ -7368,6 +7701,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Ragman",
         },
@@ -7396,6 +7730,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Lighthouse",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -7418,6 +7753,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Interchange",
         },
+        maps: [],
         trader: {
           name: "Ragman",
         },
@@ -7436,6 +7772,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/No_Fuss_Needed",
         name: "No Fuss Needed",
         trader: {
@@ -7460,6 +7797,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Lighthouse",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -7483,6 +7821,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Factory",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -7505,6 +7844,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -7523,6 +7863,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Gunsmith_-_Part_14",
         name: "Gunsmith - Part 14",
         trader: {
@@ -7543,6 +7884,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Broadcast_-_Part_5",
         name: "Broadcast - Part 5",
         trader: {
@@ -7563,6 +7905,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Hell_on_Earth_-_Part_1",
         name: "Hell on Earth - Part 1",
@@ -7584,6 +7927,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Hell_on_Earth_-_Part_2",
         name: "Hell on Earth - Part 2",
@@ -7609,6 +7953,7 @@ export const sampleData: TaskData = {
         map: {
           name: "The Lab",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -7631,6 +7976,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Woods",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -7649,6 +7995,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/The_Good_Times_-_Part_2",
         name: "The Good Times - Part 2",
@@ -7674,6 +8021,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Interchange",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -7692,6 +8040,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Viewer",
         name: "Viewer",
         trader: {
@@ -7717,6 +8066,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -7735,6 +8085,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Camera%2C_Action!",
         name: "Camera, Action!",
         trader: {
@@ -7755,6 +8106,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Proper_Comeback",
         name: "Proper Comeback",
         trader: {
@@ -7779,6 +8131,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Ragman",
         },
@@ -7797,6 +8150,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Living_High_is_Not_a_Crime_-_Part_1",
         name: "Living High is Not a Crime - Part 1",
@@ -7828,6 +8182,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -7850,6 +8205,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -7868,6 +8224,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Fishing_Place",
         name: "Fishing Place",
         trader: {
@@ -7888,6 +8245,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Forester's_Duty",
         name: "Forester's Duty",
         trader: {
@@ -7912,6 +8270,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Interchange",
         },
+        maps: [],
         trader: {
           name: "Ragman",
         },
@@ -7930,6 +8289,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Gunsmith_-_Part_15",
         name: "Gunsmith - Part 15",
         trader: {
@@ -7950,6 +8310,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Scavenger",
         name: "Scavenger",
         trader: {
@@ -7974,6 +8335,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Lighthouse",
         },
+        maps: [],
         trader: {
           name: "Peacekeeper",
         },
@@ -7992,6 +8354,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Fertilizers",
         name: "Fertilizers",
         trader: {
@@ -8016,6 +8379,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Interchange",
         },
+        maps: [],
         trader: {
           name: "Ragman",
         },
@@ -8034,6 +8398,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Test_Drive_-_Part_1",
         name: "Test Drive - Part 1",
@@ -8055,6 +8420,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Athlete",
         name: "Athlete",
         trader: {
@@ -8079,6 +8445,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Lighthouse",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -8101,6 +8468,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Lighthouse",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -8119,6 +8487,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/The_Huntsman_Path_-_Eraser_-_Part_2",
         name: "The Huntsman Path - Eraser - Part 2",
@@ -8146,6 +8515,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Silent_Caliber",
         name: "Silent Caliber",
         trader: {
@@ -8166,6 +8536,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Lend-Lease_-_Part_2",
         name: "Lend-Lease - Part 2",
@@ -8192,6 +8563,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Woods",
         },
+        maps: [],
         trader: {
           name: "Ragman",
         },
@@ -8210,6 +8582,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Gunsmith_-_Part_16",
         name: "Gunsmith - Part 16",
         trader: {
@@ -8230,6 +8603,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Peacekeeping_Mission",
         name: "Peacekeeping Mission",
@@ -8256,6 +8630,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -8279,6 +8654,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Lighthouse",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -8297,6 +8673,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Know_Your_Place!",
         name: "Know Your Place!",
         trader: {
@@ -8322,6 +8699,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Interchange",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -8346,6 +8724,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Living_High_is_Not_a_Crime_-_Part_2",
         name: "Living High is Not a Crime - Part 2",
@@ -8377,6 +8756,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -8395,6 +8775,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Gunsmith_-_Part_17",
         name: "Gunsmith - Part 17",
         trader: {
@@ -8419,6 +8800,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Woods",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -8441,6 +8823,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Woods",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -8463,6 +8846,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Ragman",
         },
@@ -8481,6 +8865,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/The_Art_of_Explosion",
         name: "The Art of Explosion",
@@ -8502,6 +8887,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Gunsmith_-_Part_18",
         name: "Gunsmith - Part 18",
         trader: {
@@ -8527,6 +8913,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -8550,6 +8937,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Lighthouse",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -8573,6 +8961,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Lighthouse",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -8596,6 +8985,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Woods",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -8619,6 +9009,7 @@ export const sampleData: TaskData = {
         map: {
           name: "The Lab",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -8641,6 +9032,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Lighthouse",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -8663,6 +9055,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Lighthouse",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -8685,6 +9078,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Lighthouse",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -8703,6 +9097,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Make_Amends_-_Buyout",
         name: "Make Amends - Buyout",
@@ -8724,6 +9119,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Make_Amends_-_Equipment",
         name: "Make Amends - Equipment",
@@ -8750,6 +9146,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -8772,6 +9169,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Lighthouse",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -8790,6 +9188,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Information_Source",
         name: "Information Source",
         trader: {
@@ -8814,6 +9213,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Lightkeeper",
         },
@@ -8832,6 +9232,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Snatch",
         name: "Snatch",
         trader: {
@@ -8856,6 +9257,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Reserve",
         },
+        maps: [],
         trader: {
           name: "Lightkeeper",
         },
@@ -8878,6 +9280,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Woods",
         },
+        maps: [],
         trader: {
           name: "Lightkeeper",
         },
@@ -8900,6 +9303,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Interchange",
         },
+        maps: [],
         trader: {
           name: "Lightkeeper",
         },
@@ -8918,6 +9322,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Following_the_Bread_Crumbs",
         name: "Following the Bread Crumbs",
@@ -8943,6 +9348,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Lightkeeper",
         },
@@ -8961,6 +9367,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Make_an_Impression",
         name: "Make an Impression",
         trader: {
@@ -8986,6 +9393,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Lightkeeper",
         },
@@ -9004,6 +9412,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Drip-Out_-_Part_2",
         name: "Drip-Out - Part 2",
         trader: {
@@ -9024,6 +9433,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Drip-Out_-_Part_2",
         name: "Drip-Out - Part 2",
         trader: {
@@ -9049,6 +9459,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Lighthouse",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -9072,6 +9483,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Reserve",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -9090,6 +9502,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Make_Amends",
         name: "Make Amends",
         trader: {
@@ -9110,6 +9523,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Make_Amends_-_Software",
         name: "Make Amends - Software",
@@ -9136,6 +9550,7 @@ export const sampleData: TaskData = {
         map: {
           name: "The Lab",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -9154,6 +9569,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Make_Amends",
         name: "Make Amends",
         trader: {
@@ -9178,6 +9594,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Lighthouse",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -9202,6 +9619,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Connections_Up_North",
         name: "Connections Up North",
@@ -9229,6 +9647,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: true,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Network_Provider_-_Part_1",
         name: "Network Provider - Part 1",
@@ -9322,6 +9741,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Surprise_Gift",
         name: "Surprise Gift",
         trader: {
@@ -9347,6 +9767,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Streets of Tarkov",
         },
+        maps: [],
         trader: {
           name: "Peacekeeper",
         },
@@ -9365,6 +9786,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Psycho_Sniper",
         name: "Psycho Sniper",
         trader: {
@@ -9385,6 +9807,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Import",
         name: "Import",
         trader: {
@@ -9405,6 +9828,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Perfect_Mediator",
         name: "Perfect Mediator",
         trader: {
@@ -9425,6 +9849,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/The_Invisible_Hand",
         name: "The Invisible Hand",
         trader: {
@@ -9445,6 +9870,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Private_Clinic",
         name: "Private Clinic",
         trader: {
@@ -9465,6 +9891,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Flint",
         name: "Flint",
         trader: {
@@ -9485,6 +9912,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Circulate",
         name: "Circulate",
         trader: {
@@ -9505,6 +9933,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Special_Offer",
         name: "Special Offer",
         trader: {
@@ -9525,6 +9954,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Combat_Proven",
         name: "Combat Proven",
         trader: {
@@ -9545,6 +9975,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Old_Patterns",
         name: "Old Patterns",
         trader: {
@@ -9569,6 +10000,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Interchange",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -9587,6 +10019,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Dangerous_Props",
         name: "Dangerous Props",
         trader: {
@@ -9607,6 +10040,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Stray_Dogs",
         name: "Stray Dogs",
         trader: {
@@ -9644,6 +10078,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Interchange",
         },
+        maps: [],
         trader: {
           name: "Therapist",
         },
@@ -9668,6 +10103,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Gunsmith_-_Part_19",
         name: "Gunsmith - Part 19",
         trader: {
@@ -9688,6 +10124,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Gunsmith_-_Part_20",
         name: "Gunsmith - Part 20",
         trader: {
@@ -9708,6 +10145,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Gunsmith_-_Part_21",
         name: "Gunsmith - Part 21",
         trader: {
@@ -9728,6 +10166,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Gunsmith_-_Part_22",
         name: "Gunsmith - Part 22",
         trader: {
@@ -9748,6 +10187,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Gunsmith_-_Part_23",
         name: "Gunsmith - Part 23",
         trader: {
@@ -9768,6 +10208,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Gunsmith_-_Part_24",
         name: "Gunsmith - Part 24",
         trader: {
@@ -9788,6 +10229,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Gunsmith_-_Part_25",
         name: "Gunsmith - Part 25",
         trader: {
@@ -9808,6 +10250,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/The_Guide",
         name: "The Guide",
         trader: {
@@ -9833,6 +10276,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Shoreline",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -9856,6 +10300,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Factory",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -9879,6 +10324,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Prapor",
         },
@@ -9897,6 +10343,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Slaughterhouse",
         name: "Slaughterhouse",
         trader: {
@@ -9923,6 +10370,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Supervisor",
         name: "Supervisor",
         trader: {
@@ -9949,6 +10397,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Capturing_Outposts",
         name: "Capturing Outposts",
         trader: {
@@ -9969,6 +10418,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Textile_-_Part_1",
         name: "Textile - Part 1",
         trader: {
@@ -9989,6 +10439,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Textile_-_Part_1",
         name: "Textile - Part 1",
         trader: {
@@ -10009,6 +10460,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Textile_-_Part_2",
         name: "Textile - Part 2",
         trader: {
@@ -10029,6 +10481,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Textile_-_Part_2",
         name: "Textile - Part 2",
         trader: {
@@ -10049,6 +10502,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Intimidator",
         name: "Intimidator",
         trader: {
@@ -10073,6 +10527,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Reserve",
         },
+        maps: [],
         trader: {
           name: "Peacekeeper",
         },
@@ -10095,6 +10550,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Interchange",
         },
+        maps: [],
         trader: {
           name: "Ragman",
         },
@@ -10113,6 +10569,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Calibration",
         name: "Calibration",
         trader: {
@@ -10133,6 +10590,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Crisis",
         name: "Crisis",
         trader: {
@@ -10153,6 +10611,7 @@ export const sampleData: TaskData = {
         kappaRequired: true,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Collector",
         name: "Collector",
         trader: {
@@ -10593,6 +11052,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Night_Sweep",
         name: "Night Sweep",
         trader: {
@@ -10613,6 +11073,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/The_Choice",
         name: "The Choice",
         trader: {
@@ -10637,6 +11098,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Woods",
         },
+        maps: [],
         trader: {
           name: "Jaeger",
         },
@@ -10655,6 +11117,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Booze",
         name: "Booze",
         trader: {
@@ -10679,6 +11142,7 @@ export const sampleData: TaskData = {
         map: {
           name: "Customs",
         },
+        maps: [],
         trader: {
           name: "Mechanic",
         },
@@ -10697,6 +11161,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Trophies",
         name: "Trophies",
         trader: {
@@ -10723,6 +11188,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Escort",
         name: "Escort",
         trader: {
@@ -10743,6 +11209,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Special_Equipment",
         name: "Special Equipment",
         trader: {
@@ -10763,6 +11230,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         taskRequirements: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Profitable_Venture",
         name: "Profitable Venture",
@@ -10776,6 +11244,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Safety_Guarantee",
         name: "Safety Guarantee",
         trader: {
@@ -10796,6 +11265,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Never_Too_Late_To_Learn",
         name: "Never Too Late To Learn",
@@ -10817,6 +11287,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Get_a_Foothold",
         name: "Get a Foothold",
         trader: {
@@ -10837,6 +11308,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Profit_Retention",
         name: "Profit Retention",
         trader: {
@@ -10857,6 +11329,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/A_Life_Lesson",
         name: "A Life Lesson",
         trader: {
@@ -10881,6 +11354,7 @@ export const sampleData: TaskData = {
         map: {
           name: "The Lab",
         },
+        maps: [],
         trader: {
           name: "Skier",
         },
@@ -10899,6 +11373,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/The_Huntsman_Path_-_Relentless",
         name: "The Huntsman Path - Relentless",
@@ -10950,6 +11425,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         taskRequirements: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Compensation_for_Damage_-_Trust",
@@ -10964,6 +11440,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         taskRequirements: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Compensation_for_Damage_-_Wager",
@@ -10978,6 +11455,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         taskRequirements: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Compensation_for_Damage_-_Barkeep",
@@ -10992,6 +11470,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         taskRequirements: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Compensation_for_Damage_-_Collection",
@@ -11006,6 +11485,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Friend_Among_Strangers",
         name: "Friend Among Strangers",
@@ -11027,6 +11507,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Immunity",
         name: "Immunity",
         trader: {
@@ -11047,6 +11528,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Small_Business_-_Part_1",
         name: "Small Business - Part 1",
@@ -11068,6 +11550,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Small_Business_-_Part_2",
         name: "Small Business - Part 2",
@@ -11089,6 +11572,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Small_Business_-_Part_3",
         name: "Small Business - Part 3",
@@ -11110,6 +11594,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         taskRequirements: [],
         wikiLink: "https://escapefromtarkov.fandom.com/wiki/Establish_Contact",
         name: "Establish Contact",
@@ -11123,6 +11608,7 @@ export const sampleData: TaskData = {
         kappaRequired: false,
         lightkeeperRequired: false,
         map: null,
+        maps: [],
         taskRequirements: [],
         wikiLink:
           "https://escapefromtarkov.fandom.com/wiki/Compensation_for_Damage_-_Wergild",

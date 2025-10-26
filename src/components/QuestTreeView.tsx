@@ -67,7 +67,8 @@ export const QuestTreeView: React.FC<QuestTreeViewProps> = ({
       const matchingTasks = baseTasks.filter(task => 
         task.name.toLowerCase().includes(term) ||
         task.trader.name.toLowerCase().includes(term) ||
-        task.map?.name.toLowerCase().includes(term)
+        task.map?.name.toLowerCase().includes(term) ||
+        task.maps?.some(m => m.name.toLowerCase().includes(term))
       );
       
       // Get all dependencies for matching tasks
@@ -129,7 +130,8 @@ export const QuestTreeView: React.FC<QuestTreeViewProps> = ({
     const matchingTasks = filteredTasks.filter(task => 
       task.name.toLowerCase().includes(term) ||
       task.trader.name.toLowerCase().includes(term) ||
-      task.map?.name.toLowerCase().includes(term)
+      task.map?.name.toLowerCase().includes(term) ||
+      task.maps?.some(m => m.name.toLowerCase().includes(term))
     );
     
     return matchingTasks.map(task => ({
@@ -238,7 +240,8 @@ export const QuestTreeView: React.FC<QuestTreeViewProps> = ({
           kappaRequired: false,
           lightkeeperRequired: false,
           wikiLink: '',
-          map: { name: 'Any' }
+          map: { name: 'Any' },
+          maps: []
         },
         children: lateNodes,
         level: 0,
@@ -299,7 +302,8 @@ export const QuestTreeView: React.FC<QuestTreeViewProps> = ({
     const isSearchMatch = searchTerm.trim() && (
       task.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       task.trader.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      task.map?.name.toLowerCase().includes(searchTerm.toLowerCase())
+      task.map?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      task.maps?.some(m => m.name.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
     // Special rendering for the separator

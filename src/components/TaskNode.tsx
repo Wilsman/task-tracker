@@ -99,10 +99,14 @@ export const TaskNode: React.FC<TaskNodeProps> = ({
                     Level {task.minPlayerLevel}
                   </span>
                 </div>
-                {task.map?.name && (
+                {((task.maps && task.maps.length > 0) || task.map?.name) && (
                   <div className="flex items-center gap-1 text-xs text-muted-foreground/80">
                     <span className="font-medium">Map:</span>
-                    <span>{task.map.name}</span>
+                    <span>
+                      {task.maps && task.maps.length > 0
+                        ? task.maps.map(m => m.name).join(', ')
+                        : task.map?.name}
+                    </span>
                   </div>
                 )}
               </div>
