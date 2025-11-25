@@ -20,8 +20,9 @@ import { EndingBreakdownPanel } from "./EndingBreakdownPanel";
 import {
   initialNodes,
   initialEdges,
-  findPathToEnding,
+  findPathToNode,
   getPathBreakdown,
+  getPathEdgeIds,
 } from "./storylineMapData";
 import { Map, ArrowLeft, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -45,10 +46,25 @@ export function StorylineMapView({
   onToggleNode,
   onBack,
 }: StorylineMapViewProps): JSX.Element {
-  // Track selected ending for breakdown view
-  const [selectedEndingId, setSelectedEndingId] = useState<string | null>(null);
+  // Track selected node for path highlighting and breakdown view
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   // Start with interactivity locked by default
   const [nodesLocked, setNodesLocked] = useState(true);
+
+  // Compute path to selected node
+  const { pathNodeIds, pathEdgeIds } = useMemo(() => {
+    if (!selectedNodeId)
+      return { pathNodeIds: new Set<string>(), pathEdgeIds: new Set<string>() };
+    const pathNodes = findPathToNode(
+      selectedNodeId,
+      initialNodes,
+      initialEdges
+    );
+    return {
+      pathNodeIds: new Set(pathNodes.map((n) => n.id)),
+      pathEdgeIds: getPathEdgeIds(pathNodes, initialEdges),
+    };
+  }, [selectedNodeId]);
 
   // Initialize nodes with completion status from props
   const initialNodesWithState = useMemo(() => {
@@ -58,15 +74,16 @@ export function StorylineMapView({
         ...node.data,
         isCompleted: completedNodes.has(node.id),
         isCurrentStep: node.id === currentNodeId,
-        isSelected: node.id === selectedEndingId,
+        isSelected: node.id === selectedNodeId,
+        isOnPath: pathNodeIds.has(node.id),
       },
     }));
-  }, [completedNodes, currentNodeId, selectedEndingId]);
+  }, [completedNodes, currentNodeId, selectedNodeId, pathNodeIds]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodesWithState);
   const [edges, , onEdgesChange] = useEdgesState(initialEdges);
 
-  // Update nodes when completedNodes or selectedEndingId changes
+  // Update nodes when completedNodes or selectedNodeId changes
   useEffect(() => {
     setNodes((nds) =>
       nds.map((n) => ({
@@ -75,32 +92,39 @@ export function StorylineMapView({
           ...n.data,
           isCompleted: completedNodes.has(n.id),
           isCurrentStep: n.id === currentNodeId,
-          isSelected: n.id === selectedEndingId,
+          isSelected: n.id === selectedNodeId,
+          isOnPath: pathNodeIds.has(n.id),
         },
       }))
     );
-  }, [completedNodes, currentNodeId, selectedEndingId, setNodes]);
+  }, [completedNodes, currentNodeId, selectedNodeId, pathNodeIds, setNodes]);
 
-  // Update edges to animate completed paths
-  const animatedEdges = useMemo(() => {
+  // Update edges to animate completed paths and highlight selected path
+  const styledEdges = useMemo(() => {
     return edges.map((edge) => {
       const sourceCompleted = completedNodes.has(edge.source);
       const targetCompleted = completedNodes.has(edge.target);
+      const isOnPath = pathEdgeIds.has(edge.id);
       return {
         ...edge,
         animated: sourceCompleted && targetCompleted,
+        style: {
+          ...edge.style,
+          strokeWidth: isOnPath ? 4 : 2,
+          opacity: selectedNodeId && !isOnPath ? 0.2 : 1,
+        },
       };
     });
-  }, [edges, completedNodes]);
+  }, [edges, completedNodes, pathEdgeIds, selectedNodeId]);
 
-  const onNodeClick = useCallback(
+  const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
+    // Toggle path selection for any node (always allowed)
+    setSelectedNodeId((prev) => (prev === node.id ? null : node.id));
+  }, []);
+
+  // Double-click to toggle completion (when unlocked)
+  const onNodeDoubleClick = useCallback(
     (_: React.MouseEvent, node: Node) => {
-      // Handle ending node clicks - show breakdown (always allowed)
-      if (node.type === "ending") {
-        setSelectedEndingId((prev) => (prev === node.id ? null : node.id));
-        return;
-      }
-      // Only toggle story nodes when not locked
       if (node.type === "story" && !nodesLocked) {
         onToggleNode(node.id);
       }
@@ -119,25 +143,26 @@ export function StorylineMapView({
       );
   }, [nodes]);
 
-  // Compute path breakdown for selected ending
-  const selectedEndingBreakdown = useMemo(() => {
-    if (!selectedEndingId) return null;
-    const pathNodes = findPathToEnding(
-      selectedEndingId,
+  // Compute path breakdown for selected node
+  const selectedNodeBreakdown = useMemo(() => {
+    if (!selectedNodeId) return null;
+    const pathNodes = findPathToNode(
+      selectedNodeId,
       initialNodes,
       initialEdges
     );
     return getPathBreakdown(pathNodes);
-  }, [selectedEndingId]);
+  }, [selectedNodeId]);
 
   return (
     <div className="h-full w-full relative">
       <ReactFlow
         nodes={nodes}
-        edges={animatedEdges}
+        edges={styledEdges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onNodeClick={onNodeClick}
+        onNodeDoubleClick={onNodeDoubleClick}
         nodeTypes={nodeTypes}
         fitView
         panOnScroll
@@ -191,8 +216,7 @@ export function StorylineMapView({
               <h1 className="font-bold text-lg">Tarkov Storyline Map</h1>
             </div>
             <p className="text-[10px] text-muted-foreground/70 mb-3">
-              Click nodes to toggle • Ctrl+scroll to zoom • Lock button (↙)
-              prevents edits
+              Click to see path • Double-click to toggle • Ctrl+scroll to zoom
             </p>
             {/* WIP Warning */}
             <div className="rounded-md border border-amber-500/30 bg-amber-500/10 p-2">
@@ -208,18 +232,18 @@ export function StorylineMapView({
           </div>
         </Panel>
         <CostPanel totalCost={calculateTotalCost()} nodes={nodes} />
-        {selectedEndingId && selectedEndingBreakdown && (
+        {selectedNodeId && selectedNodeBreakdown && (
           <EndingBreakdownPanel
             endingLabel={
               ((
-                nodes.find((n) => n.id === selectedEndingId)?.data as Record<
+                nodes.find((n) => n.id === selectedNodeId)?.data as Record<
                   string,
                   unknown
                 >
-              )?.label as string) || selectedEndingId
+              )?.label as string) || selectedNodeId
             }
-            breakdown={selectedEndingBreakdown}
-            onClose={() => setSelectedEndingId(null)}
+            breakdown={selectedNodeBreakdown}
+            onClose={() => setSelectedNodeId(null)}
           />
         )}
       </ReactFlow>

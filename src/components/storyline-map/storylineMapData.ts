@@ -15,9 +15,9 @@ export const ENDING_IDS = [
 
 export type EndingId = (typeof ENDING_IDS)[number];
 
-// Find path from prologue to a target ending using BFS
-export function findPathToEnding(
-  targetEndingId: string,
+// Find path from prologue to any target node using BFS
+export function findPathToNode(
+  targetNodeId: string,
   nodes: Node[],
   edges: Edge[]
 ): Node[] {
@@ -29,11 +29,11 @@ export function findPathToEnding(
     incomingEdges.set(edge.target, sources);
   }
 
-  // BFS from ending back to prologue
+  // BFS from target back to prologue
   const visited = new Set<string>();
   const parent = new Map<string, string>();
-  const queue: string[] = [targetEndingId];
-  visited.add(targetEndingId);
+  const queue: string[] = [targetNodeId];
+  visited.add(targetNodeId);
 
   while (queue.length > 0) {
     const current = queue.shift()!;
@@ -60,6 +60,28 @@ export function findPathToEnding(
   // Convert to nodes
   const nodeMap = new Map(nodes.map((n) => [n.id, n]));
   return path.map((id) => nodeMap.get(id)).filter(Boolean) as Node[];
+}
+
+// Alias for backwards compatibility
+export const findPathToEnding = findPathToNode;
+
+// Get edge IDs that connect nodes in a path
+export function getPathEdgeIds(pathNodes: Node[], edges: Edge[]): Set<string> {
+  const pathNodeIds = new Set(pathNodes.map((n) => n.id));
+  const edgeIds = new Set<string>();
+
+  for (const edge of edges) {
+    if (pathNodeIds.has(edge.source) && pathNodeIds.has(edge.target)) {
+      // Check if these nodes are adjacent in the path
+      const sourceIdx = pathNodes.findIndex((n) => n.id === edge.source);
+      const targetIdx = pathNodes.findIndex((n) => n.id === edge.target);
+      if (Math.abs(sourceIdx - targetIdx) === 1) {
+        edgeIds.add(edge.id);
+      }
+    }
+  }
+
+  return edgeIds;
 }
 
 // Extract breakdown info from a path
@@ -227,46 +249,55 @@ export const initialNodes: Node[] = [
     position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT },
     data: {
       label: "Keep the Case",
-      description: "Lose almost ALL Prapor rep, ~58 hour unlock",
+      description: "Prapor gets mad: -0.5 rep, ~58 hour unlock",
       isIrreversible: true,
     },
   },
   {
-    id: "the-ticket-keep",
+    id: "intel-center-keep",
     type: "story",
-    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 2 },
+    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 1.8 },
     data: {
-      label: "The Ticket Quest",
-      description: "Build Intel Center 1, Kerman contacts you",
+      label: "Intelligence Center Level 1",
+      description: "To contact Mr. Kerman, I need a working laptop",
       note: "Hideout: Intelligence Center Level 1",
     },
   },
   {
-    id: "ask-mechanic",
+    id: "talk-kerman-keep",
     type: "story",
-    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 3 },
+    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 2.5 },
     data: {
-      label: "Ask Mechanic for Help",
-      description: "Case is locked - need signal jammer from Labs",
+      label: "Talk to Mr. Kerman",
+      description: "Kerman said to contact him through my Intelligence Center",
     },
   },
   {
-    id: "prepare-labs",
+    id: "ask-mechanic-help",
     type: "story",
-    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 4 },
+    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 3.1 },
     data: {
-      label: "Prepare for Labs",
-      description: "Acquire Labs keycard if needed",
-      note: "Optional: Get keycard access",
+      label: "Ask Mechanic for Help",
+      description: "Case uses high-grade electronic lock, need special equipment",
     },
   },
   {
     id: "obtain-jammer",
     type: "story",
-    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 5 },
+    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 4 },
     data: {
       label: "Obtain Signal Jammer",
-      description: "Find experimental jammer in The Lab",
+      description: "Mechanic advised to look in laboratories",
+      note: "Location: The Lab",
+    },
+  },
+  {
+    id: "talk-mechanic-jammer",
+    type: "story",
+    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 5 },
+    data: {
+      label: "Talk to Mechanic",
+      description: "Mechanic sent instructions on how to unlock the case",
     },
   },
   {
@@ -274,8 +305,8 @@ export const initialNodes: Node[] = [
     type: "story",
     position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 6 },
     data: {
-      label: "Unlock the Case",
-      description: "Use jammer to crack open - get Ticket keycard + instructions",
+      label: "Use Jammer to Unlock Case",
+      description: "Use the experimental signal jammer at my Workbench",
     },
   },
 
@@ -631,32 +662,38 @@ export const initialEdges: Edge[] = [
 
   // ============ INDEPENDENT BRANCH (Purple path) ============
   {
-    id: "e-keep-ticket",
+    id: "e-keep-intel",
     source: "keep-case",
-    target: "the-ticket-keep",
+    target: "intel-center-keep",
     style: { stroke: "#8b5cf6" },
   },
   {
-    id: "e-ticket-mechanic",
-    source: "the-ticket-keep",
-    target: "ask-mechanic",
+    id: "e-intel-kerman",
+    source: "intel-center-keep",
+    target: "talk-kerman-keep",
     style: { stroke: "#8b5cf6" },
   },
   {
-    id: "e-mechanic-labs",
-    source: "ask-mechanic",
-    target: "prepare-labs",
+    id: "e-kerman-mechanic",
+    source: "talk-kerman-keep",
+    target: "ask-mechanic-help",
     style: { stroke: "#8b5cf6" },
   },
   {
-    id: "e-labs-jammer",
-    source: "prepare-labs",
+    id: "e-mechanic-jammer",
+    source: "ask-mechanic-help",
     target: "obtain-jammer",
     style: { stroke: "#8b5cf6" },
   },
   {
-    id: "e-jammer-unlock",
+    id: "e-jammer-talk",
     source: "obtain-jammer",
+    target: "talk-mechanic-jammer",
+    style: { stroke: "#8b5cf6" },
+  },
+  {
+    id: "e-talk-unlock",
+    source: "talk-mechanic-jammer",
     target: "unlock-case-jammer",
     style: { stroke: "#8b5cf6" },
   },
