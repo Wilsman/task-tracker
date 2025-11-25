@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useEffect } from "react";
+import { useCallback, useMemo, useEffect, useState } from "react";
 import {
   ReactFlow,
   MiniMap,
@@ -16,7 +16,13 @@ import StoryNode from "./StoryNode";
 import DecisionNode from "./DecisionNode";
 import EndingNode from "./EndingNode";
 import { CostPanel } from "./CostPanel";
-import { initialNodes, initialEdges } from "./storylineMapData";
+import { EndingBreakdownPanel } from "./EndingBreakdownPanel";
+import {
+  initialNodes,
+  initialEdges,
+  findPathToEnding,
+  getPathBreakdown,
+} from "./storylineMapData";
 import { Map, ArrowLeft, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -39,6 +45,9 @@ export function StorylineMapView({
   onToggleNode,
   onBack,
 }: StorylineMapViewProps): JSX.Element {
+  // Track selected ending for breakdown view
+  const [selectedEndingId, setSelectedEndingId] = useState<string | null>(null);
+
   // Initialize nodes with completion status from props
   const initialNodesWithState = useMemo(() => {
     return initialNodes.map((node) => ({
@@ -47,14 +56,15 @@ export function StorylineMapView({
         ...node.data,
         isCompleted: completedNodes.has(node.id),
         isCurrentStep: node.id === currentNodeId,
+        isSelected: node.id === selectedEndingId,
       },
     }));
-  }, [completedNodes, currentNodeId]);
+  }, [completedNodes, currentNodeId, selectedEndingId]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodesWithState);
   const [edges, , onEdgesChange] = useEdgesState(initialEdges);
 
-  // Update nodes when completedNodes changes
+  // Update nodes when completedNodes or selectedEndingId changes
   useEffect(() => {
     setNodes((nds) =>
       nds.map((n) => ({
@@ -63,10 +73,11 @@ export function StorylineMapView({
           ...n.data,
           isCompleted: completedNodes.has(n.id),
           isCurrentStep: n.id === currentNodeId,
+          isSelected: n.id === selectedEndingId,
         },
       }))
     );
-  }, [completedNodes, currentNodeId, setNodes]);
+  }, [completedNodes, currentNodeId, selectedEndingId, setNodes]);
 
   // Update edges to animate completed paths
   const animatedEdges = useMemo(() => {
@@ -82,6 +93,11 @@ export function StorylineMapView({
 
   const onNodeClick = useCallback(
     (_: React.MouseEvent, node: Node) => {
+      // Handle ending node clicks - show breakdown
+      if (node.type === "ending") {
+        setSelectedEndingId((prev) => (prev === node.id ? null : node.id));
+        return;
+      }
       // Only allow toggling story nodes
       if (node.type === "story") {
         onToggleNode(node.id);
@@ -100,6 +116,17 @@ export function StorylineMapView({
         0
       );
   }, [nodes]);
+
+  // Compute path breakdown for selected ending
+  const selectedEndingBreakdown = useMemo(() => {
+    if (!selectedEndingId) return null;
+    const pathNodes = findPathToEnding(
+      selectedEndingId,
+      initialNodes,
+      initialEdges
+    );
+    return getPathBreakdown(pathNodes);
+  }, [selectedEndingId]);
 
   return (
     <div className="h-full w-full relative">
@@ -172,6 +199,20 @@ export function StorylineMapView({
           </div>
         </Panel>
         <CostPanel totalCost={calculateTotalCost()} nodes={nodes} />
+        {selectedEndingId && selectedEndingBreakdown && (
+          <EndingBreakdownPanel
+            endingLabel={
+              ((
+                nodes.find((n) => n.id === selectedEndingId)?.data as Record<
+                  string,
+                  unknown
+                >
+              )?.label as string) || selectedEndingId
+            }
+            breakdown={selectedEndingBreakdown}
+            onClose={() => setSelectedEndingId(null)}
+          />
+        )}
       </ReactFlow>
     </div>
   );

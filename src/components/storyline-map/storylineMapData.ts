@@ -4,6 +4,126 @@ import type { Node, Edge } from "@xyflow/react";
 const ROW_HEIGHT = 120;
 const COL_WIDTH = 280;
 
+// Ending IDs for easy reference
+export const ENDING_IDS = [
+  "debtor-ending",
+  "survivor-ending",
+  "fallen-ending",
+  "savior-ending",
+] as const;
+
+export type EndingId = (typeof ENDING_IDS)[number];
+
+// Find all paths from start to a target ending using BFS
+export function findPathToEnding(
+  targetEndingId: string,
+  nodes: Node[],
+  edges: Edge[]
+): Node[] {
+  // Build adjacency list (reverse direction - from target to sources)
+  const incomingEdges = new Map<string, string[]>();
+  for (const edge of edges) {
+    const sources = incomingEdges.get(edge.target) || [];
+    sources.push(edge.source);
+    incomingEdges.set(edge.target, sources);
+  }
+
+  // BFS from ending back to start
+  const visited = new Set<string>();
+  const parent = new Map<string, string>();
+  const queue: string[] = [targetEndingId];
+  visited.add(targetEndingId);
+
+  while (queue.length > 0) {
+    const current = queue.shift()!;
+    if (current === "start") break;
+
+    const sources = incomingEdges.get(current) || [];
+    for (const source of sources) {
+      if (!visited.has(source)) {
+        visited.add(source);
+        parent.set(source, current);
+        queue.push(source);
+      }
+    }
+  }
+
+  // Reconstruct path from start to ending
+  const path: string[] = [];
+  let current: string | undefined = "start";
+  while (current) {
+    path.push(current);
+    current = parent.get(current);
+  }
+
+  // Convert to nodes
+  const nodeMap = new Map(nodes.map((n) => [n.id, n]));
+  return path.map((id) => nodeMap.get(id)).filter(Boolean) as Node[];
+}
+
+// Extract breakdown info from a path
+export interface PathBreakdown {
+  steps: Array<{
+    id: string;
+    label: string;
+    description?: string;
+    cost?: number;
+    isTimeGate?: boolean;
+    timeGateHours?: number;
+  }>;
+  totalCostRoubles: number;
+  totalCostBTC: number;
+  totalTimeGateHours: number;
+}
+
+export function getPathBreakdown(pathNodes: Node[]): PathBreakdown {
+  const steps: PathBreakdown["steps"] = [];
+  let totalCostRoubles = 0;
+  let totalCostBTC = 0;
+  let totalTimeGateHours = 0;
+
+  for (const node of pathNodes) {
+    const data = node.data as Record<string, unknown>;
+    const label = (data.label as string) || node.id;
+    const description = data.description as string | undefined;
+    const cost = data.cost as number | undefined;
+
+    // Detect time gates from description
+    const timeGateMatch = description?.match(/(\d+)\s*hour/i);
+    const isTimeGate = !!timeGateMatch;
+    const timeGateHours = timeGateMatch ? parseInt(timeGateMatch[1], 10) : 0;
+
+    if (isTimeGate) {
+      totalTimeGateHours += timeGateHours;
+    }
+
+    if (cost !== undefined && cost > 0) {
+      // BTC costs are < 1000, rouble costs are >= 1000
+      if (cost < 1000) {
+        totalCostBTC += cost;
+      } else {
+        totalCostRoubles += cost;
+      }
+    }
+
+    steps.push({
+      id: node.id,
+      label,
+      description,
+      cost,
+      isTimeGate,
+      timeGateHours: isTimeGate ? timeGateHours : undefined,
+    });
+  }
+
+  return {
+    steps,
+    totalCostRoubles,
+    totalCostBTC,
+    totalTimeGateHours,
+  };
+}
+
 // Initial nodes based on the Tarkov storyline
 export const initialNodes: Node[] = [
   // ============ ROW 0: Starting point (TOP) ============
