@@ -14,7 +14,7 @@ export const ENDING_IDS = [
 
 export type EndingId = (typeof ENDING_IDS)[number];
 
-// Find all paths from start to a target ending using BFS
+// Find path from prologue to a target ending using BFS
 export function findPathToEnding(
   targetEndingId: string,
   nodes: Node[],
@@ -28,7 +28,7 @@ export function findPathToEnding(
     incomingEdges.set(edge.target, sources);
   }
 
-  // BFS from ending back to start
+  // BFS from ending back to prologue
   const visited = new Set<string>();
   const parent = new Map<string, string>();
   const queue: string[] = [targetEndingId];
@@ -36,7 +36,7 @@ export function findPathToEnding(
 
   while (queue.length > 0) {
     const current = queue.shift()!;
-    if (current === "start") break;
+    if (current === "prologue") break;
 
     const sources = incomingEdges.get(current) || [];
     for (const source of sources) {
@@ -48,9 +48,9 @@ export function findPathToEnding(
     }
   }
 
-  // Reconstruct path from start to ending
+  // Reconstruct path from prologue to ending
   const path: string[] = [];
-  let current: string | undefined = "start";
+  let current: string | undefined = "prologue";
   while (current) {
     path.push(current);
     current = parent.get(current);
@@ -124,329 +124,245 @@ export function getPathBreakdown(pathNodes: Node[]): PathBreakdown {
   };
 }
 
-// Initial nodes based on the Tarkov storyline
+// Initial nodes based on the Tarkov 1.0 storyline flowchart
+// Source: STORYLINE_FLOWCHART.md
 export const initialNodes: Node[] = [
-  // ============ ROW 0: Starting point (TOP) ============
+  // ============ PROLOGUE: FALLING SKIES ============
+  {
+    id: "prologue",
+    type: "story",
+    position: { x: 0, y: -ROW_HEIGHT * 2 },
+    data: {
+      label: "Prologue: Falling Skies",
+      description: "Investigate crash on Woods, retrieve flight recorder & transcripts",
+      note: "Requires Prapor LL2",
+    },
+  },
+  {
+    id: "retrieve-case",
+    type: "story",
+    position: { x: 0, y: -ROW_HEIGHT },
+    data: {
+      label: "Retrieve Armored Case",
+      description: "Recover the armored case from plane wreckage on Woods",
+    },
+  },
+
+  // ============ DECISION 1: ARMORED CASE ============
   {
     id: "start",
     type: "decision",
     position: { x: 0, y: 0 },
     data: {
-      label: "The Armored Case",
-      description: "Your ticket out of Tarkov - What do you do?",
+      label: "Decision 1: The Armored Case",
+      description: "Hand over to Prapor or keep it for yourself?",
       isIrreversible: true,
     },
   },
 
-  // ============ ROW 1: Initial choice ============
+  // ============ PRAPOR'S BRANCH (Left side - Green) ============
   {
     id: "give-prapor",
     type: "story",
-    position: { x: -COL_WIDTH, y: ROW_HEIGHT },
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT },
     data: {
-      label: "Give Case to Prapor",
-      description: "Unlocks 'The Ticket' quest - Recommended path",
+      label: "Hand Over to Prapor",
+      description: "₽1M reward, keep Prapor's trust (Recommended)",
+      cost: -1000000, // Negative = reward
       isIrreversible: true,
     },
   },
+  {
+    id: "the-ticket-prapor",
+    type: "story",
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 2 },
+    data: {
+      label: "The Ticket Quest",
+      description: "Build Intel Center 1, wait for Kerman's call",
+      note: "Hideout: Intelligence Center Level 1",
+    },
+  },
+  {
+    id: "contact-kerman-prapor",
+    type: "story",
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 3 },
+    data: {
+      label: "Contact Mr. Kerman",
+      description: "Establish secure line via hideout intel center",
+    },
+  },
+  {
+    id: "investigate-lighthouse",
+    type: "story",
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 4 },
+    data: {
+      label: "Investigate Lighthouse Camp",
+      description: "Search Prapor's camp on Lighthouse for clues",
+    },
+  },
+  {
+    id: "unlock-lightkeeper",
+    type: "story",
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 5 },
+    data: {
+      label: "Unlock Lightkeeper",
+      description: "Complete tasks to gain access to Lightkeeper trader",
+    },
+  },
+  {
+    id: "recover-case-lk",
+    type: "story",
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 6 },
+    data: {
+      label: "Recover Case from LK",
+      description: "Lightkeeper returns the case contents after his requests",
+    },
+  },
+
+  // ============ INDEPENDENT BRANCH (Right side - Gray/Purple) ============
   {
     id: "keep-case",
     type: "story",
-    position: { x: COL_WIDTH, y: ROW_HEIGHT },
+    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT },
     data: {
       label: "Keep the Case",
-      description: "~58 hour unlock process, may hurt trader rep",
-      isIrreversible: true,
-    },
-  },
-
-  // ============ ROW 2 ============
-  {
-    id: "lk-unlock",
-    type: "story",
-    position: { x: -COL_WIDTH, y: ROW_HEIGHT * 2 },
-    data: {
-      label: "Network Provider Pt 1",
-      description: "Early Lightkeeper access via Mechanic (skips grind)",
-    },
-  },
-  {
-    id: "unlock-case",
-    type: "story",
-    position: { x: COL_WIDTH, y: ROW_HEIGHT * 2 },
-    data: {
-      label: "Unlock Case",
-      description: "Open the case yourself",
-    },
-  },
-
-  // ============ ROW 3 ============
-  {
-    id: "get-case-back",
-    type: "story",
-    position: { x: -COL_WIDTH, y: ROW_HEIGHT * 3 },
-    data: {
-      label: "LK Returns Case",
-      description: "Do LK a favor, he gives case back to open",
-    },
-  },
-  {
-    id: "trust-kerman-keep",
-    type: "decision",
-    position: { x: COL_WIDTH, y: ROW_HEIGHT * 3 },
-    data: {
-      label: "Trust Kerman?",
-      description: "Work with Kerman or not?",
-      isIrreversible: true,
-    },
-  },
-
-  // ============ ROW 4: Trust decisions ============
-  {
-    id: "trust-kerman-prapor",
-    type: "decision",
-    position: { x: -COL_WIDTH, y: ROW_HEIGHT * 4 },
-    data: {
-      label: "Trust Kerman?",
-      description: "Side with Kerman or not?",
+      description: "Lose almost ALL Prapor rep, ~58 hour unlock",
       isIrreversible: true,
     },
   },
   {
-    id: "dont-trust-keep",
+    id: "the-ticket-keep",
     type: "story",
-    position: { x: COL_WIDTH * 0.5, y: ROW_HEIGHT * 4 },
+    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 2 },
     data: {
-      label: "Don't Trust Kerman",
-      description: "Refuse Kerman",
+      label: "The Ticket Quest",
+      description: "Build Intel Center 1, Kerman contacts you",
+      note: "Hideout: Intelligence Center Level 1",
     },
   },
   {
-    id: "work-kerman-keep",
+    id: "ask-mechanic",
     type: "story",
-    position: { x: COL_WIDTH * 1.5, y: ROW_HEIGHT * 4 },
+    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 3 },
     data: {
-      label: "Work with Kerman",
-      description: "Agree to work with Kerman",
-    },
-  },
-
-  // ============ ROW 5 ============
-  {
-    id: "dont-trust-prapor",
-    type: "story",
-    position: { x: -COL_WIDTH * 1.8, y: ROW_HEIGHT * 5 },
-    data: {
-      label: "Don't Trust Kerman",
-      description: "Refuse to work with Kerman",
+      label: "Ask Mechanic for Help",
+      description: "Case is locked - need signal jammer from Labs",
     },
   },
   {
-    id: "trust-kerman-prapor-yes",
+    id: "prepare-labs",
     type: "story",
-    position: { x: -COL_WIDTH * 0.5, y: ROW_HEIGHT * 5 },
+    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 4 },
     data: {
-      label: "Side with Kerman",
-      description: "Agree to work with Mr. Kerman",
+      label: "Prepare for Labs",
+      description: "Acquire Labs keycard if needed",
+      note: "Optional: Get keycard access",
     },
   },
   {
-    id: "pay-500m-keep",
+    id: "obtain-jammer",
     type: "story",
-    position: { x: COL_WIDTH * 0.5, y: ROW_HEIGHT * 5 },
+    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 5 },
     data: {
-      label: "Pay 500m Roubles",
-      description: "Pay Prapor 500 million",
-      cost: 500000000,
+      label: "Obtain Signal Jammer",
+      description: "Find experimental jammer in The Lab",
     },
   },
   {
-    id: "use-jammer-case",
+    id: "unlock-case-jammer",
     type: "story",
-    position: { x: COL_WIDTH * 1.5, y: ROW_HEIGHT * 5 },
+    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 6 },
     data: {
-      label: "Use Jammer on Case",
-      description: "Use the jammer on the case",
+      label: "Unlock the Case",
+      description: "Use jammer to crack open - get Ticket keycard + instructions",
     },
   },
 
-  // ============ ROW 6 ============
+  // ============ PATHS CONVERGE - READ INSTRUCTIONS ============
   {
-    id: "pay-prapor-choice",
+    id: "read-instructions",
+    type: "story",
+    position: { x: 0, y: ROW_HEIGHT * 7 },
+    data: {
+      label: "Read Case Instructions",
+      description: "Examine documents - contains original escape plan for Tarkov",
+    },
+  },
+  {
+    id: "report-kerman",
+    type: "story",
+    position: { x: 0, y: ROW_HEIGHT * 8 },
+    data: {
+      label: "Report to Kerman",
+      description: "Inform him of case contents and the escape plan",
+    },
+  },
+
+  // ============ DECISION 2: TRUST KERMAN ============
+  {
+    id: "trust-kerman",
     type: "decision",
-    position: { x: -COL_WIDTH * 1.8, y: ROW_HEIGHT * 6 },
+    position: { x: 0, y: ROW_HEIGHT * 9 },
     data: {
-      label: "Pay Prapor",
-      description: "How much to pay?",
-    },
-  },
-  {
-    id: "lk-blue-folders",
-    type: "story",
-    position: { x: -COL_WIDTH * 0.5, y: ROW_HEIGHT * 6 },
-    data: {
-      label: "LK Wants 3 Blue Folders",
-      description: "Collect 3 blue folders for Lightkeeper",
-    },
-  },
-  {
-    id: "turn-in-btc",
-    type: "story",
-    position: { x: COL_WIDTH * 1.5, y: ROW_HEIGHT * 6 },
-    data: {
-      label: "Turn in 40 Bitcoins",
-      description: "Hand over 40 BTC",
-      cost: 40,
+      label: "Decision 2: Trust Mr. Kerman?",
+      description: "Follow his plan or go your own way?",
+      isIrreversible: true,
     },
   },
 
-  // ============ ROW 7 ============
+  // ============ KERMAN'S PATH (Left - Green/Best endings) ============
   {
-    id: "pay-300m",
+    id: "trust-yes",
     type: "story",
-    position: { x: -COL_WIDTH * 2.3, y: ROW_HEIGHT * 7 },
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 10 },
     data: {
-      label: "Pay 300m Roubles",
-      description: "Pay Prapor 300 million",
-      cost: 300000000,
+      label: "Trust Kerman",
+      description: "Side with Kerman's alternative escape plan",
     },
   },
   {
-    id: "pay-500m",
+    id: "build-replacement-key",
     type: "story",
-    position: { x: -COL_WIDTH * 1.5, y: ROW_HEIGHT * 7 },
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 11 },
     data: {
-      label: "Pay 500m Roubles",
-      description: "Pay Prapor 500 million",
-      cost: 500000000,
+      label: "Build Replacement Key",
+      description: "Gather: RFID Encrypter, Lab Master Pass, Blank RFID, Encryptor Chip",
+      note: "Items from Labs offices (Kruglov's office)",
     },
   },
   {
-    id: "lk-flare-kills",
+    id: "hideout-solar",
     type: "story",
-    position: { x: -COL_WIDTH * 0.5, y: ROW_HEIGHT * 7 },
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 12 },
     data: {
-      label: "Yellow Flare + 15 Kills",
-      description: "LK wants yellow flare and 15 kills on Interchange",
+      label: "Install Solar Power",
+      description: "Hideout upgrade needed for encryption setup",
+      note: "Hideout: Solar Power Module",
     },
   },
   {
-    id: "get-rfid",
+    id: "activate-ticket",
     type: "story",
-    position: { x: COL_WIDTH * 1.5, y: ROW_HEIGHT * 7 },
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 13 },
     data: {
-      label: "Get RFID Encrypter",
-      description: "Receive RFID encryption device",
+      label: "Activate the Ticket",
+      description: "Use Intel Center to encrypt/activate keycard",
     },
   },
-
-  // ============ ROW 8 ============
-  {
-    id: "tell-prapor-no-money",
-    type: "story",
-    position: { x: -COL_WIDTH * 1.8, y: ROW_HEIGHT * 8 },
-    data: {
-      label: "Can't Pay / Won't Pay",
-      description: "'Fall into darkness' - Currently disabled/game over",
-      note: "* Leads to immediate death state",
-    },
-  },
-  {
-    id: "lk-jammer",
-    type: "story",
-    position: { x: -COL_WIDTH * 0.5, y: ROW_HEIGHT * 8 },
-    data: {
-      label: "Jammer from Labs",
-      description: "LK wants jammer from Labs",
-    },
-  },
-  {
-    id: "craft-keycard",
-    type: "story",
-    position: { x: COL_WIDTH * 1.5, y: ROW_HEIGHT * 8 },
-    data: {
-      label: "Craft/Swipe Keycard",
-      description: "Create or swipe the keycard",
-    },
-  },
-
-  // ============ ROW 9 ============
-  {
-    id: "craft-case",
-    type: "story",
-    position: { x: -COL_WIDTH * 0.5, y: ROW_HEIGHT * 9 },
-    data: {
-      label: "55 Hour Craft",
-      description: "Craft for case (55 hours)",
-    },
-  },
-  {
-    id: "talk-kerman-again",
-    type: "story",
-    position: { x: COL_WIDTH * 1.5, y: ROW_HEIGHT * 9 },
-    data: {
-      label: "Talk to Kerman",
-      description: "Report back to Kerman",
-    },
-  },
-
-  // ============ ROW 10 ============
-  {
-    id: "opened-case-kerman",
-    type: "story",
-    position: { x: -COL_WIDTH * 0.5, y: ROW_HEIGHT * 10 },
-    data: {
-      label: "Opened Case - Sided with Kerman",
-      description: "Case opened, working with Mr. Kerman",
-    },
-  },
-  {
-    id: "agree-terragroup",
-    type: "story",
-    position: { x: COL_WIDTH * 1.5, y: ROW_HEIGHT * 10 },
-    data: {
-      label: "Find Dirt on Terragroup",
-      description: "Agree to work with Kerman again",
-    },
-  },
-
-  // ============ ROW 11 ============
-  {
-    id: "find-encrypt-items",
-    type: "story",
-    position: { x: -COL_WIDTH * 0.5, y: ROW_HEIGHT * 11 },
-    data: {
-      label: "Find Encryption Items",
-      description: "Find items to encrypt the keycard",
-    },
-  },
-  {
-    id: "get-intel-3",
-    type: "story",
-    position: { x: COL_WIDTH * 1.5, y: ROW_HEIGHT * 11 },
-    data: {
-      label: "Get Intel 3",
-      description: "Obtain Intel 3",
-    },
-  },
-
-  // ============ SIDE QUESTS (Required for Utopia) ============
   {
     id: "side-quests",
     type: "decision",
-    position: { x: 0, y: ROW_HEIGHT * 12 },
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 14 },
     data: {
-      label: "Complete Side Quests?",
-      description: "Batya, Bogatyr, Chronicles of Ryzhy, etc.",
+      label: "Complete ALL Side Quests?",
+      description: "Batya, Bogatyr, Chronicles of Ryzhy required for Savior",
       isIrreversible: true,
     },
   },
-
-  // ============ ROW 13: Terminal Battle ============
   {
     id: "terminal-battle",
     type: "decision",
-    position: { x: 0, y: ROW_HEIGHT * 13.5 },
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 15 },
     data: {
       label: "Terminal Battle",
       description: "Fight Black Division at Terminal - Do you survive?",
@@ -454,282 +370,289 @@ export const initialNodes: Node[] = [
     },
   },
 
-  // ============ ROW 15: ENDINGS (BOTTOM - aligned) ============
+  // ============ REFUSE KERMAN PATH (Right - Blue/Survivor or Red/Debtor) ============
   {
-    id: "debtor-ending",
-    type: "ending",
-    position: { x: -COL_WIDTH * 1.5, y: ROW_HEIGHT * 15.5 },
+    id: "trust-no",
+    type: "story",
+    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 10 },
     data: {
-      label: "Debtor Ending",
-      description: "Bad: 'Fall into darkness' - Thrall to dark forces",
-      endingType: "debtor",
+      label: "Refuse Kerman",
+      description: "Follow original instructions from the case",
     },
   },
   {
-    id: "survivor-ending",
-    type: "ending",
-    position: { x: -COL_WIDTH * 0.5, y: ROW_HEIGHT * 15.5 },
+    id: "head-to-terminal",
+    type: "story",
+    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 11 },
     data: {
-      label: "Survivor Ending",
-      description: "Selfish: Escape alone, Tarkov left to rot",
-      endingType: "survivor",
+      label: "Head to Terminal",
+      description: "Go to port Terminal via Shoreline checkpoint",
+    },
+  },
+  {
+    id: "use-ticket-terminal",
+    type: "story",
+    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 12 },
+    data: {
+      label: "Use Ticket at Terminal",
+      description: "Swipe keycard at gate intercom - alerts authorities",
+    },
+  },
+  {
+    id: "meet-prapor",
+    type: "story",
+    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 13 },
+    data: {
+      label: "Meet Prapor",
+      description: "Prapor arrives with his men - he controls this exit",
+    },
+  },
+
+  // ============ DECISION 3: PRAPOR'S BRIBE ============
+  {
+    id: "prapor-bribe",
+    type: "decision",
+    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 14 },
+    data: {
+      label: "Decision 3: Pay Prapor's Bribe?",
+      description: "₽500M to escape or refuse?",
+      isIrreversible: true,
+    },
+  },
+  {
+    id: "pay-500m",
+    type: "story",
+    position: { x: COL_WIDTH * 0.6, y: ROW_HEIGHT * 15 },
+    data: {
+      label: "Pay ₽500 Million",
+      description: "Buy your freedom from Prapor",
+      cost: 500000000,
+    },
+  },
+  {
+    id: "cant-pay",
+    type: "story",
+    position: { x: COL_WIDTH * 1.8, y: ROW_HEIGHT * 15 },
+    data: {
+      label: "Can't/Won't Pay",
+      description: "Refuse or unable to pay Prapor's bribe",
+      note: "Initially disabled to prevent rushing worst ending",
+    },
+  },
+
+  // ============ ENDINGS ============
+  {
+    id: "savior-ending",
+    type: "ending",
+    position: { x: -COL_WIDTH * 1.8, y: ROW_HEIGHT * 17 },
+    data: {
+      label: "🌟 Savior Ending",
+      description: "Best: Save Tarkov, thwart bad actors. Complete ALL side quests + survive Terminal",
+      endingType: "savior",
     },
   },
   {
     id: "fallen-ending",
     type: "ending",
-    position: { x: COL_WIDTH * 0.5, y: ROW_HEIGHT * 15.5 },
+    position: { x: -COL_WIDTH * 0.6, y: ROW_HEIGHT * 17 },
     data: {
-      label: "Fallen Ending",
-      description: "Low Effort: Skipped side quests, Cultists win",
+      label: "💀 Fallen Ending",
+      description: "Escape but 'fall into darkness' - skipped side quests or failed Terminal",
       endingType: "fallen",
     },
   },
   {
-    id: "savior-ending",
+    id: "survivor-ending",
     type: "ending",
-    position: { x: COL_WIDTH * 1.5, y: ROW_HEIGHT * 15.5 },
+    position: { x: COL_WIDTH * 0.6, y: ROW_HEIGHT * 17 },
     data: {
-      label: "Savior Ending",
-      description: "True: Save Tarkov! Complete ALL side quests + survive Terminal",
-      endingType: "savior",
+      label: "🛡️ Survivor Ending",
+      description: "Selfish: Buy freedom with ₽500M, Tarkov left to rot",
+      endingType: "survivor",
+    },
+  },
+  {
+    id: "debtor-ending",
+    type: "ending",
+    position: { x: COL_WIDTH * 1.8, y: ROW_HEIGHT * 17 },
+    data: {
+      label: "⛓️ Debtor Ending",
+      description: "Worst: 'Escape without escaping yourself' - debts catch up",
+      endingType: "debtor",
     },
   },
 ];
 
 export const initialEdges: Edge[] = [
-  // From start
+  // ============ PROLOGUE ============
+  {
+    id: "e-prologue-retrieve",
+    source: "prologue",
+    target: "retrieve-case",
+    style: { stroke: "#666" },
+  },
+  {
+    id: "e-retrieve-start",
+    source: "retrieve-case",
+    target: "start",
+    style: { stroke: "#666" },
+  },
+
+  // ============ DECISION 1: ARMORED CASE ============
   {
     id: "e-start-give",
     source: "start",
     target: "give-prapor",
+    label: "Hand Over",
     style: { stroke: "#22c55e" },
   },
   {
     id: "e-start-keep",
     source: "start",
     target: "keep-case",
+    label: "Keep It",
+    style: { stroke: "#8b5cf6" },
+  },
+
+  // ============ PRAPOR'S BRANCH (Green path - Recommended) ============
+  {
+    id: "e-give-ticket",
+    source: "give-prapor",
+    target: "the-ticket-prapor",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-ticket-contact",
+    source: "the-ticket-prapor",
+    target: "contact-kerman-prapor",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-contact-investigate",
+    source: "contact-kerman-prapor",
+    target: "investigate-lighthouse",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-investigate-lk",
+    source: "investigate-lighthouse",
+    target: "unlock-lightkeeper",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-lk-recover",
+    source: "unlock-lightkeeper",
+    target: "recover-case-lk",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-recover-read",
+    source: "recover-case-lk",
+    target: "read-instructions",
+    style: { stroke: "#22c55e" },
+  },
+
+  // ============ INDEPENDENT BRANCH (Purple path) ============
+  {
+    id: "e-keep-ticket",
+    source: "keep-case",
+    target: "the-ticket-keep",
+    style: { stroke: "#8b5cf6" },
+  },
+  {
+    id: "e-ticket-mechanic",
+    source: "the-ticket-keep",
+    target: "ask-mechanic",
+    style: { stroke: "#8b5cf6" },
+  },
+  {
+    id: "e-mechanic-labs",
+    source: "ask-mechanic",
+    target: "prepare-labs",
+    style: { stroke: "#8b5cf6" },
+  },
+  {
+    id: "e-labs-jammer",
+    source: "prepare-labs",
+    target: "obtain-jammer",
+    style: { stroke: "#8b5cf6" },
+  },
+  {
+    id: "e-jammer-unlock",
+    source: "obtain-jammer",
+    target: "unlock-case-jammer",
+    style: { stroke: "#8b5cf6" },
+  },
+  {
+    id: "e-unlock-read",
+    source: "unlock-case-jammer",
+    target: "read-instructions",
+    style: { stroke: "#8b5cf6" },
+  },
+
+  // ============ PATHS CONVERGE ============
+  {
+    id: "e-read-report",
+    source: "read-instructions",
+    target: "report-kerman",
+    style: { stroke: "#666" },
+  },
+  {
+    id: "e-report-trust",
+    source: "report-kerman",
+    target: "trust-kerman",
     style: { stroke: "#666" },
   },
 
-  // Give Prapor path
-  {
-    id: "e-give-lk",
-    source: "give-prapor",
-    target: "lk-unlock",
-    style: { stroke: "#22c55e" },
-  },
-  {
-    id: "e-lk-case",
-    source: "lk-unlock",
-    target: "get-case-back",
-    style: { stroke: "#22c55e" },
-  },
-  {
-    id: "e-case-trust",
-    source: "get-case-back",
-    target: "trust-kerman-prapor",
-    style: { stroke: "#22c55e" },
-  },
-
-  // Don't trust from Prapor path - SURVIVOR (blue) & DEBTOR (red) paths
-  {
-    id: "e-trust-no",
-    source: "trust-kerman-prapor",
-    target: "dont-trust-prapor",
-    style: { stroke: "#3b82f6" },
-  },
-  {
-    id: "e-notrust-pay",
-    source: "dont-trust-prapor",
-    target: "pay-prapor-choice",
-    style: { stroke: "#3b82f6" },
-  },
-  {
-    id: "e-pay-300",
-    source: "pay-prapor-choice",
-    target: "pay-300m",
-    style: { stroke: "#3b82f6" },
-  },
-  {
-    id: "e-pay-500",
-    source: "pay-prapor-choice",
-    target: "pay-500m",
-    style: { stroke: "#3b82f6" },
-  },
-  {
-    id: "e-pay-none",
-    source: "pay-prapor-choice",
-    target: "tell-prapor-no-money",
-    style: { stroke: "#ef4444" },
-  },
-  {
-    id: "e-300-survivor",
-    source: "pay-300m",
-    target: "survivor-ending",
-    style: { stroke: "#3b82f6" },
-  },
-  {
-    id: "e-500-survivor",
-    source: "pay-500m",
-    target: "survivor-ending",
-    style: { stroke: "#3b82f6" },
-  },
-  {
-    id: "e-nomoney-debtor",
-    source: "tell-prapor-no-money",
-    target: "debtor-ending",
-    style: { stroke: "#ef4444" },
-  },
-
-  // Trust Kerman from Prapor path
+  // ============ DECISION 2: TRUST KERMAN ============
   {
     id: "e-trust-yes",
-    source: "trust-kerman-prapor",
-    target: "trust-kerman-prapor-yes",
+    source: "trust-kerman",
+    target: "trust-yes",
+    label: "Trust Him",
     style: { stroke: "#22c55e" },
   },
   {
-    id: "e-kerman-folders",
-    source: "trust-kerman-prapor-yes",
-    target: "lk-blue-folders",
+    id: "e-trust-no",
+    source: "trust-kerman",
+    target: "trust-no",
+    label: "Refuse",
+    style: { stroke: "#3b82f6" },
+  },
+
+  // ============ KERMAN'S PATH (Green - Best endings) ============
+  {
+    id: "e-yes-build",
+    source: "trust-yes",
+    target: "build-replacement-key",
     style: { stroke: "#22c55e" },
   },
   {
-    id: "e-folders-flare",
-    source: "lk-blue-folders",
-    target: "lk-flare-kills",
+    id: "e-build-solar",
+    source: "build-replacement-key",
+    target: "hideout-solar",
     style: { stroke: "#22c55e" },
   },
   {
-    id: "e-flare-jammer",
-    source: "lk-flare-kills",
-    target: "lk-jammer",
+    id: "e-solar-activate",
+    source: "hideout-solar",
+    target: "activate-ticket",
     style: { stroke: "#22c55e" },
   },
   {
-    id: "e-jammer-craft",
-    source: "lk-jammer",
-    target: "craft-case",
-    style: { stroke: "#22c55e" },
-  },
-  {
-    id: "e-craft-opened",
-    source: "craft-case",
-    target: "opened-case-kerman",
-    style: { stroke: "#22c55e" },
-  },
-  {
-    id: "e-opened-encrypt",
-    source: "opened-case-kerman",
-    target: "find-encrypt-items",
-    style: { stroke: "#22c55e" },
-  },
-  {
-    id: "e-encrypt-sidequests",
-    source: "find-encrypt-items",
+    id: "e-activate-sidequests",
+    source: "activate-ticket",
     target: "side-quests",
     style: { stroke: "#22c55e" },
   },
-
-  // Keep case path (gray/neutral)
-  {
-    id: "e-keep-unlock",
-    source: "keep-case",
-    target: "unlock-case",
-    style: { stroke: "#666" },
-  },
-  {
-    id: "e-unlock-trust",
-    source: "unlock-case",
-    target: "trust-kerman-keep",
-    style: { stroke: "#666" },
-  },
-
-  // Don't trust from Keep path - leads to SURVIVOR (blue)
-  {
-    id: "e-keep-notrust",
-    source: "trust-kerman-keep",
-    target: "dont-trust-keep",
-    style: { stroke: "#3b82f6" },
-  },
-  {
-    id: "e-notrust-500",
-    source: "dont-trust-keep",
-    target: "pay-500m-keep",
-    style: { stroke: "#3b82f6" },
-  },
-  {
-    id: "e-500keep-survivor",
-    source: "pay-500m-keep",
-    target: "survivor-ending",
-    style: { stroke: "#3b82f6" },
-  },
-
-  // Trust Kerman from Keep path - leads to UTOPIA (purple tint for alternate route)
-  {
-    id: "e-keep-trust",
-    source: "trust-kerman-keep",
-    target: "work-kerman-keep",
-    style: { stroke: "#8b5cf6" },
-  },
-  {
-    id: "e-work-jammer",
-    source: "work-kerman-keep",
-    target: "use-jammer-case",
-    style: { stroke: "#8b5cf6" },
-  },
-  {
-    id: "e-jammer-btc",
-    source: "use-jammer-case",
-    target: "turn-in-btc",
-    style: { stroke: "#8b5cf6" },
-  },
-  {
-    id: "e-btc-rfid",
-    source: "turn-in-btc",
-    target: "get-rfid",
-    style: { stroke: "#8b5cf6" },
-  },
-  {
-    id: "e-rfid-keycard",
-    source: "get-rfid",
-    target: "craft-keycard",
-    style: { stroke: "#8b5cf6" },
-  },
-  {
-    id: "e-keycard-talk",
-    source: "craft-keycard",
-    target: "talk-kerman-again",
-    style: { stroke: "#8b5cf6" },
-  },
-  {
-    id: "e-talk-terra",
-    source: "talk-kerman-again",
-    target: "agree-terragroup",
-    style: { stroke: "#8b5cf6" },
-  },
-  {
-    id: "e-terra-intel",
-    source: "agree-terragroup",
-    target: "get-intel-3",
-    style: { stroke: "#8b5cf6" },
-  },
-  {
-    id: "e-intel-sidequests",
-    source: "get-intel-3",
-    target: "side-quests",
-    style: { stroke: "#8b5cf6", strokeDasharray: "5,5" },
-  },
-
-  // Side quests to Terminal battle
   {
     id: "e-sidequests-terminal",
     source: "side-quests",
     target: "terminal-battle",
+    style: { stroke: "#22c55e" },
   },
 
-  // Terminal battle outcomes
+  // ============ TERMINAL BATTLE OUTCOMES ============
   {
     id: "e-terminal-savior",
     source: "terminal-battle",
@@ -743,5 +666,61 @@ export const initialEdges: Edge[] = [
     target: "fallen-ending",
     label: "Survive (No Quests)",
     style: { stroke: "#6b7280" },
+  },
+
+  // ============ REFUSE KERMAN PATH (Blue/Red - Survivor/Debtor) ============
+  {
+    id: "e-no-terminal",
+    source: "trust-no",
+    target: "head-to-terminal",
+    style: { stroke: "#3b82f6" },
+  },
+  {
+    id: "e-terminal-use",
+    source: "head-to-terminal",
+    target: "use-ticket-terminal",
+    style: { stroke: "#3b82f6" },
+  },
+  {
+    id: "e-use-meet",
+    source: "use-ticket-terminal",
+    target: "meet-prapor",
+    style: { stroke: "#3b82f6" },
+  },
+  {
+    id: "e-meet-bribe",
+    source: "meet-prapor",
+    target: "prapor-bribe",
+    style: { stroke: "#3b82f6" },
+  },
+
+  // ============ DECISION 3: PRAPOR'S BRIBE ============
+  {
+    id: "e-bribe-pay",
+    source: "prapor-bribe",
+    target: "pay-500m",
+    label: "Pay ₽500M",
+    style: { stroke: "#3b82f6" },
+  },
+  {
+    id: "e-bribe-refuse",
+    source: "prapor-bribe",
+    target: "cant-pay",
+    label: "Refuse",
+    style: { stroke: "#ef4444" },
+  },
+
+  // ============ FINAL ENDINGS ============
+  {
+    id: "e-pay-survivor",
+    source: "pay-500m",
+    target: "survivor-ending",
+    style: { stroke: "#3b82f6" },
+  },
+  {
+    id: "e-cantpay-debtor",
+    source: "cant-pay",
+    target: "debtor-ending",
+    style: { stroke: "#ef4444" },
   },
 ];
