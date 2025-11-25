@@ -1,13 +1,14 @@
 import type { Node, Edge } from "@xyflow/react";
 
 // Layout constants for better alignment
-const ROW_HEIGHT = 120;
-const COL_WIDTH = 280;
+const ROW_HEIGHT = 160;
+const COL_WIDTH = 320;
 
 // Ending IDs for easy reference
 export const ENDING_IDS = [
   "debtor-ending",
-  "survivor-ending",
+  "survivor-ending-300m",
+  "survivor-ending-500m",
   "fallen-ending",
   "savior-ending",
 ] as const;
@@ -316,34 +317,91 @@ export const initialNodes: Node[] = [
     type: "story",
     position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 10 },
     data: {
-      label: "Trust Kerman",
+      label: "Accept Kerman's Offer",
       description: "Side with Kerman's alternative escape plan",
     },
   },
   {
-    id: "build-replacement-key",
+    id: "activate-rfid-case",
     type: "story",
     position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 11 },
     data: {
-      label: "Build Replacement Key",
-      description: "Gather: RFID Encrypter, Lab Master Pass, Blank RFID, Encryptor Chip",
-      note: "Items from Labs offices (Kruglov's office)",
+      label: "Activate RFID from Case",
+      description: "Kerman sends instructions - need Intel Center in Hideout",
+      note: "Hideout: Intelligence Center",
     },
   },
   {
-    id: "hideout-solar",
+    id: "obtain-lab-master-pass",
     type: "story",
     position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 12 },
     data: {
-      label: "Install Solar Power",
-      description: "Hideout upgrade needed for encryption setup",
-      note: "Hideout: Solar Power Module",
+      label: "Obtain Lab Master Pass",
+      description: "Find in TerraGroup Lab offices (Kruglov's office)",
+      note: "Location: The Lab",
+    },
+  },
+  {
+    id: "use-master-pass",
+    type: "story",
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 13 },
+    data: {
+      label: "Use Lab Master Pass",
+      description: "Activate Kruglov's keycard with the master pass",
+    },
+  },
+  {
+    id: "obtain-rfid-labs",
+    type: "story",
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 14 },
+    data: {
+      label: "Search Labs for RFID (FAILS)",
+      description: "RFID Encrypter cannot be found in Labs - this is intentional",
+      note: "Scripted failure after ~5 raids/12hrs",
+    },
+  },
+  {
+    id: "talk-kerman-rfid",
+    type: "story",
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 15 },
+    data: {
+      label: "Talk to Mr. Kerman",
+      description: "Perhaps Kerman can find where else to locate the RFID device",
+    },
+  },
+  {
+    id: "talk-mechanic",
+    type: "story",
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 16 },
+    data: {
+      label: "Talk to Mechanic",
+      description: "Mechanic offers alternative: pay 40 BTC for Elektronik key",
+    },
+  },
+  {
+    id: "turn-in-btc",
+    type: "story",
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 17 },
+    data: {
+      label: "Hand Over 40 Bitcoins",
+      description: "Give 40 BTC to Mechanic, receive Elektronik key for 14A",
+      cost: 40,
+    },
+  },
+  {
+    id: "collect-rfid-streets",
+    type: "story",
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 18 },
+    data: {
+      label: "Use Elektronik Key at 14A",
+      description: "Use key to access Klimov Street 14A and collect RFID Encrypter",
+      note: "Location: Streets of Tarkov",
     },
   },
   {
     id: "activate-ticket",
     type: "story",
-    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 13 },
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 19 },
     data: {
       label: "Activate the Ticket",
       description: "Use Intel Center to encrypt/activate keycard",
@@ -352,7 +410,7 @@ export const initialNodes: Node[] = [
   {
     id: "side-quests",
     type: "decision",
-    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 14 },
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 20 },
     data: {
       label: "Complete ALL Side Quests?",
       description: "Batya, Bogatyr, Chronicles of Ryzhy required for Savior",
@@ -362,7 +420,7 @@ export const initialNodes: Node[] = [
   {
     id: "terminal-battle",
     type: "decision",
-    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 15 },
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 21 },
     data: {
       label: "Terminal Battle",
       description: "Fight Black Division at Terminal - Do you survive?",
@@ -370,7 +428,7 @@ export const initialNodes: Node[] = [
     },
   },
 
-  // ============ REFUSE KERMAN PATH (Right - Blue/Survivor or Red/Debtor) ============
+  // ============ REFUSE KERMAN PATH (Shared nodes) ============
   {
     id: "trust-no",
     type: "story",
@@ -408,35 +466,44 @@ export const initialNodes: Node[] = [
     },
   },
 
-  // ============ DECISION 3: PRAPOR'S BRIBE ============
+  // ============ DECISION 3: PRAPOR'S BRIBE (splits based on Decision 1) ============
   {
     id: "prapor-bribe",
     type: "decision",
     position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 14 },
     data: {
       label: "Decision 3: Pay Prapor's Bribe?",
-      description: "₽500M to escape or refuse?",
+      description: "₽300M (gave case) or ₽500M (kept case) to escape?",
       isIrreversible: true,
+    },
+  },
+  {
+    id: "pay-300m",
+    type: "story",
+    position: { x: COL_WIDTH * 0.2, y: ROW_HEIGHT * 17 },
+    data: {
+      label: "Pay ₽300 Million",
+      description: "Loyalty discount - you gave Prapor the case",
+      cost: 300000000,
     },
   },
   {
     id: "pay-500m",
     type: "story",
-    position: { x: COL_WIDTH * 0.6, y: ROW_HEIGHT * 15 },
+    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 17 },
     data: {
       label: "Pay ₽500 Million",
-      description: "Buy your freedom from Prapor",
+      description: "No discount - you kept the case from Prapor",
       cost: 500000000,
     },
   },
   {
     id: "cant-pay",
     type: "story",
-    position: { x: COL_WIDTH * 1.8, y: ROW_HEIGHT * 15 },
+    position: { x: COL_WIDTH * 2.1, y: ROW_HEIGHT * 17 },
     data: {
       label: "Can't/Won't Pay",
       description: "Refuse or unable to pay Prapor's bribe",
-      note: "Initially disabled to prevent rushing worst ending",
     },
   },
 
@@ -444,7 +511,7 @@ export const initialNodes: Node[] = [
   {
     id: "savior-ending",
     type: "ending",
-    position: { x: -COL_WIDTH * 1.8, y: ROW_HEIGHT * 17 },
+    position: { x: -COL_WIDTH * 1.8, y: ROW_HEIGHT * 23 },
     data: {
       label: "🌟 Savior Ending",
       description: "Best: Save Tarkov, thwart bad actors. Complete ALL side quests + survive Terminal",
@@ -454,7 +521,7 @@ export const initialNodes: Node[] = [
   {
     id: "fallen-ending",
     type: "ending",
-    position: { x: -COL_WIDTH * 0.6, y: ROW_HEIGHT * 17 },
+    position: { x: -COL_WIDTH * 0.6, y: ROW_HEIGHT * 23 },
     data: {
       label: "💀 Fallen Ending",
       description: "Escape but 'fall into darkness' - skipped side quests or failed Terminal",
@@ -462,22 +529,32 @@ export const initialNodes: Node[] = [
     },
   },
   {
-    id: "survivor-ending",
+    id: "survivor-ending-300m",
     type: "ending",
-    position: { x: COL_WIDTH * 0.6, y: ROW_HEIGHT * 17 },
+    position: { x: COL_WIDTH * 0.2, y: ROW_HEIGHT * 23 },
     data: {
-      label: "🛡️ Survivor Ending",
-      description: "Selfish: Buy freedom with ₽500M, Tarkov left to rot",
+      label: "🛡️ Survivor (₽300M)",
+      description: "Buy freedom with ₽300M (Prapor loyal path)",
+      endingType: "survivor",
+    },
+  },
+  {
+    id: "survivor-ending-500m",
+    type: "ending",
+    position: { x: COL_WIDTH * 1, y: ROW_HEIGHT * 23 },
+    data: {
+      label: "🛡️ Survivor (₽500M)",
+      description: "Buy freedom with ₽500M (Kept case path)",
       endingType: "survivor",
     },
   },
   {
     id: "debtor-ending",
     type: "ending",
-    position: { x: COL_WIDTH * 1.8, y: ROW_HEIGHT * 17 },
+    position: { x: COL_WIDTH * 1.8, y: ROW_HEIGHT * 23 },
     data: {
       label: "⛓️ Debtor Ending",
-      description: "Worst: 'Escape without escaping yourself' - debts catch up",
+      description: "Worst: Can't pay bribe - debts catch up",
       endingType: "debtor",
     },
   },
@@ -622,20 +699,57 @@ export const initialEdges: Edge[] = [
 
   // ============ KERMAN'S PATH (Green - Best endings) ============
   {
-    id: "e-yes-build",
+    id: "e-yes-activate-rfid",
     source: "trust-yes",
-    target: "build-replacement-key",
+    target: "activate-rfid-case",
     style: { stroke: "#22c55e" },
   },
   {
-    id: "e-build-solar",
-    source: "build-replacement-key",
-    target: "hideout-solar",
+    id: "e-activate-rfid-masterpass",
+    source: "activate-rfid-case",
+    target: "obtain-lab-master-pass",
     style: { stroke: "#22c55e" },
   },
   {
-    id: "e-solar-activate",
-    source: "hideout-solar",
+    id: "e-masterpass-use",
+    source: "obtain-lab-master-pass",
+    target: "use-master-pass",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-use-masterpass-rfid-labs",
+    source: "use-master-pass",
+    target: "obtain-rfid-labs",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-rfid-labs-talk-kerman",
+    source: "obtain-rfid-labs",
+    target: "talk-kerman-rfid",
+    label: "Failed",
+    style: { stroke: "#ef4444" },
+  },
+  {
+    id: "e-talk-kerman-mechanic",
+    source: "talk-kerman-rfid",
+    target: "talk-mechanic",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-mechanic-btc",
+    source: "talk-mechanic",
+    target: "turn-in-btc",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-btc-collect-rfid",
+    source: "turn-in-btc",
+    target: "collect-rfid-streets",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-collect-rfid-activate",
+    source: "collect-rfid-streets",
     target: "activate-ticket",
     style: { stroke: "#22c55e" },
   },
@@ -668,7 +782,7 @@ export const initialEdges: Edge[] = [
     style: { stroke: "#6b7280" },
   },
 
-  // ============ REFUSE KERMAN PATH (Blue/Red - Survivor/Debtor) ============
+  // ============ REFUSE KERMAN PATH (Blue - Survivor/Debtor) ============
   {
     id: "e-no-terminal",
     source: "trust-no",
@@ -696,11 +810,18 @@ export const initialEdges: Edge[] = [
 
   // ============ DECISION 3: PRAPOR'S BRIBE ============
   {
-    id: "e-bribe-pay",
+    id: "e-bribe-pay-300m",
+    source: "prapor-bribe",
+    target: "pay-300m",
+    label: "Pay ₽300M (Loyal)",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-bribe-pay-500m",
     source: "prapor-bribe",
     target: "pay-500m",
-    label: "Pay ₽500M",
-    style: { stroke: "#3b82f6" },
+    label: "Pay ₽500M (Kept)",
+    style: { stroke: "#8b5cf6" },
   },
   {
     id: "e-bribe-refuse",
@@ -712,10 +833,16 @@ export const initialEdges: Edge[] = [
 
   // ============ FINAL ENDINGS ============
   {
-    id: "e-pay-survivor",
+    id: "e-pay-survivor-300m",
+    source: "pay-300m",
+    target: "survivor-ending-300m",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-pay-survivor-500m",
     source: "pay-500m",
-    target: "survivor-ending",
-    style: { stroke: "#3b82f6" },
+    target: "survivor-ending-500m",
+    style: { stroke: "#8b5cf6" },
   },
   {
     id: "e-cantpay-debtor",

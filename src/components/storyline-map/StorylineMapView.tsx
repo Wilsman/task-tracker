@@ -47,6 +47,8 @@ export function StorylineMapView({
 }: StorylineMapViewProps): JSX.Element {
   // Track selected ending for breakdown view
   const [selectedEndingId, setSelectedEndingId] = useState<string | null>(null);
+  // Start with interactivity locked by default
+  const [nodesLocked, setNodesLocked] = useState(true);
 
   // Initialize nodes with completion status from props
   const initialNodesWithState = useMemo(() => {
@@ -93,17 +95,17 @@ export function StorylineMapView({
 
   const onNodeClick = useCallback(
     (_: React.MouseEvent, node: Node) => {
-      // Handle ending node clicks - show breakdown
+      // Handle ending node clicks - show breakdown (always allowed)
       if (node.type === "ending") {
         setSelectedEndingId((prev) => (prev === node.id ? null : node.id));
         return;
       }
-      // Only allow toggling story nodes
-      if (node.type === "story") {
+      // Only toggle story nodes when not locked
+      if (node.type === "story" && !nodesLocked) {
         onToggleNode(node.id);
       }
     },
-    [onToggleNode]
+    [onToggleNode, nodesLocked]
   );
 
   const calculateTotalCost = useCallback(() => {
@@ -139,14 +141,21 @@ export function StorylineMapView({
         nodeTypes={nodeTypes}
         fitView
         panOnScroll
-        selectionOnDrag
+        selectionOnDrag={!nodesLocked}
         panOnDrag
         zoomOnScroll
         minZoom={0.2}
         maxZoom={2}
+        nodesDraggable={!nodesLocked}
+        nodesConnectable={!nodesLocked}
+        elementsSelectable={!nodesLocked}
         className="bg-background"
       >
-        <Controls className="!bg-card !border-border !shadow-lg [&>button]:!bg-card [&>button]:!border-border [&>button]:!text-foreground hover:[&>button]:!bg-muted" />
+        <Controls
+          className="!bg-card !border-border !shadow-lg [&>button]:!bg-card [&>button]:!border-border [&>button]:!text-foreground hover:[&>button]:!bg-muted"
+          showInteractive
+          onInteractiveChange={(interactive) => setNodesLocked(!interactive)}
+        />
         <MiniMap
           className="!bg-card !border-border"
           nodeColor={(node) => {
@@ -181,9 +190,9 @@ export function StorylineMapView({
               <Map className="h-6 w-6 text-primary" />
               <h1 className="font-bold text-lg">Tarkov Storyline Map</h1>
             </div>
-            <p className="text-xs text-muted-foreground mb-3">
-              Click story nodes to mark as completed • Pan to navigate • Scroll
-              to zoom
+            <p className="text-[10px] text-muted-foreground/70 mb-3">
+              Click nodes to toggle • Ctrl+scroll to zoom • Lock button (↙)
+              prevents edits
             </p>
             {/* WIP Warning */}
             <div className="rounded-md border border-amber-500/30 bg-amber-500/10 p-2">
