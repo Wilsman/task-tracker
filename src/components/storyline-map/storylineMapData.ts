@@ -187,7 +187,7 @@ export const initialNodes: Node[] = [
   {
     id: "give-prapor",
     type: "story",
-    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 1.1 },
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 1 },
     data: {
       label: "Hand Over to Prapor",
       description: "₽1M reward, keep Prapor's trust (Recommended)",
@@ -211,7 +211,7 @@ export const initialNodes: Node[] = [
     position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 3 },
     data: {
       label: "Contact Mr. Kerman",
-      description: "Establish secure line via hideout intel center",
+      description: "Kerman says you need the case back",
     },
   },
   {
@@ -224,9 +224,18 @@ export const initialNodes: Node[] = [
     },
   },
   {
-    id: "unlock-lightkeeper",
+    id: "talk-mechanic-network",
     type: "story",
     position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 5 },
+    data: {
+      label: "Talk to Mechanic (Network Provider)",
+      description: "Mechanic helps unlock Lightkeeper access early",
+    },
+  },
+  {
+    id: "unlock-lightkeeper",
+    type: "story",
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 6 },
     data: {
       label: "Unlock Lightkeeper",
       description: "Complete tasks to gain access to Lightkeeper trader",
@@ -235,7 +244,7 @@ export const initialNodes: Node[] = [
   {
     id: "recover-case-lk",
     type: "story",
-    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 6 },
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 7 },
     data: {
       label: "Recover Case from LK",
       description: "Lightkeeper returns the case contents after his requests",
@@ -246,17 +255,27 @@ export const initialNodes: Node[] = [
   {
     id: "keep-case",
     type: "story",
-    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 1.1 },
+    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 1 },
     data: {
       label: "Keep the Case",
-      description: "Prapor gets mad: -0.5 rep, ~58 hour unlock",
+      description: "Prapor gets mad: -0.5 rep",
       isIrreversible: true,
+    },
+  },
+  {
+    id: "timegate-55h",
+    type: "story",
+    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 3 },
+    data: {
+      label: "⏳ 55 Hour Timegate",
+      description: "Wait ~55 hours before case can be unlocked",
+      note: "Time gate penalty for keeping case",
     },
   },
   {
     id: "intel-center-keep",
     type: "story",
-    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 3 },
+    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 5 },
     data: {
       label: "Intelligence Center Level 1",
       description: "To contact Mr. Kerman, I need a working laptop",
@@ -266,7 +285,7 @@ export const initialNodes: Node[] = [
   {
     id: "talk-kerman-keep",
     type: "story",
-    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 5 },
+    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 7 },
     data: {
       label: "Talk to Mr. Kerman",
       description: "Kerman said to contact him through my Intelligence Center",
@@ -276,7 +295,7 @@ export const initialNodes: Node[] = [
   {
     id: "ask-mechanic-help",
     type: "story",
-    position: { x: 0, y: ROW_HEIGHT * 7 },
+    position: { x: 0, y: ROW_HEIGHT * 8 },
     data: {
       label: "Ask Mechanic for Help",
       description: "Case uses high-grade electronic lock, need special equipment",
@@ -285,7 +304,7 @@ export const initialNodes: Node[] = [
   {
     id: "obtain-jammer",
     type: "story",
-    position: { x: 0, y: ROW_HEIGHT * 8 },
+    position: { x: 0, y: ROW_HEIGHT * 9 },
     data: {
       label: "Obtain Signal Jammer",
       description: "Mechanic advised to look in laboratories",
@@ -295,7 +314,7 @@ export const initialNodes: Node[] = [
   {
     id: "talk-mechanic-jammer",
     type: "story",
-    position: { x: 0, y: ROW_HEIGHT * 9 },
+    position: { x: 0, y: ROW_HEIGHT * 10 },
     data: {
       label: "Talk to Mechanic",
       description: "Mechanic sent instructions on how to unlock the case",
@@ -304,7 +323,7 @@ export const initialNodes: Node[] = [
   {
     id: "unlock-case-jammer",
     type: "story",
-    position: { x: 0, y: ROW_HEIGHT * 10 },
+    position: { x: 0, y: ROW_HEIGHT * 11 },
     data: {
       label: "Use Jammer to Unlock Case",
       description: "Use the experimental signal jammer at my Workbench",
@@ -315,7 +334,7 @@ export const initialNodes: Node[] = [
   {
     id: "read-instructions",
     type: "story",
-    position: { x: 0, y: ROW_HEIGHT * 11 },
+    position: { x: 0, y: ROW_HEIGHT * 12 },
     data: {
       label: "Read Case Instructions",
       description: "Examine documents - contains original escape plan for Tarkov",
@@ -324,7 +343,7 @@ export const initialNodes: Node[] = [
   {
     id: "report-kerman",
     type: "story",
-    position: { x: 0, y: ROW_HEIGHT * 12 },
+    position: { x: 0, y: ROW_HEIGHT * 13 },
     data: {
       label: "Report to Kerman",
       description: "Inform him of case contents and the escape plan",
@@ -335,7 +354,7 @@ export const initialNodes: Node[] = [
   {
     id: "trust-kerman",
     type: "decision",
-    position: { x: 0, y: ROW_HEIGHT * 13 },
+    position: { x: 0, y: ROW_HEIGHT * 14 },
     data: {
       label: "Decision 2: Trust Mr. Kerman?",
       description: "Follow his plan or go your own way?",
@@ -347,7 +366,7 @@ export const initialNodes: Node[] = [
   {
     id: "trust-yes",
     type: "story",
-    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 14 },
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 15 },
     data: {
       label: "Accept Kerman's Offer",
       description: "Side with Kerman's alternative escape plan",
@@ -356,7 +375,7 @@ export const initialNodes: Node[] = [
   {
     id: "activate-rfid-case",
     type: "story",
-    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 15 },
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 16 },
     data: {
       label: "Activate RFID from Case",
       description: "Kerman sends instructions - need Intel Center in Hideout",
@@ -366,7 +385,7 @@ export const initialNodes: Node[] = [
   {
     id: "obtain-lab-master-pass",
     type: "story",
-    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 16 },
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 17 },
     data: {
       label: "Obtain Lab Master Pass",
       description: "Find in TerraGroup Lab offices (Kruglov's office)",
@@ -376,7 +395,7 @@ export const initialNodes: Node[] = [
   {
     id: "use-master-pass",
     type: "story",
-    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 17 },
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 18 },
     data: {
       label: "Use Lab Master Pass",
       description: "Activate Kruglov's keycard with the master pass",
@@ -385,7 +404,7 @@ export const initialNodes: Node[] = [
   {
     id: "obtain-rfid-labs",
     type: "story",
-    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 18 },
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 19 },
     data: {
       label: "Search Labs for RFID (FAILS)",
       description: "RFID Encrypter cannot be found in Labs - this is intentional",
@@ -395,7 +414,7 @@ export const initialNodes: Node[] = [
   {
     id: "talk-kerman-rfid",
     type: "story",
-    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 19 },
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 20 },
     data: {
       label: "Talk to Mr. Kerman",
       description: "Perhaps Kerman can find where else to locate the RFID device",
@@ -404,7 +423,7 @@ export const initialNodes: Node[] = [
   {
     id: "talk-mechanic",
     type: "story",
-    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 20 },
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 21 },
     data: {
       label: "Talk to Mechanic",
       description: "Mechanic offers alternative: pay 40 BTC for Elektronik key",
@@ -413,7 +432,7 @@ export const initialNodes: Node[] = [
   {
     id: "turn-in-btc",
     type: "story",
-    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 21 },
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 22 },
     data: {
       label: "Hand Over 40 Bitcoins",
       description: "Give 40 BTC to Mechanic, receive Elektronik key for 14A",
@@ -423,7 +442,7 @@ export const initialNodes: Node[] = [
   {
     id: "collect-rfid-streets",
     type: "story",
-    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 22 },
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 23 },
     data: {
       label: "Use Elektronik Key at 14A",
       description: "Use key to access Klimov Street 14A and collect RFID Encrypter",
@@ -431,32 +450,50 @@ export const initialNodes: Node[] = [
     },
   },
   {
+    id: "timegate-24-40h",
+    type: "story",
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 24 },
+    data: {
+      label: "⏳ 24-40 Hour Timegate",
+      description: "Wait 24-40 hours for keycard activation",
+      note: "Required wait before swipe",
+    },
+  },
+  {
     id: "activate-ticket",
     type: "story",
-    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 23 },
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 25 },
     data: {
-      label: "Activate the Ticket",
-      description: "Use Intel Center to encrypt/activate keycard",
+      label: "Swipe Keycard",
+      description: "Use activated keycard at Terminal",
+    },
+  },
+  {
+    id: "speak-kerman-final",
+    type: "story",
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 26 },
+    data: {
+      label: "Speak to Kerman",
+      description: "Report back after swiping keycard",
     },
   },
   {
     id: "side-quests",
     type: "decision",
-    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 24 },
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 27 },
     data: {
-      label: "Complete ALL Side Quests?",
-      description: "Batya, Bogatyr, Chronicles of Ryzhy required for Savior",
+      label: "Help Kerman Gather Evidence?",
+      description: "Complete ALL side quests (Batya, Bogatyr, Chronicles of Ryzhy)",
       isIrreversible: true,
     },
   },
   {
     id: "terminal-battle",
-    type: "decision",
-    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 25 },
+    type: "story",
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 28 },
     data: {
-      label: "Terminal Battle",
-      description: "Fight Black Division at Terminal - Do you survive?",
-      isIrreversible: true,
+      label: "Complete All Story Tasks",
+      description: "Finish all required storyline objectives",
     },
   },
 
@@ -464,7 +501,7 @@ export const initialNodes: Node[] = [
   {
     id: "trust-no",
     type: "story",
-    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 14 },
+    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 15 },
     data: {
       label: "Refuse Kerman",
       description: "Follow original instructions from the case",
@@ -473,7 +510,7 @@ export const initialNodes: Node[] = [
   {
     id: "head-to-terminal",
     type: "story",
-    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 15 },
+    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 16 },
     data: {
       label: "Head to Terminal",
       description: "Go to port Terminal via Shoreline checkpoint",
@@ -482,7 +519,7 @@ export const initialNodes: Node[] = [
   {
     id: "use-ticket-terminal",
     type: "story",
-    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 16 },
+    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 17 },
     data: {
       label: "Use Ticket at Terminal",
       description: "Swipe keycard at gate intercom - alerts authorities",
@@ -491,7 +528,7 @@ export const initialNodes: Node[] = [
   {
     id: "meet-prapor",
     type: "story",
-    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 17 },
+    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 18 },
     data: {
       label: "Meet Prapor",
       description: "Prapor arrives with his men - he controls this exit",
@@ -502,7 +539,7 @@ export const initialNodes: Node[] = [
   {
     id: "prapor-bribe",
     type: "decision",
-    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 18 },
+    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 18.75 },
     data: {
       label: "Decision 3: Pay Prapor's Bribe?",
       description: "₽300M (gave case) or ₽500M (kept case) to escape?",
@@ -512,7 +549,7 @@ export const initialNodes: Node[] = [
   {
     id: "pay-300m",
     type: "story",
-    position: { x: COL_WIDTH * 0.2, y: ROW_HEIGHT * 21 },
+    position: { x: COL_WIDTH * 0.2, y: ROW_HEIGHT * 20 },
     data: {
       label: "Pay ₽300 Million",
       description: "Loyalty discount - you gave Prapor the case",
@@ -522,7 +559,7 @@ export const initialNodes: Node[] = [
   {
     id: "pay-500m",
     type: "story",
-    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 21 },
+    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 20 },
     data: {
       label: "Pay ₽500 Million",
       description: "No discount - you kept the case from Prapor",
@@ -532,7 +569,7 @@ export const initialNodes: Node[] = [
   {
     id: "cant-pay",
     type: "story",
-    position: { x: COL_WIDTH * 2.1, y: ROW_HEIGHT * 21 },
+    position: { x: COL_WIDTH * 2.1, y: ROW_HEIGHT * 20 },
     data: {
       label: "Can't/Won't Pay",
       description: "Refuse or unable to pay Prapor's bribe",
@@ -543,7 +580,7 @@ export const initialNodes: Node[] = [
   {
     id: "prapor-tasks",
     type: "story",
-    position: { x: COL_WIDTH * 0.7, y: ROW_HEIGHT * 22.5 },
+    position: { x: COL_WIDTH * 0.7, y: ROW_HEIGHT * 21 },
     data: {
       label: "Complete Prapor's Tasks in Time",
       description: "Need to hurry, 72 hours for these three missions (0/3)",
@@ -552,7 +589,7 @@ export const initialNodes: Node[] = [
   {
     id: "kill-pmcs-raid",
     type: "story",
-    position: { x: COL_WIDTH * 0.7, y: ROW_HEIGHT * 23.5 },
+    position: { x: COL_WIDTH * 0.7, y: ROW_HEIGHT * 22 },
     data: {
       label: "Eliminate PMC Operatives in One Raid",
       description: "Can't leave until all 4 targets are eliminated (0/4)",
@@ -561,7 +598,7 @@ export const initialNodes: Node[] = [
   {
     id: "streets-targets",
     type: "story",
-    position: { x: COL_WIDTH * 0.7, y: ROW_HEIGHT * 24.5 },
+    position: { x: COL_WIDTH * 0.7, y: ROW_HEIGHT * 23 },
     data: {
       label: "Eliminate Targets on Streets of Tarkov",
       description: "Clear out 50 targets on Streets (0/50)",
@@ -570,7 +607,7 @@ export const initialNodes: Node[] = [
   {
     id: "convert-evidence",
     type: "story",
-    position: { x: COL_WIDTH * 0.7, y: ROW_HEIGHT * 25.5 },
+    position: { x: COL_WIDTH * 0.7, y: ROW_HEIGHT * 24 },
     data: {
       label: "Convert Evidence Folders to SSD",
       description: "Digitalize info at Intelligence Center in Hideout (craft)",
@@ -580,10 +617,20 @@ export const initialNodes: Node[] = [
   {
     id: "wait-evacuation",
     type: "story",
-    position: { x: COL_WIDTH * 0.7, y: ROW_HEIGHT * 26.5 },
+    position: { x: COL_WIDTH * 0.7, y: ROW_HEIGHT * 25 },
     data: {
       label: "Wait for the Evacuation to Begin",
-      description: "The port is currently closed for evacuation, but they should start letting people through soon",
+      description: "The port is currently closed for evacuation",
+    },
+  },
+  {
+    id: "timegate-indefinite",
+    type: "story",
+    position: { x: COL_WIDTH * 0.7, y: ROW_HEIGHT * 26 },
+    data: {
+      label: "⏳ Indefinite Timegate",
+      description: "Unknown wait time before evacuation opens",
+      note: "May take considerable time",
     },
   },
 
@@ -591,7 +638,7 @@ export const initialNodes: Node[] = [
   {
     id: "savior-ending",
     type: "ending",
-    position: { x: -COL_WIDTH * 1.8, y: ROW_HEIGHT * 28 },
+    position: { x: -COL_WIDTH * 1.8, y: ROW_HEIGHT * 29 },
     data: {
       label: "🌟 Savior Ending",
       description: "Best: Save Tarkov, thwart bad actors. Complete ALL side quests + survive Terminal",
@@ -601,7 +648,7 @@ export const initialNodes: Node[] = [
   {
     id: "fallen-ending",
     type: "ending",
-    position: { x: -COL_WIDTH * 0.6, y: ROW_HEIGHT * 28 },
+    position: { x: -COL_WIDTH * 0.6, y: ROW_HEIGHT * 29 },
     data: {
       label: "� Fallen Ending",
       description: "Escape but 'fall into darkness' - skipped side quests or failed Terminal",
@@ -611,7 +658,7 @@ export const initialNodes: Node[] = [
   {
     id: "survivor-ending",
     type: "ending",
-    position: { x: COL_WIDTH * 0.73, y: ROW_HEIGHT * 28 },
+    position: { x: COL_WIDTH * 0.7, y: ROW_HEIGHT * 27 },
     data: {
       label: "🛡️ Survivor Ending",
       description: "Buy freedom with ₽300M or ₽500M and complete all tasks",
@@ -681,8 +728,14 @@ export const initialEdges: Edge[] = [
     style: { stroke: "#22c55e" },
   },
   {
-    id: "e-investigate-lk",
+    id: "e-investigate-mechanic-network",
     source: "investigate-lighthouse",
+    target: "talk-mechanic-network",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-mechanic-network-lk",
+    source: "talk-mechanic-network",
     target: "unlock-lightkeeper",
     style: { stroke: "#22c55e" },
   },
@@ -701,8 +754,14 @@ export const initialEdges: Edge[] = [
 
   // ============ INDEPENDENT BRANCH (Purple path) ============
   {
-    id: "e-keep-intel",
+    id: "e-keep-timegate",
     source: "keep-case",
+    target: "timegate-55h",
+    style: { stroke: "#8b5cf6" },
+  },
+  {
+    id: "e-timegate-intel",
+    source: "timegate-55h",
     target: "intel-center-keep",
     style: { stroke: "#8b5cf6" },
   },
@@ -824,14 +883,26 @@ export const initialEdges: Edge[] = [
     style: { stroke: "#22c55e" },
   },
   {
-    id: "e-collect-rfid-activate",
+    id: "e-collect-rfid-timegate",
     source: "collect-rfid-streets",
+    target: "timegate-24-40h",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-timegate-activate",
+    source: "timegate-24-40h",
     target: "activate-ticket",
     style: { stroke: "#22c55e" },
   },
   {
-    id: "e-activate-sidequests",
+    id: "e-activate-speak-kerman",
     source: "activate-ticket",
+    target: "speak-kerman-final",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-speak-kerman-sidequests",
+    source: "speak-kerman-final",
     target: "side-quests",
     style: { stroke: "#22c55e" },
   },
@@ -945,8 +1016,14 @@ export const initialEdges: Edge[] = [
     style: { stroke: "#3b82f6" },
   },
   {
-    id: "e-evacuation-survivor",
+    id: "e-evacuation-timegate",
     source: "wait-evacuation",
+    target: "timegate-indefinite",
+    style: { stroke: "#3b82f6" },
+  },
+  {
+    id: "e-timegate-survivor",
+    source: "timegate-indefinite",
     target: "survivor-ending",
     style: { stroke: "#3b82f6" },
   },

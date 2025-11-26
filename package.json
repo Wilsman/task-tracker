@@ -48,6 +48,7 @@
     "dagre": "^0.8.5",
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.6.0",
+    "html-to-image": "^1.11.13",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.344.0",
     "motion": "^12.23.12",

@@ -8,9 +8,12 @@ import {
   useEdgesState,
   BackgroundVariant,
   Panel,
+  useReactFlow,
+  getNodesBounds,
 } from "@xyflow/react";
 import type { Node } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
+import { toPng } from "html-to-image";
 
 import StoryNode from "./StoryNode";
 import DecisionNode from "./DecisionNode";
@@ -24,7 +27,7 @@ import {
   getPathBreakdown,
   getPathEdgeIds,
 } from "./storylineMapData";
-import { Map, ArrowLeft, AlertTriangle } from "lucide-react";
+import { Map, ArrowLeft, AlertTriangle, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const nodeTypes = {
@@ -38,6 +41,74 @@ interface StorylineMapViewProps {
   currentNodeId?: string;
   onToggleNode: (id: string) => void;
   onBack?: () => void;
+}
+
+// Image export settings
+const EXPORT_SCALE = 2; // 2x for high quality
+const EXPORT_PADDING = 100; // Padding around nodes
+
+function DownloadButton() {
+  const { getNodes } = useReactFlow();
+  const [isExporting, setIsExporting] = useState(false);
+
+  const onClick = async () => {
+    setIsExporting(true);
+    try {
+      // Get the viewport element
+      const viewportEl = document.querySelector(
+        ".react-flow__viewport"
+      ) as HTMLElement;
+      if (!viewportEl) return;
+
+      // Calculate bounds of all nodes with padding
+      const nodesBounds = getNodesBounds(getNodes());
+      const imageWidth =
+        (nodesBounds.width + EXPORT_PADDING * 2) * EXPORT_SCALE;
+      const imageHeight =
+        (nodesBounds.height + EXPORT_PADDING * 2) * EXPORT_SCALE;
+
+      // Calculate transform to fit all nodes
+      const translateX = (-nodesBounds.x + EXPORT_PADDING) * EXPORT_SCALE;
+      const translateY = (-nodesBounds.y + EXPORT_PADDING) * EXPORT_SCALE;
+
+      const dataUrl = await toPng(viewportEl, {
+        backgroundColor: "#0a0a0a",
+        width: imageWidth,
+        height: imageHeight,
+        pixelRatio: 1, // We're already scaling via transform
+        style: {
+          width: `${imageWidth}px`,
+          height: `${imageHeight}px`,
+          transform: `translate(${translateX}px, ${translateY}px) scale(${EXPORT_SCALE})`,
+        },
+      });
+
+      // Download the image
+      const link = document.createElement("a");
+      link.download = `tarkov-storyline-map-${
+        new Date().toISOString().split("T")[0]
+      }.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error("Failed to export image:", err);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  return (
+    <Button
+      variant="outline"
+      size="sm"
+      onClick={onClick}
+      disabled={isExporting}
+      className="gap-2"
+    >
+      <Download className="h-4 w-4" />
+      {isExporting ? "Exporting..." : "Export PNG"}
+    </Button>
+  );
 }
 
 export function StorylineMapView({
@@ -214,6 +285,9 @@ export function StorylineMapView({
               )}
               <Map className="h-6 w-6 text-primary" />
               <h1 className="font-bold text-lg">Tarkov Storyline Map</h1>
+            </div>
+            <div className="mb-2">
+              <DownloadButton />
             </div>
             {/* WIP Warning */}
             <div className="rounded-md border border-amber-500/30 bg-amber-500/10 p-2">
