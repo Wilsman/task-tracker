@@ -700,6 +700,21 @@ export function AppSidebar({
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
+        {/* Discord Button */}
+        <div className="flex items-center justify-center group-data-[collapsible=icon]:hidden">
+          <a
+            href="https://discord.com/invite/3dFmr5qaJK"
+            rel="nofollow noreferrer"
+            target="_blank"
+            className="flex items-center"
+          >
+            <img
+              src="https://img.shields.io/discord/1298971881776611470?color=7289DA&label=Discord&logo=discord&logoColor=white"
+              alt="Discord"
+              className="h-5"
+            />
+          </a>
+        </div>
         <div className="px-2 py-2 text-[11px] text-center text-muted-foreground group-data-[collapsible=icon]:hidden">
           Data from{" "}
           <a
