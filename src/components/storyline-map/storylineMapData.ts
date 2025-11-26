@@ -435,65 +435,86 @@ export const initialNodes: Node[] = [
     position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 22 },
     data: {
       label: "Hand Over 40 Bitcoins",
-      description: "Give 40 BTC to Mechanic, receive Elektronik key for 14A",
+      description: "Give 40 BTC to Mechanic for Elektronik key",
       cost: 40,
-    },
-  },
-  {
-    id: "collect-rfid-streets",
-    type: "story",
-    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 23 },
-    data: {
-      label: "Use Elektronik Key at 14A",
-      description: "Use key to access Klimov Street 14A and collect RFID Encrypter",
-      note: "Location: Streets of Tarkov",
     },
   },
   {
     id: "timegate-24-40h",
     type: "story",
-    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 24 },
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 23 },
     data: {
-      label: "⏳ 24-40 Hour Timegate",
-      description: "Wait 24-40 hours for keycard activation",
-      note: "Required wait before swipe",
+      label: "⏳ Wait for Mechanic Response",
+      description: "Wait about a day for Mechanic to prepare",
+      note: "~24 hour timegate",
     },
   },
   {
-    id: "activate-ticket",
+    id: "collect-rfid-streets",
+    type: "story",
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 24 },
+    data: {
+      label: "Collect RFID Encrypter",
+      description: "Collect from Klimov Street 14A",
+      note: "Location: Streets of Tarkov",
+    },
+  },
+  {
+    id: "use-rfid-keycard",
     type: "story",
     position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 25 },
     data: {
-      label: "Swipe Keycard",
-      description: "Use activated keycard at Terminal",
+      label: "Activate Kruglov's Keycard",
+      description: "Use RFID encryption device to activate the keycard",
+    },
+  },
+  {
+    id: "arrive-terminal-kerman",
+    type: "story",
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 26 },
+    data: {
+      label: "Arrive at Port Terminal",
+      description: "The only way to access the port should be through Shoreline",
+      note: "Location: Shoreline → Terminal",
+    },
+  },
+  {
+    id: "swipe-keycard-kerman",
+    type: "story",
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 27 },
+    data: {
+      label: "Swipe Keycard at Intercom",
+      description: "The intercom is on the road leading to the terminal gate",
+      note: "Card doesn't work! Alerts authorities",
     },
   },
   {
     id: "speak-kerman-final",
     type: "story",
-    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 26 },
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 28 },
     data: {
-      label: "Speak to Kerman",
-      description: "Report back after swiping keycard",
+      label: "Talk to Mr. Kerman",
+      description: "The card didn't work - need to find another way",
     },
   },
   {
     id: "side-quests",
     type: "decision",
-    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 27 },
+    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 29 },
     data: {
-      label: "Help Kerman Gather Evidence?",
-      description: "Complete ALL side quests (Batya, Bogatyr, Chronicles of Ryzhy)",
+      label: "Agree to Find Dirt on TerraGroup?",
+      description: "Help Kerman gather evidence - will take time and effort",
       isIrreversible: true,
     },
   },
   {
-    id: "terminal-battle",
+    id: "complete-story-tasks",
     type: "story",
-    position: { x: -COL_WIDTH * 1.2, y: ROW_HEIGHT * 28 },
+    position: { x: -COL_WIDTH * 1.8, y: ROW_HEIGHT * 30.5 },
     data: {
       label: "Complete All Story Tasks",
-      description: "Finish all required storyline objectives",
+      description: "Batya, Bogatyr, Chronicles of Ryzhy side quests",
+      note: "Required for Savior ending",
     },
   },
 
@@ -638,27 +659,27 @@ export const initialNodes: Node[] = [
   {
     id: "savior-ending",
     type: "ending",
-    position: { x: -COL_WIDTH * 1.8, y: ROW_HEIGHT * 29 },
+    position: { x: -COL_WIDTH * 1.8, y: ROW_HEIGHT * 32 },
     data: {
       label: "🌟 Savior Ending",
-      description: "Best: Save Tarkov, thwart bad actors. Complete ALL side quests + survive Terminal",
+      description: "Best: Save Tarkov, complete all story tasks for Kerman",
       endingType: "savior",
     },
   },
   {
     id: "fallen-ending",
     type: "ending",
-    position: { x: -COL_WIDTH * 0.6, y: ROW_HEIGHT * 29 },
+    position: { x: -COL_WIDTH * 0.5, y: ROW_HEIGHT * 32 },
     data: {
-      label: "� Fallen Ending",
-      description: "Escape but 'fall into darkness' - skipped side quests or failed Terminal",
+      label: "❌ Fallen Ending",
+      description: "Refused to help Kerman gather evidence",
       endingType: "fallen",
     },
   },
   {
     id: "survivor-ending",
     type: "ending",
-    position: { x: COL_WIDTH * 0.7, y: ROW_HEIGHT * 27 },
+    position: { x: COL_WIDTH * 0.7, y: ROW_HEIGHT * 32 },
     data: {
       label: "🛡️ Survivor Ending",
       description: "Buy freedom with ₽300M or ₽500M and complete all tasks",
@@ -668,7 +689,7 @@ export const initialNodes: Node[] = [
   {
     id: "debtor-ending",
     type: "ending",
-    position: { x: COL_WIDTH * 2.1, y: ROW_HEIGHT * 28 },
+    position: { x: COL_WIDTH * 2.1, y: ROW_HEIGHT * 32 },
     data: {
       label: "⛓️ Debtor Ending",
       description: "Worst: Can't pay bribe - debts catch up",
@@ -877,26 +898,38 @@ export const initialEdges: Edge[] = [
     style: { stroke: "#22c55e" },
   },
   {
-    id: "e-btc-collect-rfid",
+    id: "e-btc-timegate",
     source: "turn-in-btc",
-    target: "collect-rfid-streets",
-    style: { stroke: "#22c55e" },
-  },
-  {
-    id: "e-collect-rfid-timegate",
-    source: "collect-rfid-streets",
     target: "timegate-24-40h",
     style: { stroke: "#22c55e" },
   },
   {
-    id: "e-timegate-activate",
+    id: "e-timegate-collect-rfid",
     source: "timegate-24-40h",
-    target: "activate-ticket",
+    target: "collect-rfid-streets",
     style: { stroke: "#22c55e" },
   },
   {
-    id: "e-activate-speak-kerman",
-    source: "activate-ticket",
+    id: "e-collect-rfid-use",
+    source: "collect-rfid-streets",
+    target: "use-rfid-keycard",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-use-rfid-arrive",
+    source: "use-rfid-keycard",
+    target: "arrive-terminal-kerman",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-arrive-swipe",
+    source: "arrive-terminal-kerman",
+    target: "swipe-keycard-kerman",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-swipe-speak-kerman",
+    source: "swipe-keycard-kerman",
     target: "speak-kerman-final",
     style: { stroke: "#22c55e" },
   },
@@ -907,26 +940,26 @@ export const initialEdges: Edge[] = [
     style: { stroke: "#22c55e" },
   },
   {
-    id: "e-sidequests-terminal",
+    id: "e-sidequests-complete",
     source: "side-quests",
-    target: "terminal-battle",
+    target: "complete-story-tasks",
+    label: "Yes",
     style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-sidequests-fallen",
+    source: "side-quests",
+    target: "fallen-ending",
+    label: "No",
+    style: { stroke: "#6b7280" },
   },
 
-  // ============ TERMINAL BATTLE OUTCOMES ============
+  // ============ STORY COMPLETION OUTCOMES ============
   {
-    id: "e-terminal-savior",
-    source: "terminal-battle",
+    id: "e-complete-savior",
+    source: "complete-story-tasks",
     target: "savior-ending",
-    label: "Survive + All Quests",
     style: { stroke: "#22c55e" },
-  },
-  {
-    id: "e-terminal-fallen",
-    source: "terminal-battle",
-    target: "fallen-ending",
-    label: "Survive (No Quests)",
-    style: { stroke: "#6b7280" },
   },
 
   // ============ REFUSE KERMAN PATH (Blue - Survivor/Debtor) ============
