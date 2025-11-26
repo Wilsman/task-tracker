@@ -266,7 +266,7 @@ export const initialNodes: Node[] = [
   {
     id: "talk-kerman-keep",
     type: "story",
-    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 2.5 },
+    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 2.65 },
     data: {
       label: "Talk to Mr. Kerman",
       description: "Kerman said to contact him through my Intelligence Center",
@@ -275,7 +275,7 @@ export const initialNodes: Node[] = [
   {
     id: "ask-mechanic-help",
     type: "story",
-    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 3.1 },
+    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 3.3 },
     data: {
       label: "Ask Mechanic for Help",
       description: "Case uses high-grade electronic lock, need special equipment",
@@ -572,7 +572,7 @@ export const initialNodes: Node[] = [
   {
     id: "survivor-ending-500m",
     type: "ending",
-    position: { x: COL_WIDTH * 1, y: ROW_HEIGHT * 23 },
+    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 23 },
     data: {
       label: "🛡️ Survivor (₽500M)",
       description: "Buy freedom with ₽500M (Kept case path)",
@@ -582,7 +582,7 @@ export const initialNodes: Node[] = [
   {
     id: "debtor-ending",
     type: "ending",
-    position: { x: COL_WIDTH * 1.8, y: ROW_HEIGHT * 23 },
+    position: { x: COL_WIDTH * 2.1, y: ROW_HEIGHT * 23 },
     data: {
       label: "⛓️ Debtor Ending",
       description: "Worst: Can't pay bribe - debts catch up",

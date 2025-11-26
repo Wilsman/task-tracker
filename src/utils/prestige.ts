@@ -97,6 +97,22 @@ export const PRESTIGE_CONFIGS: PrestigeConfig[] = [
     charismaTarget: 15,
     roublesTarget: 20_000_000,
   },
+  {
+    id: 'prestige-5',
+    levelTarget: 55,
+    strengthTarget: 20,
+    enduranceTarget: 20,
+    charismaTarget: 20,
+    roublesTarget: 20_000_000,
+  },
+  {
+    id: 'prestige-6',
+    levelTarget: 55,
+    strengthTarget: 20,
+    enduranceTarget: 20,
+    charismaTarget: 20,
+    roublesTarget: 20_000_000,
+  },
 ];
 
 export function computePrestigeRequirements(saved: PrestigeSaved | null | undefined, cfg: PrestigeConfig) {
