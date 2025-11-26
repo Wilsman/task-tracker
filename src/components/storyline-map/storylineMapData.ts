@@ -538,6 +538,54 @@ export const initialNodes: Node[] = [
     },
   },
 
+  // ============ POST-PAYMENT STEPS (shared by 300m and 500m paths) ============
+  {
+    id: "prapor-tasks",
+    type: "story",
+    position: { x: COL_WIDTH * 0.7, y: ROW_HEIGHT * 18.5 },
+    data: {
+      label: "Complete Prapor's Tasks in Time",
+      description: "Need to hurry, 72 hours for these three missions (0/3)",
+    },
+  },
+  {
+    id: "kill-pmcs-raid",
+    type: "story",
+    position: { x: COL_WIDTH * 0.7, y: ROW_HEIGHT * 19.5 },
+    data: {
+      label: "Eliminate PMC Operatives in One Raid",
+      description: "Can't leave until all 4 targets are eliminated (0/4)",
+    },
+  },
+  {
+    id: "streets-targets",
+    type: "story",
+    position: { x: COL_WIDTH * 0.7, y: ROW_HEIGHT * 20.5 },
+    data: {
+      label: "Eliminate Targets on Streets of Tarkov",
+      description: "Clear out 50 targets on Streets (0/50)",
+    },
+  },
+  {
+    id: "convert-evidence",
+    type: "story",
+    position: { x: COL_WIDTH * 0.7, y: ROW_HEIGHT * 21.5 },
+    data: {
+      label: "Convert Evidence Folders to SSD",
+      description: "Digitalize info at Intelligence Center in Hideout (craft)",
+      note: "6 hour craft at Intelligence Center",
+    },
+  },
+  {
+    id: "wait-evacuation",
+    type: "story",
+    position: { x: COL_WIDTH * 0.7, y: ROW_HEIGHT * 22.5 },
+    data: {
+      label: "Wait for the Evacuation to Begin",
+      description: "The port is currently closed for evacuation, but they should start letting people through soon",
+    },
+  },
+
   // ============ ENDINGS ============
   {
     id: "savior-ending",
@@ -554,28 +602,18 @@ export const initialNodes: Node[] = [
     type: "ending",
     position: { x: -COL_WIDTH * 0.6, y: ROW_HEIGHT * 23 },
     data: {
-      label: "💀 Fallen Ending",
+      label: "� Fallen Ending",
       description: "Escape but 'fall into darkness' - skipped side quests or failed Terminal",
       endingType: "fallen",
     },
   },
   {
-    id: "survivor-ending-300m",
+    id: "survivor-ending",
     type: "ending",
-    position: { x: COL_WIDTH * 0.2, y: ROW_HEIGHT * 23 },
+    position: { x: COL_WIDTH * 0.7, y: ROW_HEIGHT * 23 },
     data: {
-      label: "🛡️ Survivor (₽300M)",
-      description: "Buy freedom with ₽300M (Prapor loyal path)",
-      endingType: "survivor",
-    },
-  },
-  {
-    id: "survivor-ending-500m",
-    type: "ending",
-    position: { x: COL_WIDTH * 1.2, y: ROW_HEIGHT * 23 },
-    data: {
-      label: "🛡️ Survivor (₽500M)",
-      description: "Buy freedom with ₽500M (Kept case path)",
+      label: "🛡️ Survivor Ending",
+      description: "Buy freedom with ₽300M or ₽500M and complete all tasks",
       endingType: "survivor",
     },
   },
@@ -868,18 +906,48 @@ export const initialEdges: Edge[] = [
     style: { stroke: "#ef4444" },
   },
 
-  // ============ FINAL ENDINGS ============
+  // ============ POST-PAYMENT STEPS ============
   {
-    id: "e-pay-survivor-300m",
+    id: "e-300m-prapor-tasks",
     source: "pay-300m",
-    target: "survivor-ending-300m",
+    target: "prapor-tasks",
     style: { stroke: "#22c55e" },
   },
   {
-    id: "e-pay-survivor-500m",
+    id: "e-500m-prapor-tasks",
     source: "pay-500m",
-    target: "survivor-ending-500m",
+    target: "prapor-tasks",
     style: { stroke: "#8b5cf6" },
+  },
+  {
+    id: "e-prapor-tasks-pmcs",
+    source: "prapor-tasks",
+    target: "kill-pmcs-raid",
+    style: { stroke: "#3b82f6" },
+  },
+  {
+    id: "e-pmcs-streets",
+    source: "kill-pmcs-raid",
+    target: "streets-targets",
+    style: { stroke: "#3b82f6" },
+  },
+  {
+    id: "e-streets-evidence",
+    source: "streets-targets",
+    target: "convert-evidence",
+    style: { stroke: "#3b82f6" },
+  },
+  {
+    id: "e-evidence-evacuation",
+    source: "convert-evidence",
+    target: "wait-evacuation",
+    style: { stroke: "#3b82f6" },
+  },
+  {
+    id: "e-evacuation-survivor",
+    source: "wait-evacuation",
+    target: "survivor-ending",
+    style: { stroke: "#3b82f6" },
   },
   {
     id: "e-cantpay-debtor",
