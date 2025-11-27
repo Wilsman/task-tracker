@@ -90,6 +90,7 @@ export interface PathBreakdown {
     id: string;
     label: string;
     description?: string;
+    note?: string;
     cost?: number;
     isTimeGate?: boolean;
     timeGateHours?: number;
@@ -109,10 +110,12 @@ export function getPathBreakdown(pathNodes: Node[]): PathBreakdown {
     const data = node.data as Record<string, unknown>;
     const label = (data.label as string) || node.id;
     const description = data.description as string | undefined;
+    const note = data.note as string | undefined;
     const cost = data.cost as number | undefined;
 
-    // Detect time gates from description
-    const timeGateMatch = description?.match(/(\d+)\s*hour/i);
+    // Detect time gates from description OR note field
+    const timeGateMatch =
+      description?.match(/(\d+)\s*hour/i) || note?.match(/(\d+)\s*hour/i);
     const isTimeGate = !!timeGateMatch;
     const timeGateHours = timeGateMatch ? parseInt(timeGateMatch[1], 10) : 0;
 
@@ -133,6 +136,7 @@ export function getPathBreakdown(pathNodes: Node[]): PathBreakdown {
       id: node.id,
       label,
       description,
+      note,
       cost,
       isTimeGate,
       timeGateHours: isTimeGate ? timeGateHours : undefined,
@@ -536,6 +540,26 @@ export const initialNodes: Node[] = [
       note: "Required for Savior ending",
     },
   },
+  {
+    id: "deliver-evidence-kerman",
+    type: "story",
+    position: { x: -COL_WIDTH * 1.8, y: ROW_HEIGHT * 31.25 },
+    data: {
+      label: "Deliver TerraGroup Evidence",
+      description: "Deliver the major TerraGroup evidence to Mr. Kerman (0/8)",
+      note: "Hand over 8 pieces of evidence",
+    },
+  },
+  {
+    id: "wait-kerman-contact",
+    type: "story",
+    position: { x: -COL_WIDTH * 1.8, y: ROW_HEIGHT * 32 },
+    data: {
+      label: "⏳ Wait for Kerman's Contact",
+      description: "Wait for Mr. Kerman's trusted contact to get in touch",
+      note: "~24 hour timegate (unknown exact duration)",
+    },
+  },
 
   // ============ REFUSE KERMAN PATH (Shared nodes) ============
   {
@@ -684,7 +708,7 @@ export const initialNodes: Node[] = [
     zIndex: -1,
     data: {
       width: COL_WIDTH * 6,
-      height: ROW_HEIGHT * 5,
+      height: ROW_HEIGHT * 6.5,
     },
   },
 
@@ -692,7 +716,7 @@ export const initialNodes: Node[] = [
   {
     id: "savior-ending",
     type: "ending",
-    position: { x: -COL_WIDTH * 1.8, y: ROW_HEIGHT * 32.5 },
+    position: { x: -COL_WIDTH * 1.8, y: ROW_HEIGHT * 33.5 },
     data: {
       label: "🌟 Savior Ending",
       description: "Best: Save Tarkov, complete all story tasks for Kerman",
@@ -702,7 +726,7 @@ export const initialNodes: Node[] = [
   {
     id: "fallen-ending",
     type: "ending",
-    position: { x: -COL_WIDTH * 0.5, y: ROW_HEIGHT * 32.5 },
+    position: { x: -COL_WIDTH * 0.5, y: ROW_HEIGHT * 33.5 },
     data: {
       label: "❌ Fallen Ending",
       description: "Refused to help Kerman gather evidence",
@@ -712,7 +736,7 @@ export const initialNodes: Node[] = [
   {
     id: "survivor-ending",
     type: "ending",
-    position: { x: COL_WIDTH * 0.7, y: ROW_HEIGHT * 32.5 },
+    position: { x: COL_WIDTH * 0.7, y: ROW_HEIGHT * 33.5 },
     data: {
       label: "🛡️ Survivor Ending",
       description: "Buy freedom with ₽300M or ₽500M and complete all tasks",
@@ -722,7 +746,7 @@ export const initialNodes: Node[] = [
   {
     id: "debtor-ending",
     type: "ending",
-    position: { x: COL_WIDTH * 2.1, y: ROW_HEIGHT * 32.5 },
+    position: { x: COL_WIDTH * 2.1, y: ROW_HEIGHT * 33.5 },
     data: {
       label: "⛓️ Debtor Ending",
       description: "Worst: Can't pay bribe - debts catch up",
@@ -1001,8 +1025,20 @@ export const initialEdges: Edge[] = [
 
   // ============ STORY COMPLETION OUTCOMES ============
   {
-    id: "e-complete-savior",
+    id: "e-complete-deliver",
     source: "complete-story-tasks",
+    target: "deliver-evidence-kerman",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-deliver-wait",
+    source: "deliver-evidence-kerman",
+    target: "wait-kerman-contact",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-wait-savior",
+    source: "wait-kerman-contact",
     target: "savior-ending",
     style: { stroke: "#22c55e" },
   },

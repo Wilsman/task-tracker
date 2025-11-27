@@ -10,21 +10,50 @@ export interface StoryNodeData {
   isCurrentStep?: boolean;
   isIrreversible?: boolean;
   isUndetermined?: boolean;
+  isTimeGate?: boolean;
+  timeGateHours?: number;
   note?: string;
 }
 
 function StoryNode({ data }: { data: StoryNodeData }) {
+  const hasCost = data.cost !== undefined && data.cost > 0;
+  const isTimeGate = data.isTimeGate;
+  const hasCostOrTime = hasCost || isTimeGate;
+
   return (
     <div
       className={cn(
         "min-w-[200px] max-w-[260px] rounded-lg border-2 bg-card p-3 shadow-lg transition-all",
+        // Completed state takes priority
         data.isCompleted && "border-green-500 bg-green-500/10",
+        // Current step
         data.isCurrentStep &&
           "border-amber-500 bg-amber-500/10 ring-2 ring-amber-500/50",
+        // Time gate styling (when not completed/current)
+        !data.isCompleted &&
+          !data.isCurrentStep &&
+          isTimeGate &&
+          !hasCost &&
+          "border-rose-400/70 bg-rose-500/5",
+        // Cost styling (when not completed/current)
+        !data.isCompleted &&
+          !data.isCurrentStep &&
+          hasCost &&
+          !isTimeGate &&
+          "border-yellow-500/70 bg-yellow-500/5",
+        // Both cost and time gate
+        !data.isCompleted &&
+          !data.isCurrentStep &&
+          hasCost &&
+          isTimeGate &&
+          "border-orange-500/70 bg-gradient-to-br from-yellow-500/5 to-rose-500/5",
+        // Default border
         !data.isCompleted &&
           !data.isCurrentStep &&
           !data.isUndetermined &&
+          !hasCostOrTime &&
           "border-border",
+        // Undetermined
         data.isUndetermined &&
           "border-purple-500/60 border-dashed bg-purple-500/5",
         data.isIrreversible && !data.isUndetermined && "border-dashed"
@@ -33,9 +62,29 @@ function StoryNode({ data }: { data: StoryNodeData }) {
       <Handle
         type="target"
         position={Position.Top}
-        className={cn("!bg-primary", data.isUndetermined && "!bg-purple-500")}
+        className={cn(
+          "!bg-primary",
+          data.isUndetermined && "!bg-purple-500",
+          isTimeGate && !data.isCompleted && "!bg-rose-400",
+          hasCost && !data.isCompleted && "!bg-yellow-500"
+        )}
       />
       <div className="space-y-1.5">
+        {/* Badges row for time gate and cost indicators */}
+        {hasCostOrTime && !data.isCompleted && (
+          <div className="flex flex-wrap gap-1 mb-1">
+            {isTimeGate && (
+              <span className="inline-flex items-center gap-0.5 rounded bg-rose-500/20 px-1.5 py-0.5 text-[10px] font-medium text-rose-400">
+                ⏳ {data.timeGateHours ? `${data.timeGateHours}h` : "Wait"}
+              </span>
+            )}
+            {hasCost && (
+              <span className="inline-flex items-center gap-0.5 rounded bg-yellow-500/20 px-1.5 py-0.5 text-[10px] font-medium text-yellow-400">
+                💰 Cost
+              </span>
+            )}
+          </div>
+        )}
         <div className="flex items-center gap-2">
           {data.isCompleted && <span className="text-green-500">✓</span>}
           {data.isCurrentStep && <span className="text-amber-500">►</span>}

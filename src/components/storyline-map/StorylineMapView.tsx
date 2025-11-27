@@ -139,18 +139,34 @@ export function StorylineMapView({
     };
   }, [selectedNodeId]);
 
+  // Helper to detect time gates from description or note
+  const detectTimeGate = (data: Record<string, unknown>) => {
+    const description = data.description as string | undefined;
+    const note = data.note as string | undefined;
+    const match =
+      description?.match(/(\d+)\s*hour/i) || note?.match(/(\d+)\s*hour/i);
+    return {
+      isTimeGate: !!match,
+      timeGateHours: match ? parseInt(match[1], 10) : undefined,
+    };
+  };
+
   // Initialize nodes with completion status from props
   const initialNodesWithState = useMemo(() => {
-    return initialNodes.map((node) => ({
-      ...node,
-      data: {
-        ...node.data,
-        isCompleted: completedNodes.has(node.id),
-        isCurrentStep: node.id === currentNodeId,
-        isSelected: node.id === selectedNodeId,
-        isOnPath: pathNodeIds.has(node.id),
-      },
-    }));
+    return initialNodes.map((node) => {
+      const timeGateInfo = detectTimeGate(node.data as Record<string, unknown>);
+      return {
+        ...node,
+        data: {
+          ...node.data,
+          isCompleted: completedNodes.has(node.id),
+          isCurrentStep: node.id === currentNodeId,
+          isSelected: node.id === selectedNodeId,
+          isOnPath: pathNodeIds.has(node.id),
+          ...timeGateInfo,
+        },
+      };
+    });
   }, [completedNodes, currentNodeId, selectedNodeId, pathNodeIds]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodesWithState);
@@ -257,10 +273,16 @@ export function StorylineMapView({
         <MiniMap
           className="!bg-card !border-border"
           nodeColor={(node) => {
-            if (node.data.isCurrentStep) return "#f59e0b";
-            if (node.data.isCompleted) return "#22c55e";
+            const data = node.data as Record<string, unknown>;
+            const hasCost = (data.cost as number) > 0;
+            const isTimeGate = data.isTimeGate as boolean;
+            if (data.isCurrentStep) return "#f59e0b";
+            if (data.isCompleted) return "#22c55e";
             if (node.type === "decision") return "#eab308";
             if (node.type === "ending") return "#ef4444";
+            if (hasCost && isTimeGate) return "#f97316"; // orange
+            if (hasCost) return "#eab308"; // yellow
+            if (isTimeGate) return "#fb7185"; // rose
             return "#444";
           }}
           maskColor="rgba(0, 0, 0, 0.8)"

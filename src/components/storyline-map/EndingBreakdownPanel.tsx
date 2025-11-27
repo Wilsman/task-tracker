@@ -75,11 +75,13 @@ export function EndingBreakdownPanel({
               <p className="text-sm font-bold">{totalCostBTC} BTC</p>
             </div>
           )}
-          {totalTimeGateHours === 0 && totalCostRoubles === 0 && totalCostBTC === 0 && (
-            <div className="col-span-3 text-xs text-muted-foreground">
-              No major costs or time gates
-            </div>
-          )}
+          {totalTimeGateHours === 0 &&
+            totalCostRoubles === 0 &&
+            totalCostBTC === 0 && (
+              <div className="col-span-3 text-xs text-muted-foreground">
+                No major costs or time gates
+              </div>
+            )}
         </div>
 
         {/* Steps List */}
@@ -100,7 +102,12 @@ export function EndingBreakdownPanel({
                       {step.description}
                     </p>
                   )}
-                  <div className="flex gap-2 mt-0.5">
+                  {step.note && (
+                    <p className="text-[10px] text-blue-400/70 italic truncate">
+                      {step.note}
+                    </p>
+                  )}
+                  <div className="flex flex-wrap gap-2 mt-0.5">
                     {step.isTimeGate && step.timeGateHours && (
                       <span className="inline-flex items-center gap-0.5 text-[10px] text-amber-500">
                         <Clock className="h-2.5 w-2.5" />
