@@ -6,29 +6,49 @@ import {
   ChevronRight,
   Map,
   AlertTriangle,
+  CheckCheck,
+  RotateCcw,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { Progress } from "@/components/ui/progress";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 import { STORYLINE_QUESTS } from "@/data/storylineQuests";
 
 interface StorylineQuestsViewProps {
   completedObjectives: Set<string>;
   onToggleObjective: (id: string) => void;
+  onSetCompletedObjectives: (objectives: Set<string>) => void;
   onNavigateToMap?: () => void;
 }
 
 export function StorylineQuestsView({
   completedObjectives,
   onToggleObjective,
+  onSetCompletedObjectives,
   onNavigateToMap,
 }: StorylineQuestsViewProps): JSX.Element {
   const [expandedQuests, setExpandedQuests] = useState<
     Record<string, { main: boolean; optional: boolean }>
   >({});
+  const [dialogState, setDialogState] = useState<{
+    isOpen: boolean;
+    questId: string;
+    questName: string;
+    action: "complete" | "reset";
+  }>({ isOpen: false, questId: "", questName: "", action: "complete" });
 
   const toggleSection = (questId: string, section: "main" | "optional") => {
     setExpandedQuests((prev) => ({
@@ -38,6 +58,54 @@ export function StorylineQuestsView({
         [section]: !prev[questId]?.[section],
       },
     }));
+  };
+
+  const handleCompleteAll = (questId: string) => {
+    const quest = STORYLINE_QUESTS.find((q) => q.id === questId);
+    if (quest?.objectives) {
+      const newCompleted = new Set(completedObjectives);
+      quest.objectives.forEach((objective) => {
+        newCompleted.add(objective.id);
+      });
+      onSetCompletedObjectives(newCompleted);
+    }
+  };
+
+  const handleResetAll = (questId: string) => {
+    const quest = STORYLINE_QUESTS.find((q) => q.id === questId);
+    if (quest?.objectives) {
+      const newCompleted = new Set(completedObjectives);
+      quest.objectives.forEach((objective) => {
+        newCompleted.delete(objective.id);
+      });
+      onSetCompletedObjectives(newCompleted);
+    }
+  };
+
+  const openDialog = (
+    questId: string,
+    questName: string,
+    action: "complete" | "reset"
+  ) => {
+    setDialogState({ isOpen: true, questId, questName, action });
+  };
+
+  const closeDialog = () => {
+    setDialogState({
+      isOpen: false,
+      questId: "",
+      questName: "",
+      action: "complete",
+    });
+  };
+
+  const handleDialogConfirm = () => {
+    if (dialogState.action === "complete") {
+      handleCompleteAll(dialogState.questId);
+    } else {
+      handleResetAll(dialogState.questId);
+    }
+    closeDialog();
   };
 
   // Calculate total objectives
@@ -121,9 +189,36 @@ export function StorylineQuestsView({
 
                   {/* Content */}
                   <div className="flex-1 space-y-3">
-                    <h3 className="text-xl font-semibold flex items-center gap-2">
-                      {quest.name}
-                    </h3>
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-xl font-semibold flex items-center gap-2">
+                        {quest.name}
+                      </h3>
+                      {/* Bulk Action Buttons */}
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            openDialog(quest.id, quest.name, "complete")
+                          }
+                          className="h-8 px-3 text-xs"
+                        >
+                          <CheckCheck className="h-3 w-3 mr-1" />
+                          Complete All
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            openDialog(quest.id, quest.name, "reset")
+                          }
+                          className="h-8 px-3 text-xs"
+                        >
+                          <RotateCcw className="h-3 w-3 mr-1" />
+                          Reset All
+                        </Button>
+                      </div>
+                    </div>
 
                     <div className="text-sm text-muted-foreground whitespace-pre-line">
                       {quest.description}
@@ -316,6 +411,39 @@ export function StorylineQuestsView({
             </div>
           </div>
         </div>
+
+        {/* Confirmation Dialog */}
+        <AlertDialog open={dialogState.isOpen} onOpenChange={closeDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                {dialogState.action === "complete"
+                  ? `Complete All Objectives - ${dialogState.questName}`
+                  : `Reset All Objectives - ${dialogState.questName}`}
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                {dialogState.action === "complete"
+                  ? "This will mark all objectives (both main and optional) for this quest as complete. This action cannot be undone automatically."
+                  : "This will reset all objectives (both main and optional) for this quest to incomplete. This action cannot be undone automatically."}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDialogConfirm}
+                className={
+                  dialogState.action === "complete"
+                    ? "bg-green-600 hover:bg-green-700"
+                    : "bg-red-600 hover:bg-red-700"
+                }
+              >
+                {dialogState.action === "complete"
+                  ? "Complete All"
+                  : "Reset All"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );

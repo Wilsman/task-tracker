@@ -1,4 +1,11 @@
-import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from "react";
+import {
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+  lazy,
+  Suspense,
+} from "react";
 import { NuqsAdapter } from "nuqs/adapters/react";
 import { useIsMobile } from "./hooks/use-mobile";
 import { RotateCcw, BarChart3, Search } from "lucide-react";
@@ -25,12 +32,20 @@ import {
   PRESTIGE_CONFIGS,
 } from "@/utils/prestige";
 import { buildTaskDependencyMap, getAllDependencies } from "./utils/taskUtils";
-import { fetchCombinedData, loadCombinedCache, isCombinedCacheFresh } from "./services/tarkovApi";
+import {
+  fetchCombinedData,
+  loadCombinedCache,
+  isCombinedCacheFresh,
+} from "./services/tarkovApi";
 import { cn } from "@/lib/utils";
 import { Button } from "./components/ui/button";
 import { TRADER_COLORS } from "./data/traders";
 import { Sidebar as LegacySidebar } from "./components/Sidebar";
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
+import {
+  SidebarProvider,
+  SidebarInset,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
   AlertDialog,
@@ -44,12 +59,32 @@ import {
   AlertDialogTrigger,
 } from "./components/ui/alert-dialog";
 // Lazily-loaded heavy views
-const FlowView = lazy(() => import('./components/FlowView').then(m => ({ default: m.FlowView })));
-const MindMap = lazy(() => import('./components/MindMap').then(m => ({ default: m.MindMap })));
-const CheckListView = lazy(() => import('./components/CheckListView').then(m => ({ default: m.CheckListView })));
-const CollectorView = lazy(() => import('./components/ItemTrackerView').then(m => ({ default: m.CollectorView })));
-const PrestigesView = lazy(() => import('./components/PrestigesView').then(m => ({ default: m.PrestigesView })));
-const AchievementsView = lazy(() => import('./components/AchievementsView').then(m => ({ default: m.AchievementsView })));
+const FlowView = lazy(() =>
+  import("./components/FlowView").then((m) => ({ default: m.FlowView }))
+);
+const MindMap = lazy(() =>
+  import("./components/MindMap").then((m) => ({ default: m.MindMap }))
+);
+const CheckListView = lazy(() =>
+  import("./components/CheckListView").then((m) => ({
+    default: m.CheckListView,
+  }))
+);
+const CollectorView = lazy(() =>
+  import("./components/ItemTrackerView").then((m) => ({
+    default: m.CollectorView,
+  }))
+);
+const PrestigesView = lazy(() =>
+  import("./components/PrestigesView").then((m) => ({
+    default: m.PrestigesView,
+  }))
+);
+const AchievementsView = lazy(() =>
+  import("./components/AchievementsView").then((m) => ({
+    default: m.AchievementsView,
+  }))
+);
 const StorylineQuestsView = lazy(() =>
   import("./components/StorylineQuestsView").then((m) => ({
     default: m.StorylineQuestsView,
@@ -286,6 +321,18 @@ function App() {
       }
     },
     [completedStorylineObjectives]
+  );
+
+  const handleSetCompletedStorylineObjectives = useCallback(
+    async (objectives: Set<string>) => {
+      setCompletedStorylineObjectives(objectives);
+      try {
+        await taskStorage.saveCompletedStorylineObjectives(objectives);
+      } catch (err) {
+        console.error("Save storyline objectives error", err);
+      }
+    },
+    []
   );
 
   const handleToggleStorylineMapNode = useCallback(
@@ -1084,6 +1131,9 @@ function App() {
                     <StorylineQuestsView
                       completedObjectives={completedStorylineObjectives}
                       onToggleObjective={handleToggleStorylineObjective}
+                      onSetCompletedObjectives={
+                        handleSetCompletedStorylineObjectives
+                      }
                       onNavigateToMap={() => setViewMode("storyline-map")}
                     />
                   ) : viewMode === "storyline-map" ? (

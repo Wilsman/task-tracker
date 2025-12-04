@@ -332,20 +332,32 @@ export const initialNodes: Node[] = [
   {
     id: "1b2-pay-usd",
     type: "story",
-    position: { x: 652, y: 2163 },
+    position: { x: 652, y: 2155 },
     data: { label: "Hand Over 1 Million USD", description: "Final payment", cost: 1000000, note: "1M USD" },
+  },
+  {
+    id: "1b2-get-usb-stick",
+    type: "story",
+    position: { x: 638, y: 2300 },
+    data: { label: "Get USB Stick from Prapor", description: "Prapor gives you USB Stick with his Hash Code" },
+  },
+  {
+    id: "1b2-final-keycard-craft",
+    type: "craft",
+    position: { x: 638, y: 2400 },
+    data: { label: "Final Keycard Craft", description: "Craft the escape keycard", isCraft: true, craftHours: 11 },
   },
   {
     id: "1b2-shoreline-escape",
     type: "story",
-    position: { x: 638, y: 2751 },
-    data: { label: "Head to Shoreline", description: "⚠️ Path still being worked on", note: "⚠️ WIP - may not be 100% accurate" },
+    position: { x: 638, y: 2520 },
+    data: { label: "Head to Shoreline", description: "22:00-04:00, Intercom at Tower, approach Terminal without weapon", note: "If fail: 11H craft + new Blank RFID Card" },
   },
   {
     id: "fallen-ending",
     type: "ending",
-    position: { x: 660, y: 2878 },
-    data: { label: "Fallen Ending", description: "You fell from grace (WIP)", endingType: "fallen" },
+    position: { x: 660, y: 2876 },
+    data: { label: "Fallen Ending", description: "You fell from grace", endingType: "fallen" },
   },
 
   // ==========================================================================
@@ -793,13 +805,15 @@ export const initialEdges: Edge[] = [
   { id: "e-1b1-8", source: "1b1-final-craft", target: "1b1-shoreline-escape", style: { stroke: "#22c55e" } },
   { id: "e-1b1-ending", source: "1b1-shoreline-escape", target: "savior-ending", style: { stroke: "#22c55e" } },
 
-  // ==================== PATH 1-B2: FALLEN (PRAPOR HARD MODE - WIP) ====================
+  // ==================== PATH 1-B2: FALLEN (PRAPOR HARD MODE) ====================
   { id: "e-1b2-1", source: "1b2-no-help-prapor", target: "1b2-repair-kits", style: { stroke: "#6b7280" } },
   { id: "e-1b2-2", source: "1b2-repair-kits", target: "1b2-secure-container", style: { stroke: "#6b7280" } },
   { id: "e-1b2-3", source: "1b2-secure-container", target: "1b2-mil-components", style: { stroke: "#6b7280" } },
   { id: "e-1b2-4", source: "1b2-mil-components", target: "1b2-bio-weapon", style: { stroke: "#6b7280" } },
   { id: "e-1b2-5", source: "1b2-bio-weapon", target: "1b2-pay-usd", style: { stroke: "#6b7280" } },
-  { id: "e-1b2-6", source: "1b2-pay-usd", target: "1b2-shoreline-escape", style: { stroke: "#6b7280" } },
+  { id: "e-1b2-6", source: "1b2-pay-usd", target: "1b2-get-usb-stick", style: { stroke: "#6b7280" } },
+  { id: "e-1b2-7", source: "1b2-get-usb-stick", target: "1b2-final-keycard-craft", style: { stroke: "#6b7280" } },
+  { id: "e-1b2-8", source: "1b2-final-keycard-craft", target: "1b2-shoreline-escape", style: { stroke: "#6b7280" } },
   { id: "e-1b2-ending", source: "1b2-shoreline-escape", target: "fallen-ending", style: { stroke: "#6b7280" } },
 
   // ==================== PATH 1-B3: DEBTOR (LIGHTKEEPER PATH) ====================

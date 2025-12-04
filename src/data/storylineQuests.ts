@@ -30,7 +30,7 @@ export const STORYLINE_QUESTS: StorylineQuest[] = [
     name: "Tour",
     description:
       "Starting quest - automatically unlocked at the beginning of the storyline",
-    icon: "/1.png",
+    icon: "/Tour_Icon.webp",
     objectives: [
       {
         id: "tour-main-1",
@@ -51,12 +51,6 @@ export const STORYLINE_QUESTS: StorylineQuest[] = [
         id: "tour-main-4",
         type: "main",
         description: "Hand over the cash to Therapist",
-      },
-      {
-        id: "tour-opt-1",
-        type: "optional",
-        description: "Collect the required 250,000 Roubles",
-        progress: { current: 0, required: 250000 },
       },
       {
         id: "tour-main-5",
@@ -88,14 +82,6 @@ export const STORYLINE_QUESTS: StorylineQuest[] = [
         type: "main",
         description:
           "Hand over any 5 found in raid Building materials items to Skier",
-        progress: { current: 0, required: 5 },
-      },
-      {
-        id: "tour-opt-2",
-        type: "optional",
-        description:
-          "Find any 5 items in raid from the Building materials category",
-        progress: { current: 0, required: 5 },
       },
       {
         id: "tour-main-11",
@@ -111,13 +97,6 @@ export const STORYLINE_QUESTS: StorylineQuest[] = [
         id: "tour-main-13",
         type: "main",
         description: "Hand over any 2 found in raid weapons to Mechanic",
-        progress: { current: 0, required: 2 },
-      },
-      {
-        id: "tour-opt-3",
-        type: "optional",
-        description: "Find any 2 weapons in raid",
-        progress: { current: 0, required: 2 },
       },
       {
         id: "tour-main-14",
@@ -128,7 +107,6 @@ export const STORYLINE_QUESTS: StorylineQuest[] = [
         id: "tour-main-15",
         type: "main",
         description: "Eliminate any 3 targets on Woods",
-        progress: { current: 0, required: 3 },
       },
       {
         id: "tour-main-16",
@@ -164,13 +142,6 @@ export const STORYLINE_QUESTS: StorylineQuest[] = [
         id: "tour-main-22",
         type: "main",
         description: "Hand over 20,000 Dollars to Mechanic",
-        progress: { current: 0, required: 20000 },
-      },
-      {
-        id: "tour-opt-4",
-        type: "optional",
-        description: "Collect the required 20,000 Dollars",
-        progress: { current: 0, required: 20000 },
       },
       {
         id: "tour-main-23",
@@ -181,13 +152,6 @@ export const STORYLINE_QUESTS: StorylineQuest[] = [
         id: "tour-main-24",
         type: "main",
         description: "Hand over 5 PMC dogtags to Prapor",
-        progress: { current: 0, required: 5 },
-      },
-      {
-        id: "tour-opt-5",
-        type: "optional",
-        description: "Find 5 PMC dogtags in raid",
-        progress: { current: 0, required: 5 },
       },
       {
         id: "tour-main-25",
@@ -221,6 +185,32 @@ export const STORYLINE_QUESTS: StorylineQuest[] = [
         description: "Search the top management offices in The Lab",
       },
       {
+        id: "tour-opt-1",
+        type: "optional",
+        description: "Collect the required 250,000 Roubles",
+      },
+      {
+        id: "tour-opt-2",
+        type: "optional",
+        description:
+          "Find any 5 items in raid from the Building materials category",
+      },
+      {
+        id: "tour-opt-3",
+        type: "optional",
+        description: "Find any 2 weapons in raid",
+      },
+      {
+        id: "tour-opt-4",
+        type: "optional",
+        description: "Collect the required 20,000 Dollars",
+      },
+      {
+        id: "tour-opt-5",
+        type: "optional",
+        description: "Find 5 PMC dogtags in raid",
+      },
+      {
         id: "tour-opt-6",
         type: "optional",
         description: "Locate the entrance to the facility on Factory",
@@ -237,7 +227,8 @@ export const STORYLINE_QUESTS: StorylineQuest[] = [
       },
     ],
     rewards: {
-      description: "Access to Shoreline and buy equipment from Peacekeeper",
+      description:
+        "Unlocks achievement Pathfinder, traders (Skier, Mechanic, Prapor, Peacekeeper), and direct access to all locations",
     },
   },
   {
@@ -245,9 +236,8 @@ export const STORYLINE_QUESTS: StorylineQuest[] = [
     name: "Falling Skies",
     description:
       "Best method: Keep doing Tour until completing Mechanic's quest, then go to the broken plane in Woods",
-    notes:
-      "⚠️ Known Issues:\n• Quest is rumored to be bugged\n• Some reports say standard accounts need 0.2 Prapor Reputation to progress\n• Quest actually requires 'Reach Prapor LVL 2' which may cause softlock for some players",
-    icon: "/2.png",
+    notes: "Keeping the armored case results in -0.3 Prapor reputation.",
+    icon: "/Falling_Skies_Icon.webp",
     objectives: [
       {
         id: "falling-skies-main-1",
@@ -257,8 +247,7 @@ export const STORYLINE_QUESTS: StorylineQuest[] = [
       {
         id: "falling-skies-main-2",
         type: "main",
-        description:
-          "Reach Loyalty Level 2 with Prapor (Non-Unheard Or EOD Only)",
+        description: "Reach Loyalty Level 2 with Prapor",
       },
       {
         id: "falling-skies-main-3",
@@ -271,15 +260,9 @@ export const STORYLINE_QUESTS: StorylineQuest[] = [
         description: "Gather information from Therapist",
       },
       {
-        id: "falling-skies-opt-1",
-        type: "optional",
-        description: "Hand over cash to Therapist 2,000$",
-      },
-      {
         id: "falling-skies-main-5",
         type: "main",
-        description:
-          "Retrieve the flash drive from one of the G-Wagon SUVs (Shoreline near Tunnel)",
+        description: "Retrieve the flash drive from one of the G-Wagon SUVs",
       },
       {
         id: "falling-skies-main-6",
@@ -299,8 +282,7 @@ export const STORYLINE_QUESTS: StorylineQuest[] = [
       {
         id: "falling-skies-main-9",
         type: "main",
-        description:
-          "Leave the flight recorder in the specified spot (Shoreline in the house corner room at the fishers' island)",
+        description: "Leave the flight recorder in the specified spot",
       },
       {
         id: "falling-skies-main-10",
@@ -310,17 +292,17 @@ export const STORYLINE_QUESTS: StorylineQuest[] = [
       {
         id: "falling-skies-main-11",
         type: "main",
-        description: "Hand over 2 Toolset",
+        description: "Hand over 2 Toolset in raid",
       },
       {
         id: "falling-skies-main-12",
         type: "main",
-        description: "Hand over 3 Rechargeable battery",
+        description: "Hand over 3 Rechargeable battery in raid",
       },
       {
         id: "falling-skies-main-13",
         type: "main",
-        description: "Hand over 5 Printed circuit board",
+        description: "Hand over 5 Printed circuit board in raid",
       },
       {
         id: "falling-skies-main-14",
@@ -345,7 +327,7 @@ export const STORYLINE_QUESTS: StorylineQuest[] = [
       {
         id: "falling-skies-main-18",
         type: "main",
-        description: "Retrieve the armored case and choose one of:",
+        description: "Retrieve the armored case",
       },
       {
         id: "falling-skies-main-19",
@@ -357,20 +339,25 @@ export const STORYLINE_QUESTS: StorylineQuest[] = [
         type: "main",
         description: "Keep the armored case for yourself",
       },
+      {
+        id: "falling-skies-opt-1",
+        type: "optional",
+        description: "Hand over cash to Therapist 2,000$",
+      },
     ],
   },
   {
     id: "the-ticket",
     name: "The Ticket",
     description: "Earned automatically after completing Falling Skies",
-    icon: "/3.png",
+    icon: "/The_Ticket_Icon.webp",
   },
   {
     id: "batya",
     name: "Batya",
     description:
       "Turns out BEAR didn't send just regular squads into Tarkov, there were real SOF guys here. I'd like to know more about those units and what exactly they were doing.",
-    icon: "/4.png",
+    icon: "/Batya_Icon.webp",
     objectives: [
       {
         id: "batya-main-1",
@@ -380,7 +367,7 @@ export const STORYLINE_QUESTS: StorylineQuest[] = [
       {
         id: "batya-main-2",
         type: "main",
-        description: "I should check BEAR outposts",
+        description: "Check BEAR outposts",
       },
       {
         id: "batya-main-3",
@@ -419,47 +406,63 @@ export const STORYLINE_QUESTS: StorylineQuest[] = [
       {
         id: "batya-main-9",
         type: "main",
-        description: "I should search the large stores or shopping malls",
+        description: "Locate the Carousel outpost",
       },
       {
         id: "batya-main-10",
         type: "main",
-        description: "Locate the Carousel outpost",
+        description: "Learn more about Voevoda",
       },
       {
         id: "batya-main-11",
         type: "main",
-        description: "Learn more about Voevoda",
+        description: "Find the Bogatyr squad's personal notes",
       },
       {
         id: "batya-main-12",
         type: "main",
-        description: "Find the Bogatyr squad's personal notes",
+        description: "Learn more about Taran",
       },
       {
         id: "batya-main-13",
         type: "main",
-        description: "Learn more about Taran",
+        description: "Learn more about Strelets",
       },
       {
         id: "batya-main-14",
         type: "main",
-        description: "Learn more about Strelets",
+        description: "Find Voevoda's personal belongings",
       },
       {
         id: "batya-main-15",
         type: "main",
-        description: "Find Voevoda's personal belongings",
+        description: "Learn more about the Bogatyr squad's activities",
       },
       {
         id: "batya-main-16",
         type: "main",
-        description: "Learn more about the Bogatyr squad's activities",
+        description: "Search the Gnezdo outpost",
       },
       {
         id: "batya-main-17",
         type: "main",
-        description: "Search the Gnezdo outpost",
+        description:
+          "Retrieve more information about the ambush from Moreman's phone",
+      },
+      {
+        id: "batya-main-18",
+        type: "main",
+        description: "Use Workbench to repair phone parts",
+      },
+      {
+        id: "batya-main-19",
+        type: "main",
+        description: "Intelligence Center level 3",
+      },
+      {
+        id: "batya-main-20",
+        type: "main",
+        description: "Use Intelligence Center radio station",
       },
       {
         id: "batya-opt-1",
@@ -486,21 +489,66 @@ export const STORYLINE_QUESTS: StorylineQuest[] = [
         type: "optional",
         description: "Locate and obtain the Bogatyr squad patch",
       },
+      {
+        id: "batya-opt-6",
+        type: "optional",
+        description: "Locate and obtain Moreman's phone",
+      },
     ],
   },
   {
     id: "the-unheard",
     name: "The Unheard",
     description: "The Unheard questline",
-    icon: "/5.png",
-    objectives: [],
+    icon: "/The_Unheard_Icon.webp",
+    objectives: [
+      {
+        id: "unheard-main-1",
+        type: "main",
+        description: "Learn more about TerraGroup's activities",
+      },
+      {
+        id: "unheard-main-2",
+        type: "main",
+        description:
+          "Find more information about the special catalyst shipment",
+      },
+      {
+        id: "unheard-main-3",
+        type: "main",
+        description: "Locate Rzhevsky's service vehicle",
+      },
+      {
+        id: "unheard-main-4",
+        type: "main",
+        description: "Scout the underground laboratory",
+      },
+      {
+        id: "unheard-main-5",
+        type: "main",
+        description: "Find cargo transport fax in The Lab",
+      },
+      {
+        id: "unheard-main-6",
+        type: "main",
+        description:
+          "Find document on changes in enterprise interactions in The Lab",
+      },
+      {
+        id: "unheard-main-7",
+        type: "main",
+        description: "Find transport log with notes on Factory",
+      },
+    ],
   },
   {
     id: "blue-fire",
     name: "Blue Fire",
     description:
       "Find flyer at any of these locations:\n• Woods med camp: Inside a GREEN container taped to a white drawer\n• Interchange: New area flyer\n• Interchange: Big Terragroup area behind old co-op extract, med tent/bunker",
-    icon: "/6.png",
+    notes:
+      "Planting the device takes 60 seconds. Selling the fragment yields 1.5M roubles.",
+    icon: "/Blue_Fire_Icon.webp",
     objectives: [
       {
         id: "blue-fire-main-1",
@@ -510,8 +558,37 @@ export const STORYLINE_QUESTS: StorylineQuest[] = [
       {
         id: "blue-fire-main-2",
         type: "main",
-        description:
-          "The device fragment might have been taken by Scavs of the cultists; I should check their spots on Streets of Tarkov and Ground Zero",
+        description: "Talk to Mechanic about the EMP blast",
+      },
+      {
+        id: "blue-fire-main-3",
+        type: "main",
+        description: "Locate and obtain the device fragment in Chek 13",
+      },
+      {
+        id: "blue-fire-main-4",
+        type: "main",
+        description: "Talk to Mechanic",
+      },
+      {
+        id: "blue-fire-main-5",
+        type: "main",
+        description: "Plant the hacking device in the server room in The Lab",
+      },
+      {
+        id: "blue-fire-opt-1",
+        type: "optional",
+        description: "Hand over the fragment of Item 1156 to Mechanic",
+      },
+      {
+        id: "blue-fire-opt-2",
+        type: "optional",
+        description: "Keep the fragment of Item 1156 for yourself",
+      },
+      {
+        id: "blue-fire-opt-3",
+        type: "optional",
+        description: "Find a lead on Item 1156 (if fragment was sold)",
       },
     ],
   },
@@ -520,12 +597,13 @@ export const STORYLINE_QUESTS: StorylineQuest[] = [
     name: "They Are Already Here",
     description:
       "Complete any ONE of these:\n• Kill cultist\n• Loot dorms marked room\n• Get note next to cultist circle in abandoned village\n• Fisherman island on Shoreline where the green box is",
-    icon: "/7.png",
+    notes: "Contains detailed info about tape locations and key spawns.",
+    icon: "/They_Are_Already_Here_Icon.webp",
     objectives: [
       {
         id: "they-are-already-here-main-1",
         type: "main",
-        description: 'Find "Note about the Eye of the World"',
+        description: "Find 'Note about the Eye of the World'",
       },
       {
         id: "they-are-already-here-main-2",
@@ -538,15 +616,9 @@ export const STORYLINE_QUESTS: StorylineQuest[] = [
         description: "Locate the cult victim's apartment",
       },
       {
-        id: "they-are-already-here-opt-1",
-        type: "optional",
-        description: "Obtain the key to the apartment",
-      },
-      {
         id: "they-are-already-here-main-4",
         type: "main",
-        description:
-          "Obtain and read the book that the cultists planted with Igor",
+        description: "Obtain and read the planted book",
       },
       {
         id: "they-are-already-here-main-5",
@@ -566,13 +638,17 @@ export const STORYLINE_QUESTS: StorylineQuest[] = [
       {
         id: "they-are-already-here-main-8",
         type: "main",
-        description: "Locate and neutralize 2x Cultist Priests",
-        progress: { current: 0, required: 2 },
+        description: "Locate and neutralize 2 Cultist Priests",
       },
       {
         id: "they-are-already-here-main-9",
         type: "main",
         description: "Obtain more information on the Eye of the World",
+      },
+      {
+        id: "they-are-already-here-opt-1",
+        type: "optional",
+        description: "Obtain the key to the apartment",
       },
     ],
   },
@@ -580,7 +656,7 @@ export const STORYLINE_QUESTS: StorylineQuest[] = [
     id: "accidental-witness",
     name: "Accidental Witness",
     description: "Check the car between customs dorm",
-    icon: "/8.png",
+    icon: "/Accidental_Witness_Icon.webp",
     objectives: [
       {
         id: "accidental-witness-main-1",
@@ -598,16 +674,6 @@ export const STORYLINE_QUESTS: StorylineQuest[] = [
         description: "Find out what Kozlov was involved in",
       },
       {
-        id: "accidental-witness-opt-1",
-        type: "optional",
-        description: "Access Kozlov's room",
-      },
-      {
-        id: "accidental-witness-opt-2",
-        type: "optional",
-        description: "Figure out where to get Kozlov's key",
-      },
-      {
         id: "accidental-witness-main-4",
         type: "main",
         description: "Ask the traders about Anastasia",
@@ -616,11 +682,6 @@ export const STORYLINE_QUESTS: StorylineQuest[] = [
         id: "accidental-witness-main-5",
         type: "main",
         description: "Access Skier's accomplice's apartment",
-      },
-      {
-        id: "accidental-witness-opt-3",
-        type: "optional",
-        description: "Find the key to the apartment",
       },
       {
         id: "accidental-witness-main-6",
@@ -692,6 +753,21 @@ export const STORYLINE_QUESTS: StorylineQuest[] = [
         type: "main",
         description: "Locate and obtain Kozlov's evidence",
       },
+      {
+        id: "accidental-witness-opt-1",
+        type: "optional",
+        description: "Access Kozlov's room",
+      },
+      {
+        id: "accidental-witness-opt-2",
+        type: "optional",
+        description: "Figure out where to get Kozlov's key",
+      },
+      {
+        id: "accidental-witness-opt-3",
+        type: "optional",
+        description: "Find the key to Skier's accomplice's apartment",
+      },
     ],
   },
   {
@@ -699,7 +775,65 @@ export const STORYLINE_QUESTS: StorylineQuest[] = [
     name: "The Labyrinth",
     description:
       "Go into the access tunnel in Shoreline Resort Basement\n\nRequires: Knossos key\nSee: escapefromtarkov.fandom.com/wiki/Knossos_LLC_facility_key",
-    icon: "/9.png",
-    objectives: [],
+    notes:
+      "Extremely dangerous area; includes traps, poison, tripwires, and miniboss versions of Tagilla and possibly Killa.",
+    icon: "/The_Labyrinth_Chapter_Icon.webp",
+    objectives: [
+      {
+        id: "labyrinth-main-1",
+        type: "main",
+        description: "Accept Mechanic's quest 'Shady Contractor'",
+      },
+      {
+        id: "labyrinth-main-2",
+        type: "main",
+        description: "Visit Therapist for information",
+      },
+      {
+        id: "labyrinth-main-3",
+        type: "main",
+        description: "Visit Jaeger and negotiate help",
+      },
+      {
+        id: "labyrinth-main-4",
+        type: "main",
+        description: "Wait 48 hours for keycards",
+      },
+      {
+        id: "labyrinth-main-5",
+        type: "main",
+        description: "Collect 2 Labrys access keycards",
+      },
+      {
+        id: "labyrinth-main-6",
+        type: "main",
+        description: "Reach the Labyrinth via Shoreline Health Resort",
+      },
+      {
+        id: "labyrinth-main-7",
+        type: "main",
+        description: "Disable starting-room trap to exit",
+      },
+      {
+        id: "labyrinth-main-8",
+        type: "main",
+        description: "Navigate the Labyrinth hazards",
+      },
+      {
+        id: "labyrinth-main-9",
+        type: "main",
+        description: "Survive enemy waves",
+      },
+      {
+        id: "labyrinth-main-10",
+        type: "main",
+        description: "Defeat Shadow of Tagilla",
+      },
+      {
+        id: "labyrinth-main-11",
+        type: "main",
+        description: "Survive potential Killa ambush",
+      },
+    ],
   },
 ];
