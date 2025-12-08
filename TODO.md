@@ -18,3 +18,5 @@
 - [ ] Found-in-Raid item tracker for quests + hideout
 - [ ] Kappa speedrun quest order guide
 - [ ] Surface small notices for new features or warnings
+- [x] Add wiki links to quests in currently-working-on view
+- [x] Add a welcome section for tip using this page when the page is only showing collector items (fresh or no tasks/items tracking yet) currently-working-on view

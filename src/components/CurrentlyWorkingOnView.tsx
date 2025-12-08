@@ -22,6 +22,8 @@ import {
   Check,
   ChevronDown,
   ChevronUp,
+  ExternalLink,
+  Lightbulb,
 } from "lucide-react";
 import { TRADER_COLORS } from "@/data/traders";
 import { cn } from "@/lib/utils";
@@ -178,6 +180,63 @@ export function CurrentlyWorkingOnView({
         </div>
       </div>
 
+      {/* Welcome Section - Only when showing collector items (fresh state) */}
+      {activeTasks.length === 0 &&
+        activeStorylineObjectives.length === 0 &&
+        activeHideoutStations.length === 0 &&
+        collectorItems.length > 0 && (
+          <Card className="border-border bg-card text-card-foreground">
+            <CardContent className="pt-6">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0">
+                  <div className="p-2 bg-muted rounded-lg">
+                    <Lightbulb className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                </div>
+                <div className="flex-1 space-y-2">
+                  <h3 className="font-semibold text-foreground">
+                    Your Progress Dashboard
+                  </h3>
+                  <div className="text-sm text-muted-foreground space-y-2">
+                    <p>
+                      <strong>Your dashboard is empty!</strong> This overview
+                      shows all quests, hideout stations, and objectives you're
+                      currently working on.
+                    </p>
+                    <div className="space-y-1">
+                      <p className="font-medium text-foreground">
+                        Start tracking your progress:
+                      </p>
+                      <ul className="ml-4 space-y-1 text-xs">
+                        <li>
+                          • <strong>Quests:</strong> Go to Quests tab → click
+                          "Working On" on active quests
+                        </li>
+                        <li>
+                          • <strong>Hideout:</strong> Go to Hideout tab → mark
+                          stations you're upgrading
+                        </li>
+                        <li>
+                          • <strong>Storyline:</strong> Go to Storyline tab →
+                          select current objectives
+                        </li>
+                        <li>
+                          • <strong>Collector Items:</strong> Click items below
+                          to mark as found
+                        </li>
+                      </ul>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      📊 Once you start tracking, everything will appear here in
+                      one convenient dashboard!
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
       {/* Active Quests Section */}
       {activeTasks.length > 0 && (
         <Card>
@@ -247,6 +306,16 @@ export function CurrentlyWorkingOnView({
                                 <Badge variant="secondary">
                                   Lvl {task.minPlayerLevel}
                                 </Badge>
+                                <a
+                                  href={task.wikiLink}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 text-primary hover:text-primary/80 text-xs transition-colors"
+                                  title="View quest wiki"
+                                >
+                                  <ExternalLink size={12} />
+                                  Wiki
+                                </a>
                               </div>
                               {task.objectives &&
                                 task.objectives.length > 0 && (
