@@ -20,7 +20,8 @@ interface CommandMenuProps {
     | "achievements"
     | "storyline"
     | "storyline-map"
-    | "hideout-requirements";
+    | "hideout-requirements"
+    | "current";
   groupBy: "trader" | "map";
   collectorGroupBy: "collector" | "hideout-stations";
   traders: string[];

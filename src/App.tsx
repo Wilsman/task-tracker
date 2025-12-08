@@ -15,7 +15,12 @@ import { Task, CollectorItemsData, Achievement, HideoutStation } from "./types";
 import { QuestProgressPanel } from "./components/QuestProgressPanel";
 import { Skeleton } from "@/components/ui/skeleton";
 import SEO from "./components/SEO";
-import { taskStorage, migrateLegacyDataIfNeeded } from "./utils/indexedDB";
+import {
+  taskStorage,
+  migrateLegacyDataIfNeeded,
+  migrateDefaultDbIfNeeded,
+  ExportImportService,
+} from "./utils/indexedDB";
 import {
   ensureProfiles,
   getProfiles,
@@ -24,6 +29,7 @@ import {
   createProfile,
   renameProfile,
   deleteProfile,
+  getUniqueProfileName,
   type Profile,
 } from "@/utils/profile";
 import {
@@ -47,17 +53,6 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "./components/ui/alert-dialog";
 // Lazily-loaded heavy views
 const FlowView = lazy(() =>
   import("./components/FlowView").then((m) => ({ default: m.FlowView }))
@@ -100,6 +95,11 @@ const StorylineContainer = lazy(() =>
     default: m.StorylineContainer,
   }))
 );
+const CurrentlyWorkingOnView = lazy(() =>
+  import("./components/CurrentlyWorkingOnView").then((m) => ({
+    default: m.CurrentlyWorkingOnView,
+  }))
+);
 import { CommandMenu } from "./components/CommandMenu";
 import { NotesWidget } from "./components/NotesWidget";
 import { OnboardingModal } from "./components/OnboardingModal";
@@ -119,6 +119,9 @@ function App() {
   const [completedStorylineObjectives, setCompletedStorylineObjectives] =
     useState<Set<string>>(new Set());
   const [completedStorylineMapNodes, setCompletedStorylineMapNodes] = useState<
+    Set<string>
+  >(new Set());
+  const [completedTaskObjectives, setCompletedTaskObjectives] = useState<
     Set<string>
   >(new Set());
   // Show all traders by default (no hidden traders initially)
@@ -175,6 +178,7 @@ function App() {
     | "storyline"
     | "storyline-map"
     | "hideout-requirements"
+    | "current"
   >("grouped");
   const [groupBy, setGroupBy] = useState<"trader" | "map">("trader");
   const [collectorGroupBy, setCollectorGroupBy] = useState<
@@ -193,6 +197,17 @@ function App() {
     Set<string>
   >(new Set());
   const [hideoutStations, setHideoutStations] = useState<HideoutStation[]>([]);
+
+  // Working on items (currently working towards)
+  const [workingOnTasks, setWorkingOnTasks] = useState<Set<string>>(new Set());
+  const [workingOnStorylineObjectives, setWorkingOnStorylineObjectives] =
+    useState<Set<string>>(new Set());
+  const [workingOnCollectorItems, setWorkingOnCollectorItems] = useState<
+    Set<string>
+  >(new Set());
+  const [workingOnHideoutStations, setWorkingOnHideoutStations] = useState<
+    Set<string>
+  >(new Set());
 
   // Lightweight client-side routing for deep links like /Items/CollectorItems?search=...
   function normalizePath(pathname: string) {
@@ -230,6 +245,8 @@ function App() {
       } else {
         nextView = "storyline";
       }
+    } else if (parts[0] === "current") {
+      nextView = "current";
     }
 
     return { nextView, nextCollectorGroupBy };
@@ -282,6 +299,8 @@ function App() {
       nextPath = "/Quests/Flow";
     } else if (viewMode === "tree") {
       nextPath = "/Quests/Tree";
+    } else if (viewMode === "current") {
+      nextPath = "/Current";
     }
     const current = normalizePath(window.location.pathname);
     if (normalizePath(nextPath) !== current) {
@@ -295,59 +314,71 @@ function App() {
 
   const handleToggleAchievement = useCallback(
     async (id: string) => {
+      if (!activeProfileId) return;
       const next = new Set(completedAchievements);
       if (next.has(id)) next.delete(id);
       else next.add(id);
       setCompletedAchievements(next);
       try {
+        taskStorage.setProfile(activeProfileId);
+        await taskStorage.init();
         await taskStorage.saveCompletedAchievements(next);
       } catch (err) {
         console.error("Save achievements error", err);
       }
     },
-    [completedAchievements]
+    [completedAchievements, activeProfileId]
   );
 
   const handleToggleStorylineObjective = useCallback(
     async (id: string) => {
+      if (!activeProfileId) return;
       const next = new Set(completedStorylineObjectives);
       if (next.has(id)) next.delete(id);
       else next.add(id);
       setCompletedStorylineObjectives(next);
       try {
+        taskStorage.setProfile(activeProfileId);
+        await taskStorage.init();
         await taskStorage.saveCompletedStorylineObjectives(next);
       } catch (err) {
         console.error("Save storyline objectives error", err);
       }
     },
-    [completedStorylineObjectives]
+    [completedStorylineObjectives, activeProfileId]
   );
 
   const handleSetCompletedStorylineObjectives = useCallback(
     async (objectives: Set<string>) => {
+      if (!activeProfileId) return;
       setCompletedStorylineObjectives(objectives);
       try {
+        taskStorage.setProfile(activeProfileId);
+        await taskStorage.init();
         await taskStorage.saveCompletedStorylineObjectives(objectives);
       } catch (err) {
         console.error("Save storyline objectives error", err);
       }
     },
-    []
+    [activeProfileId]
   );
 
   const handleToggleStorylineMapNode = useCallback(
     async (id: string) => {
+      if (!activeProfileId) return;
       const next = new Set(completedStorylineMapNodes);
       if (next.has(id)) next.delete(id);
       else next.add(id);
       setCompletedStorylineMapNodes(next);
       try {
+        taskStorage.setProfile(activeProfileId);
+        await taskStorage.init();
         await taskStorage.saveCompletedStorylineMapNodes(next);
       } catch (err) {
         console.error("Save storyline map nodes error", err);
       }
     },
-    [completedStorylineMapNodes]
+    [completedStorylineMapNodes, activeProfileId]
   );
 
   const totalQuests = tasks.length;
@@ -436,12 +467,22 @@ function App() {
           await taskStorage.loadCompletedStorylineObjectives();
         const savedStorylineMapNodes =
           await taskStorage.loadCompletedStorylineMapNodes();
+        const savedTaskObjectives =
+          await taskStorage.loadCompletedTaskObjectives();
+        const savedWorkingOnItems = await taskStorage.loadWorkingOnItems();
         setCompletedTasks(savedTasks);
         setCompletedCollectorItems(savedCollectorItems);
         setCompletedHideoutItems(savedHideoutItems);
         setCompletedAchievements(savedAchievements);
         setCompletedStorylineObjectives(savedStorylineObjectives);
         setCompletedStorylineMapNodes(savedStorylineMapNodes);
+        setCompletedTaskObjectives(savedTaskObjectives);
+        setWorkingOnTasks(savedWorkingOnItems.tasks);
+        setWorkingOnStorylineObjectives(
+          savedWorkingOnItems.storylineObjectives
+        );
+        setWorkingOnCollectorItems(savedWorkingOnItems.collectorItems);
+        setWorkingOnHideoutStations(savedWorkingOnItems.hideoutStations);
         // Notify components like NotesWidget to update their per-profile state
         window.dispatchEvent(new Event("taskTracker:profileChanged"));
       } catch (e) {
@@ -514,6 +555,9 @@ function App() {
         // One-time migrate legacy single-DB data into the first profile
         await migrateLegacyDataIfNeeded(ensured.activeId);
 
+        // Migrate any data from "default" database (edge case from race conditions)
+        await migrateDefaultDbIfNeeded(ensured.activeId);
+
         // Migrate legacy unscoped UI prefs to active profile if present
         try {
           const lvl = localStorage.getItem("taskTracker_playerLevel");
@@ -566,12 +610,22 @@ function App() {
           await taskStorage.loadCompletedStorylineObjectives();
         const savedStorylineMapNodes =
           await taskStorage.loadCompletedStorylineMapNodes();
+        const savedTaskObjectives =
+          await taskStorage.loadCompletedTaskObjectives();
+        const savedWorkingOnItems = await taskStorage.loadWorkingOnItems();
         setCompletedTasks(savedTasks);
         setCompletedCollectorItems(savedCollectorItems);
         setCompletedHideoutItems(savedHideoutItems);
         setCompletedAchievements(savedAchievements);
         setCompletedStorylineObjectives(savedStorylineObjectives);
         setCompletedStorylineMapNodes(savedStorylineMapNodes);
+        setCompletedTaskObjectives(savedTaskObjectives);
+        setWorkingOnTasks(savedWorkingOnItems.tasks);
+        setWorkingOnStorylineObjectives(
+          savedWorkingOnItems.storylineObjectives
+        );
+        setWorkingOnCollectorItems(savedWorkingOnItems.collectorItems);
+        setWorkingOnHideoutStations(savedWorkingOnItems.hideoutStations);
 
         // Load cached API data instantly if present
         const cached = loadCombinedCache();
@@ -680,6 +734,7 @@ function App() {
 
   const handleToggleComplete = useCallback(
     async (taskId: string) => {
+      if (!activeProfileId) return; // Don't save if profile not initialized
       const next = new Set(completedTasks);
       if (next.has(taskId)) {
         next.delete(taskId);
@@ -691,12 +746,15 @@ function App() {
       }
       setCompletedTasks(next);
       try {
+        // Ensure taskStorage is using the correct profile before saving
+        taskStorage.setProfile(activeProfileId);
+        await taskStorage.init();
         await taskStorage.saveCompletedTasks(next);
       } catch (err) {
         console.error("Save error", err);
       }
     },
-    [completedTasks, tasks]
+    [completedTasks, tasks, activeProfileId]
   );
 
   // Sidebar trader filter: multi-select toggle
@@ -743,6 +801,7 @@ function App() {
 
   const handleToggleCollectorItem = useCallback(
     async (itemName: string) => {
+      if (!activeProfileId) return;
       const next = new Set(completedCollectorItems);
       if (next.has(itemName)) {
         next.delete(itemName);
@@ -751,68 +810,221 @@ function App() {
       }
       setCompletedCollectorItems(next);
       try {
+        taskStorage.setProfile(activeProfileId);
+        await taskStorage.init();
         await taskStorage.saveCompletedCollectorItems(next);
       } catch (err) {
         console.error("Save collector items error", err);
       }
     },
-    [completedCollectorItems]
+    [completedCollectorItems, activeProfileId]
   );
 
   const handleToggleHideoutItem = useCallback(
     async (itemKey: string) => {
-      console.log("[Hideout] Toggling item key:", itemKey);
+      if (!activeProfileId) return;
       const next = new Set(completedHideoutItems);
       if (next.has(itemKey)) {
         next.delete(itemKey);
-        console.log("[Hideout] Removed from set");
       } else {
         next.add(itemKey);
-        console.log("[Hideout] Added to set");
       }
-      console.log("[Hideout] Current set size:", next.size);
       setCompletedHideoutItems(next);
       try {
+        taskStorage.setProfile(activeProfileId);
+        await taskStorage.init();
         await taskStorage.saveCompletedHideoutItems(next);
-        console.log("[Hideout] Saved to storage");
       } catch (err) {
         console.error("Save hideout items error", err);
       }
     },
-    [completedHideoutItems]
+    [completedHideoutItems, activeProfileId]
   );
 
-  const handleResetProgress = useCallback(async () => {
-    setCompletedTasks(new Set());
-    setCompletedCollectorItems(new Set());
-    setCompletedHideoutItems(new Set());
-    setCompletedAchievements(new Set());
-    setCompletedStorylineObjectives(new Set());
-    try {
-      console.debug("[Prestige] Reset:start");
-      await taskStorage.saveCompletedTasks(new Set());
-      await taskStorage.saveCompletedCollectorItems(new Set());
-      await taskStorage.saveCompletedHideoutItems(new Set());
-      await taskStorage.saveCompletedAchievements(new Set());
-      await taskStorage.saveCompletedStorylineObjectives(new Set());
-      // Reset prestige by saving empty entries per prestige id, mirroring other save-based resets
-      for (const cfg of PRESTIGE_CONFIGS) {
-        await taskStorage.savePrestigeProgress(cfg.id, {});
-        console.debug("[Prestige] Reset:prestige saved empty", cfg.id);
+  const handleToggleTaskObjective = useCallback(
+    async (objectiveKey: string) => {
+      if (!activeProfileId) return;
+      const next = new Set(completedTaskObjectives);
+      if (next.has(objectiveKey)) {
+        next.delete(objectiveKey);
+      } else {
+        next.add(objectiveKey);
       }
-      // Notify listeners so UI refreshes immediately
-      window.dispatchEvent(new Event(PRESTIGE_UPDATED_EVENT));
-      // Reset player level filter state in IndexedDB
-      await taskStorage.saveUserPreferences({
-        playerLevel: 1,
-        enableLevelFilter: false,
-      });
-      window.dispatchEvent(new Event("taskTracker:reset"));
-      console.debug("[Prestige] Reset:event dispatched");
-    } catch (err) {
-      console.error("Reset error", err);
-    }
-  }, []);
+      setCompletedTaskObjectives(next);
+      try {
+        taskStorage.setProfile(activeProfileId);
+        await taskStorage.init();
+        await taskStorage.saveCompletedTaskObjectives(next);
+      } catch (err) {
+        console.error("Save task objectives error", err);
+      }
+    },
+    [completedTaskObjectives, activeProfileId]
+  );
+
+  // Working on toggle handlers
+  const handleToggleWorkingOnTask = useCallback(
+    async (taskId: string) => {
+      if (!activeProfileId) return;
+      const next = new Set(workingOnTasks);
+      if (next.has(taskId)) {
+        next.delete(taskId);
+      } else {
+        next.add(taskId);
+      }
+      setWorkingOnTasks(next);
+      try {
+        taskStorage.setProfile(activeProfileId);
+        await taskStorage.init();
+        await taskStorage.saveWorkingOnItems({
+          tasks: next,
+          storylineObjectives: workingOnStorylineObjectives,
+          collectorItems: workingOnCollectorItems,
+          hideoutStations: workingOnHideoutStations,
+        });
+      } catch (err) {
+        console.error("Save working on items error", err);
+      }
+    },
+    [
+      workingOnTasks,
+      workingOnStorylineObjectives,
+      workingOnCollectorItems,
+      workingOnHideoutStations,
+      activeProfileId,
+    ]
+  );
+
+  const handleToggleWorkingOnStorylineObjective = useCallback(
+    async (objectiveId: string) => {
+      if (!activeProfileId) return;
+      const next = new Set(workingOnStorylineObjectives);
+      if (next.has(objectiveId)) {
+        next.delete(objectiveId);
+      } else {
+        next.add(objectiveId);
+      }
+      setWorkingOnStorylineObjectives(next);
+      try {
+        taskStorage.setProfile(activeProfileId);
+        await taskStorage.init();
+        await taskStorage.saveWorkingOnItems({
+          tasks: workingOnTasks,
+          storylineObjectives: next,
+          collectorItems: workingOnCollectorItems,
+          hideoutStations: workingOnHideoutStations,
+        });
+      } catch (err) {
+        console.error("Save working on items error", err);
+      }
+    },
+    [
+      workingOnTasks,
+      workingOnStorylineObjectives,
+      workingOnCollectorItems,
+      workingOnHideoutStations,
+      activeProfileId,
+    ]
+  );
+
+  const handleToggleWorkingOnHideoutStation = useCallback(
+    async (stationKey: string) => {
+      if (!activeProfileId) return;
+      const next = new Set(workingOnHideoutStations);
+      if (next.has(stationKey)) {
+        next.delete(stationKey);
+      } else {
+        next.add(stationKey);
+      }
+      setWorkingOnHideoutStations(next);
+      try {
+        taskStorage.setProfile(activeProfileId);
+        await taskStorage.init();
+        await taskStorage.saveWorkingOnItems({
+          tasks: workingOnTasks,
+          storylineObjectives: workingOnStorylineObjectives,
+          collectorItems: workingOnCollectorItems,
+          hideoutStations: next,
+        });
+      } catch (err) {
+        console.error("Save working on items error", err);
+      }
+    },
+    [
+      workingOnTasks,
+      workingOnStorylineObjectives,
+      workingOnCollectorItems,
+      workingOnHideoutStations,
+      activeProfileId,
+    ]
+  );
+
+  const handleResetProgress = useCallback(
+    async (
+      options?: import("@/components/SelectiveResetDialog").ResetOptions
+    ) => {
+      if (!activeProfileId) return;
+
+      // Determine which areas to reset (all if no options provided)
+      const resetAll = !options;
+      const resetStorylineQuests = resetAll || options.storylineQuests;
+      const resetNormalTasks = resetAll || options.normalTasks;
+      const resetHideoutItems = resetAll || options.hideoutItems;
+      const resetCollectorItems = resetAll || options.collectorItems;
+      const resetAchievements = resetAll || options.achievements;
+      const resetPrestiges = resetAll || options.prestiges;
+
+      // Reset state for selected areas
+      if (resetNormalTasks) setCompletedTasks(new Set());
+      if (resetCollectorItems) setCompletedCollectorItems(new Set());
+      if (resetHideoutItems) setCompletedHideoutItems(new Set());
+      if (resetAchievements) setCompletedAchievements(new Set());
+      if (resetStorylineQuests) {
+        setCompletedStorylineObjectives(new Set());
+        setCompletedStorylineMapNodes(new Set());
+      }
+
+      try {
+        taskStorage.setProfile(activeProfileId);
+        await taskStorage.init();
+
+        // Save empty sets for selected areas
+        if (resetNormalTasks) await taskStorage.saveCompletedTasks(new Set());
+        if (resetCollectorItems)
+          await taskStorage.saveCompletedCollectorItems(new Set());
+        if (resetHideoutItems)
+          await taskStorage.saveCompletedHideoutItems(new Set());
+        if (resetAchievements)
+          await taskStorage.saveCompletedAchievements(new Set());
+        if (resetStorylineQuests) {
+          await taskStorage.saveCompletedStorylineObjectives(new Set());
+          await taskStorage.saveCompletedStorylineMapNodes(new Set());
+        }
+
+        // Reset prestige by saving empty entries per prestige id
+        if (resetPrestiges) {
+          for (const cfg of PRESTIGE_CONFIGS) {
+            await taskStorage.savePrestigeProgress(cfg.id, {});
+            console.debug("[Prestige] Reset:prestige saved empty", cfg.id);
+          }
+          // Notify listeners so UI refreshes immediately
+          window.dispatchEvent(new Event(PRESTIGE_UPDATED_EVENT));
+        }
+
+        // Reset player level filter state only if resetting all or normal tasks
+        if (resetAll || resetNormalTasks) {
+          await taskStorage.saveUserPreferences({
+            playerLevel: 1,
+            enableLevelFilter: false,
+          });
+          window.dispatchEvent(new Event("taskTracker:reset"));
+        }
+      } catch (err) {
+        console.error("Reset error", err);
+      }
+    },
+    [activeProfileId]
+  );
 
   // Check if onboarding should be shown (only once)
   useEffect(() => {
@@ -828,6 +1040,140 @@ function App() {
     setShowOnboarding(false);
     localStorage.setItem("taskTracker_onboarding_shown", "true");
   }, []);
+
+  // Handler for when import completes - reload all data from IndexedDB
+  const handleImportComplete = useCallback(async () => {
+    try {
+      const savedTasks = await taskStorage.loadCompletedTasks();
+      const savedCollectorItems =
+        await taskStorage.loadCompletedCollectorItems();
+      const savedHideoutItems = await taskStorage.loadCompletedHideoutItems();
+      const savedAchievements = await taskStorage.loadCompletedAchievements();
+      const savedStorylineObjectives =
+        await taskStorage.loadCompletedStorylineObjectives();
+      const savedStorylineMapNodes =
+        await taskStorage.loadCompletedStorylineMapNodes();
+      const savedTaskObjectives =
+        await taskStorage.loadCompletedTaskObjectives();
+      setCompletedTasks(savedTasks);
+      setCompletedCollectorItems(savedCollectorItems);
+      setCompletedHideoutItems(savedHideoutItems);
+      setCompletedAchievements(savedAchievements);
+      setCompletedStorylineObjectives(savedStorylineObjectives);
+      setCompletedStorylineMapNodes(savedStorylineMapNodes);
+      setCompletedTaskObjectives(savedTaskObjectives);
+      // Notify components like NotesWidget and PrestigesView to refresh
+      window.dispatchEvent(new Event("taskTracker:profileChanged"));
+      window.dispatchEvent(new Event(PRESTIGE_UPDATED_EVENT));
+    } catch (e) {
+      console.error("Import reload error", e);
+    }
+  }, []);
+
+  // Handler for importing data into a new profile
+  const handleImportAsNewProfile = useCallback(
+    async (name: string, data: import("@/utils/indexedDB").ExportData) => {
+      // Create the new profile
+      const newProfile = createProfile(name);
+      setProfiles(getProfiles());
+
+      // Switch to the new profile
+      setActiveProfileIdLS(newProfile.id);
+      setActiveProfileId(newProfile.id);
+      taskStorage.setProfile(newProfile.id);
+      await taskStorage.init();
+
+      // Import the data into the new profile
+      await ExportImportService.importAllData(data);
+
+      // Load the imported data into state
+      const savedTasks = await taskStorage.loadCompletedTasks();
+      const savedCollectorItems =
+        await taskStorage.loadCompletedCollectorItems();
+      const savedHideoutItems = await taskStorage.loadCompletedHideoutItems();
+      const savedAchievements = await taskStorage.loadCompletedAchievements();
+      const savedStorylineObjectives =
+        await taskStorage.loadCompletedStorylineObjectives();
+      const savedStorylineMapNodes =
+        await taskStorage.loadCompletedStorylineMapNodes();
+      const savedTaskObjectives =
+        await taskStorage.loadCompletedTaskObjectives();
+      setCompletedTasks(savedTasks);
+      setCompletedCollectorItems(savedCollectorItems);
+      setCompletedHideoutItems(savedHideoutItems);
+      setCompletedAchievements(savedAchievements);
+      setCompletedStorylineObjectives(savedStorylineObjectives);
+      setCompletedStorylineMapNodes(savedStorylineMapNodes);
+      setCompletedTaskObjectives(savedTaskObjectives);
+
+      // Notify components to refresh
+      window.dispatchEvent(new Event("taskTracker:profileChanged"));
+      window.dispatchEvent(new Event(PRESTIGE_UPDATED_EVENT));
+    },
+    []
+  );
+
+  // Handler for importing all profiles from a bundle
+  const handleImportAllProfiles = useCallback(
+    async (data: import("@/utils/indexedDB").AllProfilesExportData) => {
+      // Import each profile as a new profile with unique names
+      for (const profileData of data.profiles) {
+        // Create a new profile with a unique name to avoid duplicates
+        const uniqueName = getUniqueProfileName(profileData.name);
+        const newProfile = createProfile(uniqueName);
+
+        // Switch to the new profile's database
+        taskStorage.setProfile(newProfile.id);
+        await taskStorage.init();
+
+        // Import the data
+        await ExportImportService.importAllData(profileData.data);
+      }
+
+      // Refresh the profiles list
+      const updatedProfiles = getProfiles();
+      setProfiles(updatedProfiles);
+
+      // Switch to the most recently created profile (last in the list)
+      const lastProfile = updatedProfiles[updatedProfiles.length - 1];
+      if (lastProfile) {
+        const targetProfile = lastProfile;
+        {
+          setActiveProfileIdLS(targetProfile.id);
+          setActiveProfileId(targetProfile.id);
+          taskStorage.setProfile(targetProfile.id);
+          await taskStorage.init();
+
+          // Load the data into state
+          const savedTasks = await taskStorage.loadCompletedTasks();
+          const savedCollectorItems =
+            await taskStorage.loadCompletedCollectorItems();
+          const savedHideoutItems =
+            await taskStorage.loadCompletedHideoutItems();
+          const savedAchievements =
+            await taskStorage.loadCompletedAchievements();
+          const savedStorylineObjectives =
+            await taskStorage.loadCompletedStorylineObjectives();
+          const savedStorylineMapNodes =
+            await taskStorage.loadCompletedStorylineMapNodes();
+          const savedTaskObjectives =
+            await taskStorage.loadCompletedTaskObjectives();
+          setCompletedTasks(savedTasks);
+          setCompletedCollectorItems(savedCollectorItems);
+          setCompletedHideoutItems(savedHideoutItems);
+          setCompletedAchievements(savedAchievements);
+          setCompletedStorylineObjectives(savedStorylineObjectives);
+          setCompletedStorylineMapNodes(savedStorylineMapNodes);
+          setCompletedTaskObjectives(savedTaskObjectives);
+        }
+      }
+
+      // Notify components to refresh
+      window.dispatchEvent(new Event("taskTracker:profileChanged"));
+      window.dispatchEvent(new Event(PRESTIGE_UPDATED_EVENT));
+    },
+    []
+  );
 
   const handleTaskClick = useCallback(
     (taskId: string) => {
@@ -918,6 +1264,9 @@ function App() {
           onRenameProfile={handleRenameProfile}
           onDeleteProfile={handleDeleteProfile}
           onResetProfile={handleResetProgress}
+          onImportComplete={handleImportComplete}
+          onImportAsNewProfile={handleImportAsNewProfile}
+          onImportAllProfiles={handleImportAllProfiles}
           traders={traderList}
           hiddenTraders={hiddenTraders}
           onToggleTraderVisibility={handleToggleTraderVisibility}
@@ -1067,7 +1416,8 @@ function App() {
                     viewMode === "collector" ||
                     viewMode === "flow" ||
                     viewMode === "prestiges" ||
-                    viewMode === "storyline"
+                    viewMode === "storyline" ||
+                    viewMode === "current"
                     ? "overflow-y-auto"
                     : "overflow-hidden"
                 )}
@@ -1100,6 +1450,8 @@ function App() {
                       groupBy={groupBy}
                       onSetGroupBy={setGroupBy}
                       activeProfileId={activeProfileId}
+                      workingOnTasks={workingOnTasks}
+                      onToggleWorkingOnTask={handleToggleWorkingOnTask}
                     />
                   ) : viewMode === "collector" ? (
                     <CollectorView
@@ -1110,6 +1462,10 @@ function App() {
                       onToggleHideoutItem={handleToggleHideoutItem}
                       groupBy={collectorGroupBy}
                       hideoutStations={hideoutStations}
+                      workingOnHideoutStations={workingOnHideoutStations}
+                      onToggleWorkingOnHideoutStation={
+                        handleToggleWorkingOnHideoutStation
+                      }
                     />
                   ) : viewMode === "prestiges" ? (
                     <PrestigesView />
@@ -1127,6 +1483,12 @@ function App() {
                         handleSetCompletedStorylineObjectives
                       }
                       onNavigateToMap={() => setViewMode("storyline-map")}
+                      workingOnStorylineObjectives={
+                        workingOnStorylineObjectives
+                      }
+                      onToggleWorkingOnStorylineObjective={
+                        handleToggleWorkingOnStorylineObjective
+                      }
                     />
                   ) : viewMode === "storyline-map" ? (
                     <StorylineContainer
@@ -1150,6 +1512,38 @@ function App() {
                           );
                         }, 100);
                       }}
+                    />
+                  ) : viewMode === "current" ? (
+                    <CurrentlyWorkingOnView
+                      tasks={tasks}
+                      workingOnTasks={workingOnTasks}
+                      workingOnStorylineObjectives={
+                        workingOnStorylineObjectives
+                      }
+                      workingOnHideoutStations={workingOnHideoutStations}
+                      collectorItems={collectorItems}
+                      hideoutStations={hideoutStations}
+                      completedCollectorItems={completedCollectorItems}
+                      completedTasks={completedTasks}
+                      completedStorylineObjectives={
+                        completedStorylineObjectives
+                      }
+                      completedHideoutItems={completedHideoutItems}
+                      onToggleWorkingOnTask={handleToggleWorkingOnTask}
+                      onToggleWorkingOnStorylineObjective={
+                        handleToggleWorkingOnStorylineObjective
+                      }
+                      onToggleCollectorItem={handleToggleCollectorItem}
+                      onToggleWorkingOnHideoutStation={
+                        handleToggleWorkingOnHideoutStation
+                      }
+                      onToggleTask={handleToggleComplete}
+                      onToggleStorylineObjective={
+                        handleToggleStorylineObjective
+                      }
+                      onToggleHideoutItem={handleToggleHideoutItem}
+                      completedTaskObjectives={completedTaskObjectives}
+                      onToggleTaskObjective={handleToggleTaskObjective}
                     />
                   ) : viewMode === "flow" ? (
                     <FlowView
@@ -1209,29 +1603,6 @@ function App() {
                     currentPrestigeId={prestigeProgress?.id}
                     progressTitle={progressTitle}
                   />
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button variant="outline" size="sm" className="w-full">
-                        <RotateCcw className="mr-2 h-4 w-4" />
-                        Reset Progress
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This will reset all completed tasks and cannot be
-                          undone.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleResetProgress}>
-                          Reset
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
                 </div>
               </LegacySidebar>
             </div>

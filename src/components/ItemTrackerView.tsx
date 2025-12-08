@@ -5,7 +5,7 @@ import { Checkbox } from './ui/checkbox';
 import { Progress } from './ui/progress';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { Button } from './ui/button';
-import { ChevronDown, ChevronUp, Minus, Plus, CheckCheck } from 'lucide-react';
+import { ChevronDown, ChevronUp, Minus, Plus, CheckCheck, Target } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { HideoutStation } from '@/types';
 
@@ -23,6 +23,8 @@ interface CollectorViewProps {
   onToggleHideoutItem: (itemKey: string) => void;
   groupBy: GroupBy;
   hideoutStations: HideoutStation[];
+  workingOnHideoutStations?: Set<string>;
+  onToggleWorkingOnHideoutStation?: (stationKey: string) => void;
 }
 
 type GroupBy = 'collector' | 'hideout-stations';
@@ -35,6 +37,8 @@ export const CollectorView: React.FC<CollectorViewProps> = ({
   onToggleHideoutItem,
   groupBy,
   hideoutStations,
+  workingOnHideoutStations = new Set(),
+  onToggleWorkingOnHideoutStation,
 }) => {
   const [searchTerm, setSearchTerm] = useQueryState('itemsSearch', { defaultValue: '' });
   const [expandedGroups, setExpandedGroups] = useState<string[]>([]);
@@ -135,11 +139,16 @@ export const CollectorView: React.FC<CollectorViewProps> = ({
   
   const areAllExpanded = expandedGroups.length === allGroupNames.length;
 
-  // Start collapsed by default, track initialization
+  // Start with Collector Items expanded by default, track initialization
   const [initializedGroupBy, setInitializedGroupBy] = useState<GroupBy | null>(null);
   useEffect(() => {
     if (initializedGroupBy !== groupBy) {
-      setExpandedGroups([]);
+      // When switching to collector view, expand "Collector Items" by default
+      if (groupBy === 'collector') {
+        setExpandedGroups(['Collector Items']);
+      } else {
+        setExpandedGroups([]);
+      }
       setInitializedGroupBy(groupBy);
     }
   }, [groupBy, allGroupNames, initializedGroupBy]);
@@ -267,6 +276,27 @@ export const CollectorView: React.FC<CollectorViewProps> = ({
                       <div className="flex items-center justify-between">
                         <h4 className="font-medium text-base">Level {level.level}</h4>
                         <div className="flex items-center gap-2">
+                          {onToggleWorkingOnHideoutStation && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const stationKey = `${station.name}-${level.level}`;
+                                onToggleWorkingOnHideoutStation(stationKey);
+                              }}
+                              className={cn(
+                                "p-1 rounded-sm transition-colors",
+                                workingOnHideoutStations.has(`${station.name}-${level.level}`)
+                                  ? "text-blue-500 hover:text-blue-600"
+                                  : "text-muted-foreground/40 hover:text-muted-foreground"
+                              )}
+                              title={workingOnHideoutStations.has(`${station.name}-${level.level}`) ? "Remove from working on" : "Mark as working on"}
+                            >
+                              <Target
+                                className="h-4 w-4"
+                                fill={workingOnHideoutStations.has(`${station.name}-${level.level}`) ? "currentColor" : "none"}
+                              />
+                            </button>
+                          )}
                           {totalItems > 0 && completedItems < totalItems && (
                             <Button
                               variant="ghost"

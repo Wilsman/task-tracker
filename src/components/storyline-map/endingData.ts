@@ -113,14 +113,8 @@ export const endingInfos: EndingInfo[] = [
     icon: "🛡️",
     ...calculateEndingStats(ENDING_NODE_IDS.survivor),
     rewards: [
-      { name: "Survivor Trophy", icon: "🏆", description: "Proof of escape" },
-      {
-        name: "Prapor's Gratitude",
-        icon: "🤝",
-        description: "Special trader status",
-      },
-      { name: "500K Roubles", icon: "💰", description: "Escape bonus" },
-      // TODO: Replace with actual rewards
+      { name: "Survivor Armband", icon: "🎗️", description: "Cosmetic only" },
+      { name: "Survivor Poster", icon: "🖼️", description: "Commemorative art" },
     ],
     endingNodeIds: ENDING_NODE_IDS.survivor,
     keyDecisions: [
@@ -179,9 +173,7 @@ export const endingInfos: EndingInfo[] = [
     icon: "⛓️",
     ...calculateEndingStats(ENDING_NODE_IDS.debtor),
     rewards: [
-      { name: "Debtor Trophy", icon: "🏆", description: "Freedom at a price" },
-      { name: "Lightkeeper's Mark", icon: "🔮", description: "You owe him" },
-      { name: "750K Roubles", icon: "💰", description: "Escape bonus" },
+      { name: "TBC", icon: "🏆", description: "To be confirmed" },
       // TODO: Replace with actual rewards
     ],
     endingNodeIds: ENDING_NODE_IDS.debtor,
@@ -201,18 +193,12 @@ export const endingInfos: EndingInfo[] = [
     icon: "💀",
     ...calculateEndingStats(ENDING_NODE_IDS.fallen),
     rewards: [
+      { name: "10M Roubles", icon: "💰", description: "Cash payout" },
       {
-        name: "Fallen Trophy",
-        icon: "🏆",
-        description: "Survived at any cost",
+        name: "Money Case",
+        icon: "💼",
+        description: "Secure currency storage",
       },
-      { name: "Empty Pockets", icon: "👛", description: "You gave it all" },
-      {
-        name: "Bio Weapon Intel",
-        icon: "☣️",
-        description: "Dangerous knowledge",
-      },
-      // TODO: Replace with actual rewards
     ],
     endingNodeIds: ENDING_NODE_IDS.fallen,
     keyDecisions: [

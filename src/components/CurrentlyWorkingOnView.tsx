@@ -1,0 +1,621 @@
+import { useMemo, useState } from "react";
+import { Task, HideoutStation } from "@/types";
+import { STORYLINE_QUESTS, StorylineQuest } from "@/data/storylineQuests";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import {
+  X,
+  MapPin,
+  User,
+  Package,
+  Home,
+  Target,
+  Check,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
+import { TRADER_COLORS } from "@/data/traders";
+import { cn } from "@/lib/utils";
+
+interface CurrentlyWorkingOnViewProps {
+  tasks: Task[];
+  workingOnTasks: Set<string>;
+  workingOnStorylineObjectives: Set<string>;
+  workingOnHideoutStations: Set<string>;
+  collectorItems: { id: string; name: string; img: string }[];
+  hideoutStations: HideoutStation[];
+  completedCollectorItems: Set<string>;
+  completedTasks: Set<string>;
+  completedStorylineObjectives: Set<string>;
+  completedHideoutItems: Set<string>;
+  onToggleWorkingOnTask: (taskId: string) => void;
+  onToggleWorkingOnStorylineObjective: (objectiveId: string) => void;
+  onToggleCollectorItem: (itemId: string) => void;
+  onToggleWorkingOnHideoutStation: (stationKey: string) => void;
+  onToggleTask: (taskId: string) => void;
+  onToggleStorylineObjective: (objectiveId: string) => void;
+  onToggleHideoutItem: (itemKey: string) => void;
+  completedTaskObjectives: Set<string>;
+  onToggleTaskObjective: (objectiveKey: string) => void;
+}
+
+export function CurrentlyWorkingOnView({
+  tasks,
+  workingOnTasks,
+  workingOnStorylineObjectives,
+  workingOnHideoutStations,
+  collectorItems,
+  hideoutStations,
+  completedCollectorItems,
+  completedTasks,
+  completedStorylineObjectives,
+  completedHideoutItems,
+  onToggleWorkingOnTask,
+  onToggleWorkingOnStorylineObjective,
+  onToggleCollectorItem,
+  onToggleWorkingOnHideoutStation,
+  onToggleTask,
+  onToggleStorylineObjective,
+  onToggleHideoutItem,
+  completedTaskObjectives,
+  onToggleTaskObjective,
+}: CurrentlyWorkingOnViewProps) {
+  const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
+  const [expandedHideout, setExpandedHideout] = useState<Set<string>>(
+    new Set()
+  );
+
+  const toggleTaskExpanded = (taskId: string) => {
+    setExpandedTasks((prev) => {
+      const next = new Set(prev);
+      if (next.has(taskId)) next.delete(taskId);
+      else next.add(taskId);
+      return next;
+    });
+  };
+
+  const toggleHideoutExpanded = (key: string) => {
+    setExpandedHideout((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  };
+
+  // Filter tasks that are marked as working on
+  const activeTasks = useMemo(() => {
+    return tasks.filter((task) => workingOnTasks.has(task.id));
+  }, [tasks, workingOnTasks]);
+
+  // Group active tasks by map - tasks with multiple maps appear under each map
+  const tasksByMap = useMemo(() => {
+    const grouped = new Map<string, Task[]>();
+    activeTasks.forEach((task) => {
+      if (task.maps && task.maps.length > 0) {
+        task.maps.forEach((map) => {
+          const mapName = map.name || "No specific map";
+          if (!grouped.has(mapName)) grouped.set(mapName, []);
+          grouped.get(mapName)!.push(task);
+        });
+      } else {
+        const mapName = task.map?.name || "No specific map";
+        if (!grouped.has(mapName)) grouped.set(mapName, []);
+        grouped.get(mapName)!.push(task);
+      }
+    });
+    return grouped;
+  }, [activeTasks]);
+
+  // Filter storyline objectives that are marked as working on
+  const activeStorylineObjectives = useMemo(() => {
+    const result: Array<{
+      quest: StorylineQuest;
+      objectiveId: string;
+      description: string;
+    }> = [];
+    STORYLINE_QUESTS.forEach((quest) => {
+      quest.objectives?.forEach((obj) => {
+        if (obj.type === "main" && workingOnStorylineObjectives.has(obj.id)) {
+          result.push({
+            quest,
+            objectiveId: obj.id,
+            description: obj.description,
+          });
+        }
+      });
+    });
+    return result;
+  }, [workingOnStorylineObjectives]);
+
+  // Collector items - always show all
+  const activeCollectorItems = useMemo(() => {
+    return collectorItems;
+  }, [collectorItems]);
+
+  // Filter hideout stations that are marked as working on
+  const activeHideoutStations = useMemo(() => {
+    return Array.from(workingOnHideoutStations)
+      .map((key) => {
+        // Key format: "stationName-levelIndex"
+        const [stationName, levelIndex] = key.split("-");
+        const station = hideoutStations.find((s) => s.name === stationName);
+        if (!station) return null;
+        const level = station.levels[parseInt(levelIndex)];
+        if (!level) return null;
+        return { station, level, key };
+      })
+      .filter((item): item is NonNullable<typeof item> => item !== null);
+  }, [workingOnHideoutStations, hideoutStations]);
+
+  const totalItems =
+    activeTasks.length +
+    activeStorylineObjectives.length +
+    collectorItems.length +
+    activeHideoutStations.length;
+
+  return (
+    <div className="container mx-auto p-4 md:p-6 max-w-7xl space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Target className="h-8 w-8 text-primary" />
+          <div>
+            <h1 className="text-3xl font-bold">Currently Working On</h1>
+            <p className="text-muted-foreground">
+              {totalItems} {totalItems === 1 ? "item" : "items"} in progress
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Active Quests Section */}
+      {activeTasks.length > 0 && (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <User className="h-5 w-5" />
+              <CardTitle>Quests ({activeTasks.length})</CardTitle>
+            </div>
+            <CardDescription>
+              Regular tasks you're currently working on
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {Array.from(tasksByMap.entries()).map(([mapName, mapTasks]) => (
+              <div key={mapName} className="space-y-2">
+                <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
+                  <MapPin className="h-4 w-4" />
+                  {mapName}
+                </div>
+                <div className="space-y-2 ml-6">
+                  {mapTasks.map((task) => {
+                    const isTaskCompleted = completedTasks.has(task.id);
+                    const isExpanded = expandedTasks.has(task.id);
+                    return (
+                      <div
+                        key={task.id}
+                        className={cn(
+                          "rounded-lg border bg-card transition-colors",
+                          isTaskCompleted && "opacity-60"
+                        )}
+                      >
+                        <div className="flex items-start justify-between gap-4 p-3">
+                          <div className="flex items-start gap-3 flex-1 min-w-0">
+                            <Checkbox
+                              checked={isTaskCompleted}
+                              onCheckedChange={() => onToggleTask(task.id)}
+                              className="mt-1 h-5 w-5"
+                            />
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <h4
+                                  className={cn(
+                                    "font-medium",
+                                    isTaskCompleted &&
+                                      "line-through text-muted-foreground"
+                                  )}
+                                >
+                                  {task.name}
+                                </h4>
+                                <Badge
+                                  variant="outline"
+                                  style={{
+                                    borderColor:
+                                      TRADER_COLORS[
+                                        task.trader
+                                          .name as keyof typeof TRADER_COLORS
+                                      ] || "#6b7280",
+                                    color:
+                                      TRADER_COLORS[
+                                        task.trader
+                                          .name as keyof typeof TRADER_COLORS
+                                      ] || "#6b7280",
+                                  }}
+                                >
+                                  {task.trader.name}
+                                </Badge>
+                                <Badge variant="secondary">
+                                  Lvl {task.minPlayerLevel}
+                                </Badge>
+                              </div>
+                              {task.objectives &&
+                                task.objectives.length > 0 && (
+                                  <div className="mt-1 flex items-center gap-2">
+                                    <span className="text-xs text-muted-foreground">
+                                      {task.objectives.length} objective
+                                      {task.objectives.length !== 1 ? "s" : ""}
+                                    </span>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-6 px-2 text-xs"
+                                      onClick={() =>
+                                        toggleTaskExpanded(task.id)
+                                      }
+                                    >
+                                      {isExpanded ? (
+                                        <>
+                                          <ChevronUp className="h-3 w-3 mr-1" />
+                                          Hide
+                                        </>
+                                      ) : (
+                                        <>
+                                          <ChevronDown className="h-3 w-3 mr-1" />
+                                          Show
+                                        </>
+                                      )}
+                                    </Button>
+                                  </div>
+                                )}
+                            </div>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => onToggleWorkingOnTask(task.id)}
+                            className="flex-shrink-0"
+                            title="Remove from working on"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        {/* Expanded objectives */}
+                        {isExpanded &&
+                          task.objectives &&
+                          task.objectives.length > 0 && (
+                            <div className="px-3 pb-3 ml-8 space-y-2 border-t mt-2 pt-3">
+                              {task.objectives.map((obj, idx) => {
+                                const objectiveKey = `${task.id}-${idx}`;
+                                const isObjCompleted =
+                                  completedTaskObjectives.has(objectiveKey);
+                                return (
+                                  <div
+                                    key={idx}
+                                    className={cn(
+                                      "flex items-start gap-2 text-sm p-2 rounded-md hover:bg-muted/50 transition-colors",
+                                      isObjCompleted && "opacity-60"
+                                    )}
+                                  >
+                                    <Checkbox
+                                      checked={isObjCompleted}
+                                      onCheckedChange={() =>
+                                        onToggleTaskObjective(objectiveKey)
+                                      }
+                                      className="mt-0.5 h-4 w-4"
+                                    />
+                                    <div className="flex-1">
+                                      <p
+                                        className={cn(
+                                          "text-muted-foreground",
+                                          isObjCompleted && "line-through"
+                                        )}
+                                      >
+                                        {obj.description}
+                                      </p>
+                                      {obj.count && obj.count > 1 && (
+                                        <span className="text-xs text-primary font-medium">
+                                          (×{obj.count})
+                                        </span>
+                                      )}
+                                      {obj.items && obj.items.length > 0 && (
+                                        <div className="flex flex-wrap gap-1 mt-1">
+                                          {obj.items.map((item) => (
+                                            <Badge
+                                              key={item.id}
+                                              variant="secondary"
+                                              className="text-xs"
+                                            >
+                                              {item.name}
+                                            </Badge>
+                                          ))}
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Active Storyline Objectives Section */}
+      {activeStorylineObjectives.length > 0 && (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <Package className="h-5 w-5" />
+              <CardTitle>
+                Storyline Objectives ({activeStorylineObjectives.length})
+              </CardTitle>
+            </div>
+            <CardDescription>
+              1.0 storyline objectives in progress
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {activeStorylineObjectives.map(
+              ({ quest, objectiveId, description }) => {
+                const isCompleted =
+                  completedStorylineObjectives.has(objectiveId);
+                return (
+                  <div
+                    key={objectiveId}
+                    className={cn(
+                      "flex items-start justify-between gap-4 p-3 rounded-lg border bg-card transition-colors",
+                      isCompleted && "opacity-60"
+                    )}
+                  >
+                    <div className="flex items-start gap-3 flex-1 min-w-0">
+                      <Checkbox
+                        checked={isCompleted}
+                        onCheckedChange={() =>
+                          onToggleStorylineObjective(objectiveId)
+                        }
+                        className="mt-1 h-5 w-5"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                          <Badge variant="outline">{quest.name}</Badge>
+                        </div>
+                        <p
+                          className={cn(
+                            "text-sm",
+                            isCompleted && "line-through text-muted-foreground"
+                          )}
+                        >
+                          {description}
+                        </p>
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() =>
+                        onToggleWorkingOnStorylineObjective(objectiveId)
+                      }
+                      className="flex-shrink-0"
+                      title="Remove from working on"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                );
+              }
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Active Collector Items Section */}
+      {activeCollectorItems.length > 0 && (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <Package className="h-5 w-5" />
+              <CardTitle>
+                Collector Items ({activeCollectorItems.length})
+              </CardTitle>
+            </div>
+            <CardDescription>
+              Click an item to toggle found status
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 xl:grid-cols-12 gap-2">
+              {activeCollectorItems.map((item) => (
+                // show all items; fade completed
+                <button
+                  key={item.name}
+                  onClick={() => onToggleCollectorItem(item.name)}
+                  className={cn(
+                    "relative group rounded-lg border bg-card p-2 hover:bg-green-500/20 hover:border-green-500/50 transition-colors cursor-pointer text-left",
+                    completedCollectorItems.has(item.name) && "opacity-50"
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "absolute inset-0 flex items-center justify-center rounded-lg transition-opacity bg-green-500/10",
+                      completedCollectorItems.has(item.name)
+                        ? "opacity-100"
+                        : "opacity-0 group-hover:opacity-100"
+                    )}
+                  >
+                    <Check className="h-8 w-8 text-green-500" />
+                  </div>
+                  {item.img && (
+                    <img
+                      src={item.img}
+                      alt={item.name}
+                      className="w-full aspect-square object-contain mb-1 group-hover:opacity-30 transition-opacity"
+                    />
+                  )}
+                  <p className="text-xs text-center line-clamp-2 group-hover:opacity-30 transition-opacity">
+                    {item.name}
+                  </p>
+                </button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Active Hideout Stations Section */}
+      {activeHideoutStations.length > 0 && (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <Home className="h-5 w-5" />
+              <CardTitle>
+                Hideout Stations ({activeHideoutStations.length})
+              </CardTitle>
+            </div>
+            <CardDescription>Stations you're upgrading</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {activeHideoutStations.map(({ station, level, key }) => {
+              const isExpanded = expandedHideout.has(key);
+              const completedCount = level.itemRequirements.filter((req) => {
+                const itemKey = `${station.name}-${level.level}-${req.item.name}`;
+                return completedHideoutItems.has(itemKey);
+              }).length;
+              const totalCount = level.itemRequirements.length;
+              const progressPercent =
+                totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
+
+              return (
+                <div
+                  key={key}
+                  className="rounded-lg border bg-card transition-colors"
+                >
+                  <div className="flex items-start justify-between gap-4 p-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap mb-2">
+                        <h4 className="font-medium">{station.name}</h4>
+                        <Badge variant="secondary">Level {level.level}</Badge>
+                        {totalCount > 0 && (
+                          <span className="text-xs text-muted-foreground">
+                            {completedCount}/{totalCount} items
+                          </span>
+                        )}
+                      </div>
+                      {totalCount > 0 && (
+                        <div className="flex items-center gap-2 mb-2">
+                          <Progress
+                            value={progressPercent}
+                            className="h-2 flex-1"
+                          />
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-6 px-2 text-xs"
+                            onClick={() => toggleHideoutExpanded(key)}
+                          >
+                            {isExpanded ? (
+                              <>
+                                <ChevronUp className="h-3 w-3 mr-1" />
+                                Hide Items
+                              </>
+                            ) : (
+                              <>
+                                <ChevronDown className="h-3 w-3 mr-1" />
+                                Show Items
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => onToggleWorkingOnHideoutStation(key)}
+                      className="flex-shrink-0"
+                      title="Remove from working on"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  {/* Expanded item requirements */}
+                  {isExpanded && totalCount > 0 && (
+                    <div className="px-3 pb-3 border-t pt-3 space-y-2">
+                      {level.itemRequirements.map((req, idx) => {
+                        const itemKey = `${station.name}-${level.level}-${req.item.name}`;
+                        const isItemCompleted =
+                          completedHideoutItems.has(itemKey);
+                        return (
+                          <div
+                            key={idx}
+                            className={cn(
+                              "flex items-center gap-3 p-2 rounded-md hover:bg-muted/50 transition-colors",
+                              isItemCompleted && "opacity-60"
+                            )}
+                          >
+                            <Checkbox
+                              checked={isItemCompleted}
+                              onCheckedChange={() =>
+                                onToggleHideoutItem(itemKey)
+                              }
+                              className="h-4 w-4"
+                            />
+                            {req.item.iconLink && (
+                              <img
+                                src={req.item.iconLink}
+                                alt={req.item.name}
+                                className="h-8 w-8 object-contain"
+                              />
+                            )}
+                            <span
+                              className={cn(
+                                "text-sm flex-1",
+                                isItemCompleted &&
+                                  "line-through text-muted-foreground"
+                              )}
+                            >
+                              {req.count}x {req.item.name}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Empty State */}
+      {totalItems === 0 && (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <Target className="h-16 w-16 text-muted-foreground mb-4" />
+            <h3 className="text-xl font-semibold mb-2">No active items</h3>
+            <p className="text-muted-foreground text-center max-w-md">
+              Mark quests, storyline objectives, hideout stations, or collector
+              items to see them here.
+            </p>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}

@@ -676,7 +676,7 @@ const initialEdges: Edge[] = [
 function App() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
+  const [, setSelectedNodes] = useState<string[]>([]);
 
   const onConnect = useCallback(
     (params: Connection) =>

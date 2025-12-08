@@ -8,6 +8,7 @@ import {
   AlertTriangle,
   CheckCheck,
   RotateCcw,
+  Target,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
@@ -32,6 +33,8 @@ interface StorylineQuestsViewProps {
   onToggleObjective: (id: string) => void;
   onSetCompletedObjectives: (objectives: Set<string>) => void;
   onNavigateToMap?: () => void;
+  workingOnStorylineObjectives?: Set<string>;
+  onToggleWorkingOnStorylineObjective?: (objectiveId: string) => void;
 }
 
 export function StorylineQuestsView({
@@ -39,6 +42,8 @@ export function StorylineQuestsView({
   onToggleObjective,
   onSetCompletedObjectives,
   onNavigateToMap,
+  workingOnStorylineObjectives = new Set(),
+  onToggleWorkingOnStorylineObjective,
 }: StorylineQuestsViewProps): JSX.Element {
   const [expandedQuests, setExpandedQuests] = useState<
     Record<string, { main: boolean; optional: boolean }>
@@ -264,6 +269,21 @@ export function StorylineQuestsView({
                                       }
                                       className="mt-0.5"
                                     />
+                                    {onToggleWorkingOnStorylineObjective && (
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          onToggleWorkingOnStorylineObjective(objective.id);
+                                        }}
+                                        className={`p-0.5 rounded-sm transition-colors ${workingOnStorylineObjectives.has(objective.id) ? "text-blue-500 hover:text-blue-600" : "text-muted-foreground/40 hover:text-muted-foreground"}`}
+                                        title={workingOnStorylineObjectives.has(objective.id) ? "Remove from working on" : "Mark as working on"}
+                                      >
+                                        <Target
+                                          className="h-4 w-4"
+                                          fill={workingOnStorylineObjectives.has(objective.id) ? "currentColor" : "none"}
+                                        />
+                                      </button>
+                                    )}
                                     <label
                                       htmlFor={objective.id}
                                       className={`flex-1 cursor-pointer ${

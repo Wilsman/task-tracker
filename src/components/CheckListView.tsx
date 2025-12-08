@@ -30,12 +30,14 @@ import {
   ArrowRight,
   MapPin,
   UserCheck,
+  Target,
 } from "lucide-react";
 import { groupTasksByTrader } from "../utils/taskUtils";
 import { cn } from "@/lib/utils";
 import { Switch } from "./ui/switch";
 import { Label } from "./ui/label";
 import { taskStorage } from "@/utils/indexedDB";
+import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
 
 interface CheckListViewProps {
   tasks: Task[];
@@ -49,6 +51,8 @@ interface CheckListViewProps {
   groupBy: "trader" | "map";
   onSetGroupBy: (mode: "trader" | "map") => void;
   activeProfileId: string;
+  workingOnTasks?: Set<string>;
+  onToggleWorkingOnTask?: (taskId: string) => void;
 }
 
 export const CheckListView: React.FC<CheckListViewProps> = ({
@@ -63,6 +67,8 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
   groupBy,
   onSetGroupBy,
   activeProfileId,
+  workingOnTasks = new Set(),
+  onToggleWorkingOnTask,
 }) => {
   // Mark intentionally unused while preserving external API
   void _onTaskClick;
@@ -304,11 +310,12 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
       if (task.maps && task.maps.length > 0) {
         // Add task to each map it belongs to
         task.maps.forEach((map) => {
-          (acc[map.name] ||= []).push(task);
+          const mapName = map.name || "No specific map";
+          (acc[mapName] ||= []).push(task);
         });
       } else {
-        // Fallback to single map or 'Anywhere'
-        const mapName = task.map?.name || "Anywhere";
+        // Fallback to single map or 'No specific map'
+        const mapName = task.map?.name || "No specific map";
         (acc[mapName] ||= []).push(task);
       }
       return acc;
@@ -441,26 +448,36 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
         </Button>
         {/* Group By controls moved here from sidebar */}
         <div className="flex items-center gap-2">
-          <Button
-            variant={groupBy === "trader" ? "default" : "outline"}
-            size="sm"
-            className="px-2"
-            onClick={() => onSetGroupBy("trader")}
-            aria-label="Group by Trader"
-            title="Group by Trader"
+          <Label className="text-sm text-muted-foreground">Group by</Label>
+          <ToggleGroup
+            type="single"
+            value={groupBy}
+            onValueChange={(value) => {
+              if (value === "trader" || value === "map") onSetGroupBy(value);
+            }}
+            className="rounded-xl border bg-card/70 shadow-sm px-1.5 py-1 text-muted-foreground"
           >
-            <UserCheck className="h-4 w-4" />
-          </Button>
-          <Button
-            variant={groupBy === "map" ? "default" : "outline"}
-            size="sm"
-            className="px-2"
-            onClick={() => onSetGroupBy("map")}
-            aria-label="Group by Map"
-            title="Group by Map"
-          >
-            <MapPin className="h-4 w-4" />
-          </Button>
+            <ToggleGroupItem
+              value="trader"
+              aria-label="Group by Trader"
+              className="gap-2 rounded-lg px-2 data-[state=on]:bg-primary/10 data-[state=on]:text-primary data-[state=on]:shadow-sm"
+            >
+              <UserCheck className="h-4 w-4" />
+              <span className="text-xs sm:text-sm font-medium leading-none">
+                Trader
+              </span>
+            </ToggleGroupItem>
+            <ToggleGroupItem
+              value="map"
+              aria-label="Group by Map"
+              className="gap-2 rounded-lg px-2 data-[state=on]:bg-primary/10 data-[state=on]:text-primary data-[state=on]:shadow-sm"
+            >
+              <MapPin className="h-4 w-4" />
+              <span className="text-xs sm:text-sm font-medium leading-none">
+                Map
+              </span>
+            </ToggleGroupItem>
+          </ToggleGroup>
         </div>
         <div className="ml-auto flex items-center gap-3">
           <div className="flex items-center gap-2">
@@ -672,6 +689,39 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
                               disabled={false}
                               onClick={(e) => e.stopPropagation()}
                             />
+                            {onToggleWorkingOnTask && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onToggleWorkingOnTask(task.id);
+                                }}
+                                className={cn(
+                                  "p-1 rounded-sm transition-colors",
+                                  workingOnTasks.has(task.id)
+                                    ? "text-blue-500 hover:text-blue-600"
+                                    : "text-muted-foreground/40 hover:text-muted-foreground"
+                                )}
+                                title={
+                                  workingOnTasks.has(task.id)
+                                    ? "Remove from working on"
+                                    : "Mark as working on"
+                                }
+                                aria-label={
+                                  workingOnTasks.has(task.id)
+                                    ? "Remove from working on"
+                                    : "Mark as working on"
+                                }
+                              >
+                                <Target
+                                  className="h-4 w-4"
+                                  fill={
+                                    workingOnTasks.has(task.id)
+                                      ? "currentColor"
+                                      : "none"
+                                  }
+                                />
+                              </button>
+                            )}
                             {task.wikiLink && (
                               <a
                                 href={task.wikiLink}

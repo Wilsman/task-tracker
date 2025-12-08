@@ -1,4 +1,4 @@
-import * as React from "react"
+import * as React from "react";
 import {
   ListChecks,
   Package,
@@ -11,6 +11,7 @@ import {
   RotateCcw,
   Home,
   Map,
+  Target,
 } from "lucide-react";
 
 import {
@@ -61,7 +62,18 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { MoreHorizontal, UserPlus, Edit3, Trash2 } from "lucide-react";
+import {
+  MoreHorizontal,
+  UserPlus,
+  Edit3,
+  Trash2,
+  FolderSync,
+} from "lucide-react";
+import { ExportImportDialog } from "@/components/ExportImportDialog";
+import {
+  SelectiveResetDialog,
+  type ResetOptions,
+} from "@/components/SelectiveResetDialog";
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   viewMode:
@@ -73,7 +85,8 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
     | "achievements"
     | "storyline"
     | "storyline-map"
-    | "hideout-requirements";
+    | "hideout-requirements"
+    | "current";
   onSetViewMode: (mode: AppSidebarProps["viewMode"]) => void;
   onSetFocus: (mode: "all" | "kappa" | "lightkeeper") => void;
   focusMode: "all" | "kappa" | "lightkeeper";
@@ -92,7 +105,15 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   onCreateProfile: (name?: string) => void;
   onRenameProfile: (id: string, name: string) => void;
   onDeleteProfile: (id: string) => void;
-  onResetProfile: () => void;
+  onResetProfile: (options?: ResetOptions) => void;
+  onImportComplete: () => void;
+  onImportAsNewProfile: (
+    name: string,
+    data: import("@/utils/indexedDB").ExportData
+  ) => Promise<void>;
+  onImportAllProfiles: (
+    data: import("@/utils/indexedDB").AllProfilesExportData
+  ) => Promise<void>;
 }
 
 export function AppSidebar({
@@ -116,9 +137,13 @@ export function AppSidebar({
   onRenameProfile,
   onDeleteProfile,
   onResetProfile,
+  onImportComplete,
+  onImportAsNewProfile,
+  onImportAllProfiles,
   ...props
 }: AppSidebarProps) {
   const [perTraderOpen, setPerTraderOpen] = React.useState(false);
+  const [exportImportOpen, setExportImportOpen] = React.useState(false);
   const [perMapOpen, setPerMapOpen] = React.useState(false);
   const [nameModalOpen, setNameModalOpen] = React.useState<null | {
     mode: "create" | "rename";
@@ -223,6 +248,16 @@ export function AppSidebar({
                     disabled={!activeProfile}
                     onClick={() => {
                       setMenuOpen(false);
+                      setExportImportOpen(true);
+                    }}
+                  >
+                    <FolderSync className="mr-2 h-4 w-4" />
+                    Export / Import
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    disabled={!activeProfile}
+                    onClick={() => {
+                      setMenuOpen(false);
                       setResetOpen(true);
                     }}
                   >
@@ -263,29 +298,27 @@ export function AppSidebar({
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
+              {/* Export/Import dialog */}
+              <ExportImportDialog
+                open={exportImportOpen}
+                onOpenChange={setExportImportOpen}
+                profileName={activeProfile?.name || "Profile"}
+                profiles={profiles}
+                activeProfileId={activeProfileId}
+                onImportComplete={onImportComplete}
+                onImportAsNewProfile={onImportAsNewProfile}
+                onImportAllProfiles={onImportAllProfiles}
+              />
               {/* Reset confirmation */}
-              <AlertDialog open={resetOpen} onOpenChange={setResetOpen}>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Reset progress?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This resets all completed tasks, items, achievements and
-                      prestige for "{activeProfile?.name}".
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={() => {
-                        onResetProfile();
-                        setResetOpen(false);
-                      }}
-                    >
-                      Reset
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+              <SelectiveResetDialog
+                open={resetOpen}
+                onOpenChange={setResetOpen}
+                profileName={activeProfile?.name || "Profile"}
+                onConfirm={(options) => {
+                  onResetProfile(options);
+                  setResetOpen(false);
+                }}
+              />
             </div>
 
             {/* Create/Rename dialog */}
@@ -345,7 +378,18 @@ export function AppSidebar({
           <SidebarGroupLabel>Navigate</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {/* 1.0 Storyline - at the top */}
+              {/* Currently Working On */}
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  isActive={viewMode === "current"}
+                  onClick={() => onSetViewMode("current")}
+                >
+                  <Target />
+                  <span>Currently Working On</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              {/* 1.0 Storyline */}
               <SidebarMenuItem>
                 <SidebarMenuButton
                   isActive={
