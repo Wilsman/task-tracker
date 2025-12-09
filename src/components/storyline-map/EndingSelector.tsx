@@ -47,7 +47,11 @@ function EndingCard({
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
-          <span className="text-3xl">{ending.icon}</span>
+          <img
+            src={ending.iconUrl}
+            alt={ending.label}
+            className="w-12 h-12 object-contain"
+          />
           <div>
             <h3 className="font-bold text-lg" style={{ color: ending.color }}>
               {ending.label}
@@ -187,7 +191,11 @@ export function EndingSelector({
             <DialogTitle className="flex items-center gap-2">
               {rewardsDialogEnding && (
                 <>
-                  <span className="text-2xl">{rewardsDialogEnding.icon}</span>
+                  <img
+                    src={rewardsDialogEnding.iconUrl}
+                    alt={rewardsDialogEnding.label}
+                    className="w-8 h-8 object-contain"
+                  />
                   <span style={{ color: rewardsDialogEnding.color }}>
                     {rewardsDialogEnding.label} Rewards
                   </span>

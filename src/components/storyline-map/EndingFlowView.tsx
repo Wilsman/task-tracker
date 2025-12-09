@@ -101,7 +101,11 @@ export function EndingFlowView({ endingId, onBack }: EndingFlowViewProps) {
               >
                 <ArrowLeft className="h-4 w-4" />
               </Button>
-              <span className="text-2xl">{endingInfo.icon}</span>
+              <img
+                src={endingInfo.iconUrl}
+                alt={endingInfo.label}
+                className="w-10 h-10 object-contain"
+              />
               <div>
                 <h1
                   className="font-bold text-lg"

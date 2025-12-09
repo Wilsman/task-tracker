@@ -25,6 +25,7 @@ export interface EndingInfo {
   tagline: string;
   color: string;
   icon: string;
+  iconUrl: string;
   // Pre-calculated from path data
   totalCraftHours: number;
   totalTimeGateHours: number;
@@ -111,6 +112,8 @@ export const endingInfos: EndingInfo[] = [
     tagline: "The path of independence",
     color: "#3b82f6",
     icon: "🛡️",
+    iconUrl:
+      "https://assets.tarkov.dev/achievement-68e8f02ff3a1196d1a05f2cb-icon.webp",
     ...calculateEndingStats(ENDING_NODE_IDS.survivor),
     rewards: [
       { name: "Survivor Armband", icon: "🎗️", description: "Cosmetic only" },
@@ -130,6 +133,8 @@ export const endingInfos: EndingInfo[] = [
     tagline: "The path of justice",
     color: "#22c55e",
     icon: "⭐",
+    iconUrl:
+      "https://assets.tarkov.dev/achievement-68e8f0575eb7e5ce5000ba0a-icon.webp",
     ...calculateEndingStats(ENDING_NODE_IDS.savior),
     rewards: [
       // All items are Found in Raid (FIR) - PvE exclusive reward
@@ -172,6 +177,8 @@ export const endingInfos: EndingInfo[] = [
     tagline: "The path of obligation",
     color: "#ef4444",
     icon: "⛓️",
+    iconUrl:
+      "https://assets.tarkov.dev/achievement-68e8f04eb841bc8ac305350a-icon.webp",
     ...calculateEndingStats(ENDING_NODE_IDS.debtor),
     rewards: [
       { name: "30,000 EUR", icon: "💶", description: "Cash reward" },
@@ -216,6 +223,8 @@ export const endingInfos: EndingInfo[] = [
     tagline: "The path of sacrifice",
     color: "#6b7280",
     icon: "💀",
+    iconUrl:
+      "https://assets.tarkov.dev/achievement-68e8f042b8efa2bbeb009d89-icon.webp",
     ...calculateEndingStats(ENDING_NODE_IDS.fallen),
     rewards: [
       { name: "10M Roubles", icon: "💰", description: "Cash payout" },

@@ -27,19 +27,24 @@ const endingColors: Record<EndingType, string> = {
   cultist: "#8b5cf6",
 };
 
-const endingIcons: Record<EndingType, string> = {
-  survivor: "🛡️",
-  debtor: "⛓️",
-  savior: "⭐",
-  utopia: "🌟",
-  fallen: "💀",
-  cultist: "🔮",
+const endingIconUrls: Record<EndingType, string> = {
+  survivor:
+    "https://assets.tarkov.dev/achievement-68e8f02ff3a1196d1a05f2cb-icon.webp",
+  debtor:
+    "https://assets.tarkov.dev/achievement-68e8f04eb841bc8ac305350a-icon.webp",
+  savior:
+    "https://assets.tarkov.dev/achievement-68e8f0575eb7e5ce5000ba0a-icon.webp",
+  utopia:
+    "https://assets.tarkov.dev/achievement-68e8f0575eb7e5ce5000ba0a-icon.webp",
+  fallen:
+    "https://assets.tarkov.dev/achievement-68e8f042b8efa2bbeb009d89-icon.webp",
+  cultist: "",
 };
 
 function EndingNode({ data }: { data: EndingNodeData }) {
   const baseColor = endingColors[data.endingType] || "#64748b";
   const color = data.isUndetermined ? "#a855f7" : baseColor;
-  const icon = endingIcons[data.endingType] || "🏁";
+  const iconUrl = endingIconUrls[data.endingType];
 
   return (
     <div
@@ -63,7 +68,19 @@ function EndingNode({ data }: { data: EndingNodeData }) {
         style={{ background: color }}
       />
       <div className="space-y-1.5 text-center">
-        <div className="text-2xl">{data.isUndetermined ? "❓" : icon}</div>
+        <div className="flex justify-center">
+          {data.isUndetermined ? (
+            <span className="text-2xl">❓</span>
+          ) : iconUrl ? (
+            <img
+              src={iconUrl}
+              alt={data.label}
+              className="w-15 h-15 object-contain"
+            />
+          ) : (
+            <span className="text-2xl">🏁</span>
+          )}
+        </div>
         <span className="font-bold text-sm" style={{ color }}>
           {data.label}
         </span>
