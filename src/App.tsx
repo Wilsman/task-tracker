@@ -103,6 +103,7 @@ const CurrentlyWorkingOnView = lazy(() =>
 import { CommandMenu } from "./components/CommandMenu";
 import { NotesWidget } from "./components/NotesWidget";
 import { OnboardingModal } from "./components/OnboardingModal";
+import { LazyLoadErrorBoundary } from "./components/LazyLoadErrorBoundary";
 import { STORYLINE_QUESTS } from "@/data/storylineQuests";
 
 function App() {
@@ -1423,150 +1424,152 @@ function App() {
                 )}
               >
                 {/* Quests sub-tabs removed; view selection handled via sidebar */}
-                <Suspense
-                  fallback={
-                    <div className="p-6 space-y-4">
-                      <div className="space-y-2">
-                        <Skeleton className="h-6 w-40" />
-                        <Skeleton className="h-4 w-64" />
+                <LazyLoadErrorBoundary>
+                  <Suspense
+                    fallback={
+                      <div className="p-6 space-y-4">
+                        <div className="space-y-2">
+                          <Skeleton className="h-6 w-40" />
+                          <Skeleton className="h-4 w-64" />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <Skeleton className="h-40 w-full" />
+                          <Skeleton className="h-40 w-full" />
+                        </div>
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <Skeleton className="h-40 w-full" />
-                        <Skeleton className="h-40 w-full" />
-                      </div>
-                    </div>
-                  }
-                >
-                  {viewMode === "grouped" ? (
-                    <CheckListView
-                      tasks={tasks}
-                      completedTasks={completedTasks}
-                      hiddenTraders={hiddenTraders}
-                      showKappa={showKappa}
-                      showLightkeeper={showLightkeeper}
-                      onToggleComplete={handleToggleComplete}
-                      onTaskClick={handleTaskClick}
-                      mapFilter={selectedMap}
-                      groupBy={groupBy}
-                      onSetGroupBy={setGroupBy}
-                      activeProfileId={activeProfileId}
-                      workingOnTasks={workingOnTasks}
-                      onToggleWorkingOnTask={handleToggleWorkingOnTask}
-                    />
-                  ) : viewMode === "collector" ? (
-                    <CollectorView
-                      collectorItems={collectorItems}
-                      completedCollectorItems={completedCollectorItems}
-                      onToggleCollectorItem={handleToggleCollectorItem}
-                      completedHideoutItems={completedHideoutItems}
-                      onToggleHideoutItem={handleToggleHideoutItem}
-                      groupBy={collectorGroupBy}
-                      hideoutStations={hideoutStations}
-                      workingOnHideoutStations={workingOnHideoutStations}
-                      onToggleWorkingOnHideoutStation={
-                        handleToggleWorkingOnHideoutStation
-                      }
-                    />
-                  ) : viewMode === "prestiges" ? (
-                    <PrestigesView />
-                  ) : viewMode === "achievements" ? (
-                    <AchievementsView
-                      achievements={achievements}
-                      completed={completedAchievements}
-                      onToggle={handleToggleAchievement}
-                    />
-                  ) : viewMode === "storyline" ? (
-                    <StorylineQuestsView
-                      completedObjectives={completedStorylineObjectives}
-                      onToggleObjective={handleToggleStorylineObjective}
-                      onSetCompletedObjectives={
-                        handleSetCompletedStorylineObjectives
-                      }
-                      onNavigateToMap={() => setViewMode("storyline-map")}
-                      workingOnStorylineObjectives={
-                        workingOnStorylineObjectives
-                      }
-                      onToggleWorkingOnStorylineObjective={
-                        handleToggleWorkingOnStorylineObjective
-                      }
-                    />
-                  ) : viewMode === "storyline-map" ? (
-                    <StorylineContainer
-                      completedNodes={completedStorylineMapNodes}
-                      onToggleNode={handleToggleStorylineMapNode}
-                      onBack={() => setViewMode("storyline")}
-                    />
-                  ) : viewMode === "hideout-requirements" ? (
-                    <HideoutRequirementsView
-                      hideoutStations={hideoutStations}
-                      completedHideoutItems={completedHideoutItems}
-                      onNavigateToStation={(stationName) => {
-                        setCollectorGroupBy("hideout-stations");
-                        setViewMode("collector");
-                        // Use setTimeout to ensure view switches before search
-                        setTimeout(() => {
-                          window.dispatchEvent(
-                            new CustomEvent("taskTracker:globalSearch", {
-                              detail: { term: stationName, scope: "items" },
-                            })
-                          );
-                        }, 100);
-                      }}
-                    />
-                  ) : viewMode === "current" ? (
-                    <CurrentlyWorkingOnView
-                      tasks={tasks}
-                      workingOnTasks={workingOnTasks}
-                      workingOnStorylineObjectives={
-                        workingOnStorylineObjectives
-                      }
-                      workingOnHideoutStations={workingOnHideoutStations}
-                      collectorItems={collectorItems}
-                      hideoutStations={hideoutStations}
-                      completedCollectorItems={completedCollectorItems}
-                      completedTasks={completedTasks}
-                      completedStorylineObjectives={
-                        completedStorylineObjectives
-                      }
-                      completedHideoutItems={completedHideoutItems}
-                      onToggleWorkingOnTask={handleToggleWorkingOnTask}
-                      onToggleWorkingOnStorylineObjective={
-                        handleToggleWorkingOnStorylineObjective
-                      }
-                      onToggleCollectorItem={handleToggleCollectorItem}
-                      onToggleWorkingOnHideoutStation={
-                        handleToggleWorkingOnHideoutStation
-                      }
-                      onToggleTask={handleToggleComplete}
-                      onToggleStorylineObjective={
-                        handleToggleStorylineObjective
-                      }
-                      onToggleHideoutItem={handleToggleHideoutItem}
-                      completedTaskObjectives={completedTaskObjectives}
-                      onToggleTaskObjective={handleToggleTaskObjective}
-                    />
-                  ) : viewMode === "flow" ? (
-                    <FlowView
-                      tasks={tasks}
-                      completedTasks={completedTasks}
-                      hiddenTraders={hiddenTraders}
-                      showKappa={showKappa}
-                      showLightkeeper={showLightkeeper}
-                      onToggleComplete={handleToggleComplete}
-                      highlightedTaskId={highlightedTask}
-                    />
-                  ) : (
-                    <MindMap
-                      tasks={tasks}
-                      completedTasks={completedTasks}
-                      hiddenTraders={hiddenTraders}
-                      showKappa={showKappa}
-                      showLightkeeper={showLightkeeper}
-                      onToggleComplete={handleToggleComplete}
-                      highlightedTaskId={highlightedTask}
-                    />
-                  )}
-                </Suspense>
+                    }
+                  >
+                    {viewMode === "grouped" ? (
+                      <CheckListView
+                        tasks={tasks}
+                        completedTasks={completedTasks}
+                        hiddenTraders={hiddenTraders}
+                        showKappa={showKappa}
+                        showLightkeeper={showLightkeeper}
+                        onToggleComplete={handleToggleComplete}
+                        onTaskClick={handleTaskClick}
+                        mapFilter={selectedMap}
+                        groupBy={groupBy}
+                        onSetGroupBy={setGroupBy}
+                        activeProfileId={activeProfileId}
+                        workingOnTasks={workingOnTasks}
+                        onToggleWorkingOnTask={handleToggleWorkingOnTask}
+                      />
+                    ) : viewMode === "collector" ? (
+                      <CollectorView
+                        collectorItems={collectorItems}
+                        completedCollectorItems={completedCollectorItems}
+                        onToggleCollectorItem={handleToggleCollectorItem}
+                        completedHideoutItems={completedHideoutItems}
+                        onToggleHideoutItem={handleToggleHideoutItem}
+                        groupBy={collectorGroupBy}
+                        hideoutStations={hideoutStations}
+                        workingOnHideoutStations={workingOnHideoutStations}
+                        onToggleWorkingOnHideoutStation={
+                          handleToggleWorkingOnHideoutStation
+                        }
+                      />
+                    ) : viewMode === "prestiges" ? (
+                      <PrestigesView />
+                    ) : viewMode === "achievements" ? (
+                      <AchievementsView
+                        achievements={achievements}
+                        completed={completedAchievements}
+                        onToggle={handleToggleAchievement}
+                      />
+                    ) : viewMode === "storyline" ? (
+                      <StorylineQuestsView
+                        completedObjectives={completedStorylineObjectives}
+                        onToggleObjective={handleToggleStorylineObjective}
+                        onSetCompletedObjectives={
+                          handleSetCompletedStorylineObjectives
+                        }
+                        onNavigateToMap={() => setViewMode("storyline-map")}
+                        workingOnStorylineObjectives={
+                          workingOnStorylineObjectives
+                        }
+                        onToggleWorkingOnStorylineObjective={
+                          handleToggleWorkingOnStorylineObjective
+                        }
+                      />
+                    ) : viewMode === "storyline-map" ? (
+                      <StorylineContainer
+                        completedNodes={completedStorylineMapNodes}
+                        onToggleNode={handleToggleStorylineMapNode}
+                        onBack={() => setViewMode("storyline")}
+                      />
+                    ) : viewMode === "hideout-requirements" ? (
+                      <HideoutRequirementsView
+                        hideoutStations={hideoutStations}
+                        completedHideoutItems={completedHideoutItems}
+                        onNavigateToStation={(stationName) => {
+                          setCollectorGroupBy("hideout-stations");
+                          setViewMode("collector");
+                          // Use setTimeout to ensure view switches before search
+                          setTimeout(() => {
+                            window.dispatchEvent(
+                              new CustomEvent("taskTracker:globalSearch", {
+                                detail: { term: stationName, scope: "items" },
+                              })
+                            );
+                          }, 100);
+                        }}
+                      />
+                    ) : viewMode === "current" ? (
+                      <CurrentlyWorkingOnView
+                        tasks={tasks}
+                        workingOnTasks={workingOnTasks}
+                        workingOnStorylineObjectives={
+                          workingOnStorylineObjectives
+                        }
+                        workingOnHideoutStations={workingOnHideoutStations}
+                        collectorItems={collectorItems}
+                        hideoutStations={hideoutStations}
+                        completedCollectorItems={completedCollectorItems}
+                        completedTasks={completedTasks}
+                        completedStorylineObjectives={
+                          completedStorylineObjectives
+                        }
+                        completedHideoutItems={completedHideoutItems}
+                        onToggleWorkingOnTask={handleToggleWorkingOnTask}
+                        onToggleWorkingOnStorylineObjective={
+                          handleToggleWorkingOnStorylineObjective
+                        }
+                        onToggleCollectorItem={handleToggleCollectorItem}
+                        onToggleWorkingOnHideoutStation={
+                          handleToggleWorkingOnHideoutStation
+                        }
+                        onToggleTask={handleToggleComplete}
+                        onToggleStorylineObjective={
+                          handleToggleStorylineObjective
+                        }
+                        onToggleHideoutItem={handleToggleHideoutItem}
+                        completedTaskObjectives={completedTaskObjectives}
+                        onToggleTaskObjective={handleToggleTaskObjective}
+                      />
+                    ) : viewMode === "flow" ? (
+                      <FlowView
+                        tasks={tasks}
+                        completedTasks={completedTasks}
+                        hiddenTraders={hiddenTraders}
+                        showKappa={showKappa}
+                        showLightkeeper={showLightkeeper}
+                        onToggleComplete={handleToggleComplete}
+                        highlightedTaskId={highlightedTask}
+                      />
+                    ) : (
+                      <MindMap
+                        tasks={tasks}
+                        completedTasks={completedTasks}
+                        hiddenTraders={hiddenTraders}
+                        showKappa={showKappa}
+                        showLightkeeper={showLightkeeper}
+                        onToggleComplete={handleToggleComplete}
+                        highlightedTaskId={highlightedTask}
+                      />
+                    )}
+                  </Suspense>
+                </LazyLoadErrorBoundary>
               </main>
 
               {/* Right Progress */}
