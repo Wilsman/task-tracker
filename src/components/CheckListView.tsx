@@ -31,6 +31,7 @@ import {
   MapPin,
   UserCheck,
   Target,
+  Search,
 } from "lucide-react";
 import { groupTasksByTrader } from "../utils/taskUtils";
 import { cn } from "@/lib/utils";
@@ -38,6 +39,13 @@ import { Switch } from "./ui/switch";
 import { Label } from "./ui/label";
 import { taskStorage } from "@/utils/indexedDB";
 import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "./ui/select";
 
 interface CheckListViewProps {
   tasks: Task[];
@@ -83,6 +91,16 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
   const [prefsLoaded, setPrefsLoaded] = useState(false);
   const [enableLevelFilter, setEnableLevelFilter] = useState<boolean>(false);
   const [showCompleted, setShowCompleted] = useState<boolean>(true);
+  const [sortMode, setSortMode] = useState<
+    | "name-asc"
+    | "level-asc"
+    | "level-desc"
+    | "incomplete-first"
+    | "complete-first"
+    | "working-on-first"
+    | "has-prereqs-first"
+    | "kappa-first"
+  >("name-asc");
 
   // Load UI prefs from IndexedDB (with migration from localStorage)
   useEffect(() => {
@@ -382,19 +400,103 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
     }
   };
 
+  const getSortedTasks = useCallback(
+    (groupTasks: Task[]) => {
+      const sorted = [...groupTasks];
+      const compareByName = (a: Task, b: Task) => a.name.localeCompare(b.name);
+      const compareByLevelAsc = (a: Task, b: Task) =>
+        a.minPlayerLevel - b.minPlayerLevel || compareByName(a, b);
+      const compareByLevelDesc = (a: Task, b: Task) =>
+        b.minPlayerLevel - a.minPlayerLevel || compareByName(a, b);
+      const compareByCompletion = (a: Task, b: Task) => {
+        const aDone = completedTasks.has(a.id);
+        const bDone = completedTasks.has(b.id);
+        if (aDone === bDone) return compareByName(a, b);
+        return aDone ? 1 : -1;
+      };
+      const compareByWorkingOn = (a: Task, b: Task) => {
+        const aWorkingOn = workingOnTasks.has(a.id);
+        const bWorkingOn = workingOnTasks.has(b.id);
+        if (aWorkingOn === bWorkingOn) return compareByName(a, b);
+        return aWorkingOn ? -1 : 1;
+      };
+      const compareByHasPrereqs = (a: Task, b: Task) => {
+        const aHas = (a.taskRequirements?.length ?? 0) > 0;
+        const bHas = (b.taskRequirements?.length ?? 0) > 0;
+        if (aHas === bHas) return compareByName(a, b);
+        return aHas ? -1 : 1;
+      };
+      const compareByKappaRequired = (a: Task, b: Task) => {
+        const aKappa = !!a.kappaRequired;
+        const bKappa = !!b.kappaRequired;
+        if (aKappa === bKappa) return compareByName(a, b);
+        return aKappa ? -1 : 1;
+      };
+
+      switch (sortMode) {
+        case "name-asc":
+          return sorted.sort(compareByName);
+        case "level-asc":
+          return sorted.sort(compareByLevelAsc);
+        case "level-desc":
+          return sorted.sort(compareByLevelDesc);
+        case "complete-first":
+          return sorted.sort((a, b) => -compareByCompletion(a, b));
+        case "incomplete-first":
+          return sorted.sort(compareByCompletion);
+        case "working-on-first":
+          return sorted.sort(compareByWorkingOn);
+        case "has-prereqs-first":
+          return sorted.sort(compareByHasPrereqs);
+        case "kappa-first":
+          return sorted.sort(compareByKappaRequired);
+        default:
+          return sorted;
+      }
+    },
+    [completedTasks, sortMode, workingOnTasks]
+  );
+
   return (
     <div className="p-4 bg-background text-foreground">
       {/* Grouping selection moved to sidebar under Quests > Checklist */}
 
       {/* Search and Controls */}
-      <div className="mb-4 flex items-center gap-4">
-        <div className="flex-1 max-w-md">
+      <div className="sticky top-0 z-20 -mx-4 mb-4 border-b bg-background px-4 py-3">
+        <div className="relative">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Search tasks..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full"
+            className="w-full pl-9"
           />
+        </div>
+      </div>
+
+      <div className="mb-4 flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          <Label className="text-sm text-muted-foreground">Sort</Label>
+          <Select
+            value={sortMode}
+            onValueChange={(v) => setSortMode(v as typeof sortMode)}
+          >
+            <SelectTrigger className="h-8 w-[180px]">
+              <SelectValue placeholder="Sort" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="name-asc">Name (A-Z)</SelectItem>
+              <SelectItem value="level-asc">Min level (low-high)</SelectItem>
+              <SelectItem value="level-desc">Min level (high-low)</SelectItem>
+              <SelectItem value="incomplete-first">Incomplete first</SelectItem>
+              <SelectItem value="complete-first">Completed first</SelectItem>
+              <SelectItem value="working-on-first">Working on first</SelectItem>
+              <SelectItem value="has-prereqs-first">
+                Has prerequisites first
+              </SelectItem>
+              <SelectItem value="kappa-first">Kappa required first</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         {/* Show/Hide Completed toggle */}
         <div className="flex items-center gap-2">
@@ -477,7 +579,7 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
 
       {/* Selected Task Breadcrumb - shows all predecessors and successors */}
       {selectedTaskId && (
-        <div className="sticky top-0 z-10 mb-3 border rounded-md bg-card p-3">
+        <div className="sticky top-16 z-10 mb-3 border rounded-md bg-card p-3">
           {(() => {
             const taskMap = new Map(tasks.map((t) => [t.id, t]));
             const currentTask = taskMap.get(selectedTaskId);
@@ -587,6 +689,7 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
         onValueChange={setExpandedGroups}
       >
         {sortedGroups.map(([groupName, groupTasks]) => {
+          const sortedGroupTasks = getSortedTasks(groupTasks);
           const completedCount = groupTasks.filter((t) =>
             completedTasks.has(t.id)
           ).length;
@@ -624,7 +727,7 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
               </AccordionTrigger>
               <AccordionContent className="px-4 pb-4 border-t">
                 <div className="pr-2 space-y-1">
-                  {groupTasks.map((task) => {
+                  {sortedGroupTasks.map((task) => {
                     const isCompleted = completedTasks.has(task.id);
                     return (
                       <div
@@ -731,6 +834,22 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
                                       loading="lazy"
                                       className="h-5 w-5 rounded-full object-cover"
                                     />
+                                  )}
+                                  {task.factionName === "USEC" && (
+                                    <span
+                                      title="USEC only"
+                                      className="text-[10px] px-1.5 py-0.5 rounded bg-blue-600/10 text-blue-500 font-medium"
+                                    >
+                                      USEC
+                                    </span>
+                                  )}
+                                  {task.factionName === "BEAR" && (
+                                    <span
+                                      title="BEAR only"
+                                      className="text-[10px] px-1.5 py-0.5 rounded bg-red-600/10 text-red-500 font-medium"
+                                    >
+                                      BEAR
+                                    </span>
                                   )}
                                   {task.kappaRequired && (
                                     <span

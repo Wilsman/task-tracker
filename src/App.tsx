@@ -205,6 +205,15 @@ function App() {
   >("collector");
   const [selectedMap, setSelectedMap] = useState<string | null>(null);
   const [playerLevel, setPlayerLevel] = useState<number>(1);
+
+  const handleSetPlayerLevel = useCallback((level: number) => {
+    setPlayerLevel(level);
+    taskStorage.setProfile(activeProfileId);
+    taskStorage.init().then(() =>
+      taskStorage.saveUserPreferences({playerLevel: level})
+    );
+  }, [activeProfileId]);
+
   const isMobile = useIsMobile();
 
   // Always use checklist on mobile
@@ -741,13 +750,13 @@ function App() {
     void init();
   }, []);
 
-  // Persist playerLevel to IndexedDB when it changes
-  useEffect(() => {
-    if (!activeProfileId) return;
-    taskStorage.saveUserPreferences({ playerLevel }).catch(() => {
-      // ignore persistence errors
-    });
-  }, [playerLevel, activeProfileId]);
+  // // Persist playerLevel to IndexedDB when it changes
+  // useEffect(() => {
+  //   if (!activeProfileId) return;
+  //   taskStorage.saveUserPreferences({ playerLevel }).catch(() => {
+  //     // ignore persistence errors
+  //   });
+  // }, [playerLevel, activeProfileId]);
 
   // Compute "next" prestige progress (only one visible at a time)
   const [prestigeProgress, setPrestigeProgress] = useState<{
@@ -1329,7 +1338,7 @@ function App() {
           collectorGroupBy={collectorGroupBy}
           onSetCollectorGroupBy={setCollectorGroupBy}
           playerLevel={playerLevel}
-          onSetPlayerLevel={setPlayerLevel}
+          onSetPlayerLevel={handleSetPlayerLevel}
           side="left"
         />
         <SidebarInset>

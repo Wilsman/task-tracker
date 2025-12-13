@@ -2,6 +2,7 @@ export type Profile = {
   id: string;
   name: string;
   faction?: "USEC" | "BEAR";
+  level?: number;
   createdAt: number;
 };
 
@@ -27,11 +28,24 @@ function saveProfiles(list: Profile[]) {
 
 export function ensureProfiles(): { profiles: Profile[]; activeId: string } {
   let profiles = loadProfiles();
+
+  const normalizedProfiles = profiles.map((profile) => {
+    if (profile.faction) return profile;
+    return { ...profile, faction: "USEC" as const };
+  });
+
+  if (normalizedProfiles.some((p, idx) => p !== profiles[idx])) {
+    profiles = normalizedProfiles;
+    saveProfiles(profiles);
+  }
+
   let activeId = localStorage.getItem(ACTIVE_PROFILE_KEY) || "";
   if (profiles.length === 0) {
     const def: Profile = {
       id: crypto.randomUUID(),
       name: "Default",
+      faction: "USEC",
+      level: 1,
       createdAt: Date.now(),
     };
     profiles = [def];
@@ -61,12 +75,17 @@ export function setActiveProfileId(id: string) {
   localStorage.setItem(ACTIVE_PROFILE_KEY, id);
 }
 
-export function createProfile(name: string, faction?: "USEC" | "BEAR"): Profile {
+export function createProfile(
+  name: string,
+  faction?: "USEC" | "BEAR",
+  level?: number
+): Profile {
   const list = loadProfiles();
   const p: Profile = {
     id: crypto.randomUUID(),
     name: name || "New Character",
-    faction,
+    faction: faction || "USEC",
+    level: level || 1,
     createdAt: Date.now(),
   };
   list.push(p);
@@ -120,6 +139,15 @@ export function updateProfileFaction(id: string, faction: "USEC" | "BEAR") {
   const idx = list.findIndex((p) => p.id === id);
   if (idx >= 0) {
     list[idx] = { ...list[idx], faction };
+    saveProfiles(list);
+  }
+}
+
+export function updateProfileLevel(id: string, level: number){
+  const list = loadProfiles();
+  const idx = list.findIndex((p) => p.id === id);
+  if (idx >= 0) {
+    list[idx] = { ...list[idx], level };
     saveProfiles(list);
   }
 }
