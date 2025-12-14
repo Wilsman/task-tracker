@@ -206,13 +206,17 @@ function App() {
   const [selectedMap, setSelectedMap] = useState<string | null>(null);
   const [playerLevel, setPlayerLevel] = useState<number>(1);
 
-  const handleSetPlayerLevel = useCallback((level: number) => {
-    setPlayerLevel(level);
-    taskStorage.setProfile(activeProfileId);
-    taskStorage.init().then(() =>
-      taskStorage.saveUserPreferences({playerLevel: level})
-    );
-  }, [activeProfileId]);
+  const handleSetPlayerLevel = useCallback(
+    async (level: number) => {
+      const safeLevel = Number.isFinite(level) ? Math.max(1, level) : 1;
+      setPlayerLevel(safeLevel);
+      const profileId = activeProfileId;
+      taskStorage.setProfile(profileId);
+      await taskStorage.init();
+      await taskStorage.saveUserPreferences({ playerLevel: safeLevel });
+    },
+    [activeProfileId]
+  );
 
   const isMobile = useIsMobile();
 
@@ -516,8 +520,11 @@ function App() {
         setWorkingOnHideoutStations(savedWorkingOnItems.hideoutStations);
         // Load player level from user preferences
         const savedPrefs = await taskStorage.loadUserPreferences();
-        if (savedPrefs.playerLevel !== undefined) {
-          setPlayerLevel(Math.max(1, savedPrefs.playerLevel));
+        const loadedLevel = Number(savedPrefs.playerLevel);
+        if (Number.isFinite(loadedLevel)) {
+          setPlayerLevel(Math.max(1, loadedLevel));
+        } else {
+          setPlayerLevel(1);
         }
         // Notify components like NotesWidget to update their per-profile state
         window.dispatchEvent(new Event("taskTracker:profileChanged"));
@@ -673,10 +680,34 @@ function App() {
         );
         setWorkingOnCollectorItems(savedWorkingOnItems.collectorItems);
         setWorkingOnHideoutStations(savedWorkingOnItems.hideoutStations);
-        // Load player level from user preferences
+        // Load player level from user preferences (with migration from localStorage)
         const savedPrefs = await taskStorage.loadUserPreferences();
-        if (savedPrefs.playerLevel !== undefined) {
-          setPlayerLevel(Math.max(1, savedPrefs.playerLevel));
+        let loadedLevel = Number(savedPrefs.playerLevel);
+        if (!Number.isFinite(loadedLevel)) {
+          // Migrate from localStorage if exists
+          try {
+            const lsLevel = localStorage.getItem(
+              `taskTracker_playerLevel::${ensured.activeId}`
+            );
+            if (lsLevel) {
+              loadedLevel = Number(lsLevel);
+              if (Number.isFinite(loadedLevel)) {
+                await taskStorage.saveUserPreferences({
+                  playerLevel: Math.max(1, loadedLevel),
+                });
+                localStorage.removeItem(
+                  `taskTracker_playerLevel::${ensured.activeId}`
+                );
+              }
+            }
+          } catch {
+            /* ignore migration errors */
+          }
+        }
+        if (Number.isFinite(loadedLevel)) {
+          setPlayerLevel(Math.max(1, loadedLevel));
+        } else {
+          setPlayerLevel(1);
         }
 
         // Load cached API data instantly if present

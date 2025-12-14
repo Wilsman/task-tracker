@@ -1,7 +1,7 @@
-import { afterEach } from 'vitest';
+import { afterEach } from "vitest";
 
 // In-memory storage for our mock IndexedDB
-const databases = new Map<string, Map<string, Map<string, any>>>();
+const databases = new Map<string, Map<string, Map<string, unknown>>>();
 
 // Helper to get or create database storage
 function getDatabase(dbName: string) {
@@ -29,7 +29,7 @@ class MockIDBDatabase {
   constructor(dbName: string, version: number) {
     this.name = dbName;
     this.version = version;
-    
+
     const db = getDatabase(dbName);
     this.objectStoreNames = {
       contains: (name: string) => db.has(name),
@@ -37,16 +37,19 @@ class MockIDBDatabase {
       length: db.size,
       [Symbol.iterator]: function* () {
         yield* db.keys();
-      }
+      },
     } as DOMStringList;
   }
 
-  createObjectStore(name: string, options?: any) {
+  createObjectStore(name: string, options?: { keyPath?: string }) {
     getObjectStore(this.name, name);
-    return { keyPath: options?.keyPath || 'id' };
+    return { keyPath: options?.keyPath || "id" };
   }
 
-  transaction(storeNames: string | string[], mode: IDBTransactionMode = 'readonly') {
+  transaction(
+    storeNames: string | string[],
+    mode: IDBTransactionMode = "readonly"
+  ) {
     const names = Array.isArray(storeNames) ? storeNames : [storeNames];
     return new MockIDBTransaction(this.name, names, mode);
   }
@@ -61,7 +64,10 @@ class MockIDBTransaction {
   dbName: string;
   objectStoreNames: DOMStringList;
   mode: IDBTransactionMode;
-  
+  oncomplete: ((event: Event) => void) | null = null;
+  onerror: ((event: Event) => void) | null = null;
+  error: DOMException | null = null;
+
   constructor(dbName: string, storeNames: string[], mode: IDBTransactionMode) {
     this.dbName = dbName;
     this.mode = mode;
@@ -71,8 +77,15 @@ class MockIDBTransaction {
       length: storeNames.length,
       [Symbol.iterator]: function* () {
         yield* storeNames;
-      }
+      },
     } as DOMStringList;
+
+    // Auto-complete transaction after microtask queue flushes
+    Promise.resolve().then(() => {
+      if (this.oncomplete) {
+        this.oncomplete(new Event("complete"));
+      }
+    });
   }
 
   objectStore(name: string) {
@@ -98,10 +111,10 @@ class MockIDBObjectStore {
     return getObjectStore(this.dbName, this.name);
   }
 
-  add(value: any): IDBRequest {
+add(value: { id: string }): IDBRequest {
     const store = this.getStore();
-    const request: any = {};
-    
+    const request: { result?: unknown; onsuccess?: ((event: { target: typeof request }) => void) } = {};
+
     Promise.resolve().then(() => {
       store.set(value.id, value);
       request.result = value.id;
@@ -109,14 +122,14 @@ class MockIDBObjectStore {
         request.onsuccess({ target: request });
       }
     });
-    
+
     return request as IDBRequest;
   }
 
-  put(value: any): IDBRequest {
+put(value: { id: string }): IDBRequest {
     const store = this.getStore();
-    const request: any = {};
-    
+    const request: { result?: unknown; onsuccess?: ((event: { target: typeof request }) => void) } = {};
+
     Promise.resolve().then(() => {
       store.set(value.id, value);
       request.result = value.id;
@@ -124,42 +137,42 @@ class MockIDBObjectStore {
         request.onsuccess({ target: request });
       }
     });
-    
+
     return request as IDBRequest;
   }
 
-  get(key: any): IDBRequest {
+get(key: string): IDBRequest {
     const store = this.getStore();
-    const request: any = {};
-    
+    const request: { result?: unknown; onsuccess?: ((event: { target: typeof request }) => void) } = {};
+
     Promise.resolve().then(() => {
       request.result = store.get(key) || undefined;
       if (request.onsuccess) {
         request.onsuccess({ target: request });
       }
     });
-    
+
     return request as IDBRequest;
   }
 
-  getAll(): IDBRequest {
+getAll(): IDBRequest {
     const store = this.getStore();
-    const request: any = {};
-    
+    const request: { result?: unknown; onsuccess?: ((event: { target: typeof request }) => void) } = {};
+
     Promise.resolve().then(() => {
       request.result = Array.from(store.values());
       if (request.onsuccess) {
         request.onsuccess({ target: request });
       }
     });
-    
+
     return request as IDBRequest;
   }
 
-  clear(): IDBRequest {
+clear(): IDBRequest {
     const store = this.getStore();
-    const request: any = {};
-    
+    const request: { result?: unknown; onsuccess?: ((event: { target: typeof request }) => void) } = {};
+
     Promise.resolve().then(() => {
       store.clear();
       request.result = undefined;
@@ -167,14 +180,14 @@ class MockIDBObjectStore {
         request.onsuccess({ target: request });
       }
     });
-    
+
     return request as IDBRequest;
   }
 
-  delete(key: any): IDBRequest {
+delete(key: string): IDBRequest {
     const store = this.getStore();
-    const request: any = {};
-    
+    const request: { result?: unknown; onsuccess?: ((event: { target: typeof request }) => void) } = {};
+
     Promise.resolve().then(() => {
       store.delete(key);
       request.result = undefined;
@@ -182,28 +195,32 @@ class MockIDBObjectStore {
         request.onsuccess({ target: request });
       }
     });
-    
+
     return request as IDBRequest;
   }
 }
 
 // Mock IDBOpenDBRequest
 class MockIDBOpenDBRequest {
-  result: any = null;
-  error: any = null;
-  onsuccess: ((event: any) => void) | null = null;
-  onerror: ((event: any) => void) | null = null;
-  onupgradeneeded: ((event: any) => void) | null = null;
+  result: unknown = null;
+  error: unknown = null;
+  onsuccess: ((event: { target: MockIDBOpenDBRequest }) => void) | null = null;
+  onerror: ((event: { target: MockIDBOpenDBRequest }) => void) | null = null;
+  onupgradeneeded: ((event: { target: { result: MockIDBDatabase; transaction: MockIDBTransaction }; oldVersion: number; newVersion: number }) => void) | null = null;
   transaction: IDBTransaction | null = null;
 
   constructor(dbName: string, version: number) {
     Promise.resolve().then(() => {
       const db = new MockIDBDatabase(dbName, version);
       const dbStorage = getDatabase(dbName);
-      
+
       // Trigger upgrade if database is new or version changed
       if (dbStorage.size === 0 && this.onupgradeneeded) {
-        this.transaction = new MockIDBTransaction(dbName, [], 'versionchange') as any;
+        this.transaction = new MockIDBTransaction(
+          dbName,
+          [],
+          "versionchange"
+) as MockIDBTransaction;
         const upgradeEvent = {
           target: { result: db, transaction: this.transaction },
           oldVersion: 0,
@@ -222,13 +239,13 @@ class MockIDBOpenDBRequest {
 
 // Mock indexedDB
 const mockIndexedDB = {
-  open(name: string, version: number = 1): IDBOpenDBRequest {
-    return new MockIDBOpenDBRequest(name, version) as any;
+open(name: string, version: number = 1): IDBOpenDBRequest {
+    return new MockIDBOpenDBRequest(name, version) as IDBOpenDBRequest;
   },
 
-  deleteDatabase(name: string): IDBOpenDBRequest {
-    const request: any = {};
-    
+deleteDatabase(name: string): IDBOpenDBRequest {
+    const request: { result?: unknown; onsuccess?: ((event: { target: typeof request }) => void) } = {};
+
     Promise.resolve().then(() => {
       databases.delete(name);
       request.result = undefined;
@@ -236,28 +253,28 @@ const mockIndexedDB = {
         request.onsuccess({ target: request });
       }
     });
-    
+
     return request as IDBOpenDBRequest;
   },
 
   async databases() {
-    return Array.from(databases.keys()).map(name => ({
+    return Array.from(databases.keys()).map((name) => ({
       name,
       version: 1,
     }));
   },
 
-  cmp(a: any, b: any) {
+  cmp(a: unknown, b: unknown) {
     return a < b ? -1 : a > b ? 1 : 0;
   },
 };
 
 // Install mocks globally
-(globalThis as any).indexedDB = mockIndexedDB;
-(globalThis as any).IDBDatabase = MockIDBDatabase;
-(globalThis as any).IDBObjectStore = MockIDBObjectStore;
-(globalThis as any).IDBTransaction = MockIDBTransaction;
-(globalThis as any).IDBRequest = class MockIDBRequest {};
+(globalThis as { indexedDB: typeof mockIndexedDB }).indexedDB = mockIndexedDB;
+(globalThis as { IDBDatabase: typeof MockIDBDatabase }).IDBDatabase = MockIDBDatabase;
+(globalThis as { IDBObjectStore: typeof MockIDBObjectStore }).IDBObjectStore = MockIDBObjectStore;
+(globalThis as { IDBTransaction: typeof MockIDBTransaction }).IDBTransaction = MockIDBTransaction;
+(globalThis as { IDBRequest: typeof MockIDBRequest }).IDBRequest = class MockIDBRequest {};
 
 // Clean up between tests
 afterEach(() => {

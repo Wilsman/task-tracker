@@ -15,6 +15,7 @@
 - `npm run lint`: Run ESLint across the repo.
 - `npm run test`: Run Vitest in watch mode.
 - `npm run test:run`: Run Vitest once (CI-friendly).
+- `npm run test:run <filename>`: Run single test file
 - `npm run test:coverage`: Generate coverage report.
 
 ## Coding Style & Naming Conventions
@@ -51,4 +52,5 @@
 - Keep patches minimal and focused; follow naming and style.
 - Update or add tests when changing `services/`/`utils/`; mock `fetch`.
 - Avoid introducing new tooling without discussion; update this file if conventions change.
+- Use Radix UI patterns with cva for component variants; follow existing UI component structure.
 

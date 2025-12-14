@@ -399,13 +399,18 @@ export class TaskStorage {
   // User preferences (notes, player level, filters)
   async saveUserPreferences(prefs: Partial<UserPreferences>): Promise<void> {
     if (!this.db) await this.init();
-    const tx = this.db!.transaction([USER_PREFS_STORE], "readwrite");
-    const store = tx.objectStore(USER_PREFS_STORE);
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction([USER_PREFS_STORE], "readwrite");
+      const store = tx.objectStore(USER_PREFS_STORE);
 
-    // Save each preference as a separate entry for granular updates
-    for (const [key, value] of Object.entries(prefs)) {
-      await store.put({ id: key, value });
-    }
+      // Save each preference as a separate entry for granular updates
+      for (const [key, value] of Object.entries(prefs)) {
+        store.put({ id: key, value });
+      }
+
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
   }
 
   async loadUserPreferences(): Promise<Partial<UserPreferences>> {
@@ -433,9 +438,13 @@ export class TaskStorage {
 
   async clearUserPreferences(): Promise<void> {
     if (!this.db) await this.init();
-    const tx = this.db!.transaction([USER_PREFS_STORE], "readwrite");
-    const store = tx.objectStore(USER_PREFS_STORE);
-    await store.clear();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction([USER_PREFS_STORE], "readwrite");
+      const store = tx.objectStore(USER_PREFS_STORE);
+      store.clear();
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
   }
 
   // Working on items (currently working towards)
