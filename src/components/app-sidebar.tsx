@@ -62,12 +62,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Switch } from "@/components/ui/switch";
+import { useChristmasTheme } from "@/hooks/use-christmas-theme";
 import {
   MoreHorizontal,
   UserPlus,
   Edit3,
   Trash2,
   FolderSync,
+  TreePine,
 } from "lucide-react";
 import { ExportImportDialog } from "@/components/ExportImportDialog";
 import {
@@ -171,6 +174,7 @@ export function AppSidebar({
   }, []);
   const [deleteOpen, setDeleteOpen] = React.useState(false);
   const [resetOpen, setResetOpen] = React.useState(false);
+  const { isChristmasTheme, toggleChristmasTheme } = useChristmasTheme();
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -789,6 +793,20 @@ export function AppSidebar({
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
+        {/* Christmas Theme Toggle */}
+        <div className="px-2 py-2 group-data-[collapsible=icon]:hidden">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <TreePine className="h-4 w-4 text-green-600" />
+              <span className="text-sm font-medium">Christmas Theme</span>
+            </div>
+            <Switch
+              checked={isChristmasTheme}
+              onCheckedChange={toggleChristmasTheme}
+              aria-label="Toggle Christmas theme"
+            />
+          </div>
+        </div>
         {/* Discord Button */}
         <div className="flex items-center justify-center group-data-[collapsible=icon]:hidden">
           <a

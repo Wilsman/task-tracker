@@ -106,6 +106,9 @@ import { NotesWidget } from "./components/NotesWidget";
 import { OnboardingModal } from "./components/OnboardingModal";
 import { LazyLoadErrorBoundary } from "./components/LazyLoadErrorBoundary";
 import { STORYLINE_QUESTS } from "@/data/storylineQuests";
+import { useChristmasTheme } from "@/hooks/use-christmas-theme";
+import { ChristmasLoading } from "./components/ChristmasLoading";
+import { Snowfall } from "./components/Snowfall";
 
 function App() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
@@ -219,6 +222,7 @@ function App() {
   );
 
   const isMobile = useIsMobile();
+  const { isChristmasTheme } = useChristmasTheme();
 
   // Always use checklist on mobile
   useEffect(() => {
@@ -1314,6 +1318,10 @@ function App() {
   }, [focusMode]);
 
   if (isLoading) {
+    if (isChristmasTheme) {
+      return <ChristmasLoading progress={66} />;
+    }
+
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="flex flex-col items-center gap-6">
@@ -1386,8 +1394,15 @@ function App() {
                         ? "EFT Tracker"
                         : "Escape from Tarkov Task Tracker"}
                     </h1>
-                    <span className="inline-flex text-[10px] px-2 py-0.5 rounded-full bg-orange-600/10 text-orange-600 border border-orange-600/20 font-semibold">
-                      BETA
+                    <span
+                      className={cn(
+                        "inline-flex text-[10px] px-2 py-0.5 rounded-full font-semibold border",
+                        isChristmasTheme
+                          ? "bg-red-600/10 text-red-600 border-red-600/20"
+                          : "bg-orange-600/10 text-orange-600 border-orange-600/20"
+                      )}
+                    >
+                      {isChristmasTheme ? "🎄 Christmas Edition" : "BETA"}
                     </span>
                     <span className="hidden md:inline-flex md:peer-data-[state=collapsed]:hidden text-[10px] px-2 py-0.5 rounded-full bg-emerald-600/10 text-emerald-600 border border-emerald-600/20">
                       Live API
@@ -1733,6 +1748,7 @@ function App() {
         isOpen={showOnboarding}
         onClose={handleCloseOnboarding}
       />
+      <Snowfall />
     </NuqsAdapter>
   );
 }
