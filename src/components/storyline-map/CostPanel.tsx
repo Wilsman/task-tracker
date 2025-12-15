@@ -2,14 +2,46 @@ import { Panel } from "@xyflow/react";
 import type { Node } from "@xyflow/react";
 
 interface CostPanelProps {
-  totalCost: number;
   nodes: Node[];
 }
 
-export function CostPanel({ totalCost, nodes }: CostPanelProps) {
+export function CostPanel({ nodes }: CostPanelProps) {
   const completedSteps = nodes.filter((n) => n.data.isCompleted).length;
   const totalSteps = nodes.filter((n) => n.type === "story").length;
   const currentStep = nodes.find((n) => n.data.isCurrentStep);
+
+  const totals = nodes
+    .filter((n) => n.data.isCompleted)
+    .reduce(
+      (acc, node) => {
+        const data = node.data as Record<string, unknown>;
+        const cost = (data.cost as number) || 0;
+        if (!cost) return acc;
+
+        const currency = data.currency as "roubles" | "btc" | "usd" | undefined;
+        if (currency === "usd") {
+          acc.usd += cost;
+          return acc;
+        }
+        if (currency === "btc") {
+          acc.btc += cost;
+          return acc;
+        }
+        if (currency === "roubles") {
+          acc.roubles += cost;
+          return acc;
+        }
+
+        if (cost < 100) {
+          acc.btc += cost;
+          return acc;
+        }
+
+        acc.roubles += cost;
+        return acc;
+      },
+      { roubles: 0, btc: 0, usd: 0 }
+    );
 
   return (
     <Panel position="top-right" className="!m-4">
@@ -33,15 +65,27 @@ export function CostPanel({ totalCost, nodes }: CostPanelProps) {
             </div>
           )}
 
-          {totalCost > 0 && (
+          {totals.roubles > 0 && (
             <div className="flex justify-between text-yellow-500">
-              <span>Total Cost:</span>
+              <span>Roubles:</span>
               <span className="font-medium">
-                {totalCost >= 1000000
-                  ? `${(totalCost / 1000000).toFixed(0)}M ₽`
-                  : totalCost < 100
-                  ? `${totalCost} BTC`
-                  : `${totalCost.toLocaleString()} ₽`}
+                {totals.roubles >= 1000000
+                  ? `${(totals.roubles / 1000000).toFixed(0)}M ₽`
+                  : `${totals.roubles.toLocaleString()} ₽`}
+              </span>
+            </div>
+          )}
+          {totals.btc > 0 && (
+            <div className="flex justify-between text-orange-500">
+              <span>Bitcoin:</span>
+              <span className="font-medium">{totals.btc} BTC</span>
+            </div>
+          )}
+          {totals.usd > 0 && (
+            <div className="flex justify-between text-emerald-500">
+              <span>USD:</span>
+              <span className="font-medium">
+                {totals.usd.toLocaleString()} USD
               </span>
             </div>
           )}

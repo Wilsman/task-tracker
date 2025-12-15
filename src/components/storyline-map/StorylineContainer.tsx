@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { ReactFlowProvider } from "@xyflow/react";
 import { EndingSelector } from "./EndingSelector";
 import { EndingFlowView } from "./EndingFlowView";
@@ -11,6 +10,9 @@ interface StorylineContainerProps {
   currentNodeId?: string;
   onToggleNode: (id: string) => void;
   onBack?: () => void;
+  viewMode?: ViewMode;
+  selectedEndingId?: string | null;
+  onViewChange?: (view: ViewMode, endingId?: string | null) => void;
 }
 
 export function StorylineContainer({
@@ -18,29 +20,37 @@ export function StorylineContainer({
   currentNodeId,
   onToggleNode,
   onBack,
+  viewMode: externalViewMode,
+  selectedEndingId: externalSelectedEndingId,
+  onViewChange,
 }: StorylineContainerProps) {
-  const [viewMode, setViewMode] = useState<ViewMode>("selector");
-  const [selectedEndingId, setSelectedEndingId] = useState<string | null>(null);
+  // Use URL-controlled state if provided, otherwise fall back to internal state
+  const viewMode = externalViewMode || "selector";
+  const selectedEndingId = externalSelectedEndingId || null;
 
   const handleSelectEnding = (endingId: string) => {
-    setSelectedEndingId(endingId);
-    setViewMode("ending");
+    if (onViewChange) {
+      onViewChange("ending", endingId);
+    }
   };
 
   const handleViewFullMap = () => {
-    setViewMode("fullMap");
+    if (onViewChange) {
+      onViewChange("fullMap");
+    }
   };
 
   const handleBackToSelector = () => {
-    setViewMode("selector");
-    setSelectedEndingId(null);
+    if (onViewChange) {
+      onViewChange("selector");
+    }
   };
 
   const handleBackFromFullMap = () => {
     if (onBack) {
       onBack();
-    } else {
-      setViewMode("selector");
+    } else if (onViewChange) {
+      onViewChange("selector");
     }
   };
 

@@ -10,6 +10,7 @@ export interface PathStep {
   description?: string;
   note?: string;
   cost?: number;
+  currency?: "roubles" | "btc" | "usd";
   isCraft?: boolean;
   craftHours?: number;
   isTimeGate?: boolean;
@@ -20,875 +21,1585 @@ export interface PathBreakdown {
   steps: PathStep[];
   totalCostRoubles: number;
   totalCostBTC: number;
+  totalCostUSD: number;
   totalCraftHours: number;
   totalTimeGateHours: number;
 }
 
 // ============================================================================
-// NODES (positions are custom-placed via UI)
+// NODES - Version 1.3.1 (last edited: 14.12.2025)
+// Based on Mermaid flowchart from @Callsign_Smokey
 // ============================================================================
 
 export const initialNodes: Node[] = [
-  // ==================== START ====================
+  // ==================== TITLE / VERSION ====================
   {
-    id: "start",
+    id: "title",
     type: "story",
-    position: { x: 949, y: -391 },
+    position: { x: 800, y: -500 },
     data: {
-      label: "Acquire Armored Case",
-      description: "Find the Armored Case from PMC's crashed Plane",
+      label: "The Ticket",
+      description: "Unlock by completing the Fallen Skies storyline chapter",
     },
   },
 
-  // ==================== INITIAL DECISION: Keep vs Give ====================
+  // ==================== TOP: ARMORED CASE ====================
   {
-    id: "case-decision",
-    type: "decision",
-    position: { x: 986, y: -265 },
+    id: "recover",
+    type: "story",
+    position: { x: 800, y: -400 },
     data: {
-      label: "The Case?",
-      description: "Choose your path",
+      label: "Recover Armored Case from Wrecked Crashed Plane",
+      description: "Starting point of the storyline",
+    },
+  },
+
+  // Initial case decision
+  {
+    id: "keep-self",
+    type: "decision",
+    position: { x: 500, y: -280 },
+    data: {
+      label: "Keep Case for yourself",
+      description: "Point of no return",
+      isIrreversible: true,
+    },
+  },
+  {
+    id: "give-prapor-0",
+    type: "decision",
+    position: { x: 1100, y: -280 },
+    data: {
+      label: "Hand over Case to Prapor",
+      description: "Point of no return",
       isIrreversible: true,
     },
   },
 
-  // ==========================================================================
-  // BRANCH 1: KEEP CASE (LEFT SIDE) - Common Setup
-  // ==========================================================================
+  // Prapor path to get case back
   {
-    id: "keep-case",
+    id: "prapor-comp",
     type: "story",
-    position: { x: 327, y: 101 },
+    position: { x: 1100, y: -180 },
     data: {
-      label: "Keep Case for Yourself",
-      description: "Decision: Keep the case",
+      label: "Find compromising material on Prapor",
+      description: "on Lighthouse",
     },
   },
   {
-    id: "1-open-case",
+    id: "lk-access",
     type: "story",
-    position: { x: 322, y: 199 },
+    position: { x: 1100, y: -80 },
+    data: {
+      label: "Gain Lightkeeper Access",
+      description: "(Network Provider 1 is available)",
+    },
+  },
+  {
+    id: "talk-lk-0",
+    type: "story",
+    position: { x: 1100, y: 20 },
+    data: {
+      label: "Talk to Lightkeeper",
+      description: "(Pay him 3x Terragroup Blue Folder)",
+    },
+  },
+  {
+    id: "yellow-flare",
+    type: "story",
+    position: { x: 1100, y: 120 },
+    data: {
+      label: "Fire Yellow Flare in front of Ultra Mall",
+      description: "(Interchange)",
+    },
+  },
+  {
+    id: "kill-15",
+    type: "story",
+    position: { x: 1100, y: 220 },
+    data: {
+      label: "Kill 15 Targets without dying",
+      description: "(one Raid)",
+    },
+  },
+  {
+    id: "lk-case",
+    type: "story",
+    position: { x: 1100, y: 320 },
+    data: {
+      label: "Collect Case from Lightkeeper",
+      description: "(goes into Special Slot)",
+    },
+  },
+
+  // Convergence: Armored Case in hands
+  {
+    id: "armored-hands",
+    type: "story",
+    position: { x: 800, y: 420 },
+    data: {
+      label: "Armored Case in your Hands",
+      description: "Both paths converge here",
+    },
+  },
+  {
+    id: "open-case",
+    type: "story",
+    position: { x: 800, y: 520 },
     data: {
       label: "Open the Case",
-      description: "Find Signal Jammer on Labs",
+      description: "(find Signal Jammer on Labs)",
     },
   },
   {
-    id: "1-craft-55h",
+    id: "tg-48",
     type: "craft",
-    position: { x: 325, y: 296 },
+    position: { x: 800, y: 620 },
     data: {
-      label: "55H Craft at Workbench",
-      description: "Craft to unlock the case",
+      label: "48h Craft at Workbench",
+      description: "Craft to open the case",
       isCraft: true,
-      craftHours: 55,
+      craftHours: 48,
     },
   },
   {
-    id: "1-case-open",
+    id: "case-open",
     type: "story",
-    position: { x: 326, y: 417 },
+    position: { x: 800, y: 720 },
     data: {
-      label: "Case is Open",
-      description: "Case unlocked and ready",
+      label: "Case is open",
+      description: "Ready to proceed",
+    },
+  },
+
+  // ==================== SPLIT: Work with Kerman ====================
+  {
+    id: "dont-work",
+    type: "decision",
+    position: { x: 400, y: 850 },
+    data: {
+      label: "Don't work with Kerman",
+      description: "Point of no return - Survivor path",
+      isIrreversible: true,
     },
   },
   {
-    id: "Kerman-decision-1",
+    id: "work-together",
     type: "decision",
-    position: { x: 307, y: 511 },
+    position: { x: 1200, y: 850 },
     data: {
-      label: "Work with Kerman?",
-      description: "Choose to work with Kerman or go solo",
+      label: "Work together with Kerman",
+      description: "Point of no return - Multiple endings available",
       isIrreversible: true,
     },
   },
 
-  // ==========================================================================
-  // PATH 1-A: KEEP CASE + DON'T WORK WITH Kerman → SURVIVOR ENDING
-  // ==========================================================================
+  // ==================== SURVIVOR PATH (Don't work with Kerman) ====================
   {
-    id: "1a-shoreline-keycard",
+    id: "sl-shore",
     type: "story",
-    position: { x: -40, y: 716 },
-    data: { label: "Shoreline Port Entrance", description: "Swipe Keycard at Intercom" },
+    position: { x: 50, y: 1000 },
+    data: {
+      label: "Head to Shoreline Port Entrance",
+      description: "(Intercom) swipe Keycard",
+    },
   },
   {
-    id: "1a-keycard-fail",
+    id: "sl-key-fail",
     type: "story",
-    position: { x: -40, y: 801 },
-    data: { label: "Keycard Failed", description: "Ask Prapor for Help" },
+    position: { x: 50, y: 1100 },
+    data: {
+      label: "Keycard didn't work",
+      description: "Ask Prapor for help",
+    },
+  },
+
+  // Cost decision (parallel branches)
+  {
+    id: "sl-300",
+    type: "story",
+    position: { x: 50, y: 1220 },
+    data: {
+      label: "Prapor wants 300 Million Roubles",
+      description: "since you gave him the Case",
+      cost: 300000000,
+      currency: "roubles",
+      note: "300M ₽ (if gave case to Prapor)",
+    },
   },
   {
-    id: "1a-pay-prapor",
+    id: "sl-500",
     type: "story",
-    position: { x: -41, y: 892 },
-    data: { label: "Pay Prapor 500M Roubles", description: "Full price (kept the case)", cost: 500000000, note: "500M ₽ (no discount)" },
+    position: { x: 250, y: 1220 },
+    data: {
+      label: "Prapor wants 500 Million Roubles",
+      description: "since you kept the Case",
+      cost: 500000000,
+      currency: "roubles",
+      note: "500M ₽ (if kept case)",
+    },
+  },
+
+  // Main linear task chain for 500M path
+  {
+    id: "sl-tg",
+    type: "story",
+    position: { x: 250, y: 1340 },
+    data: {
+      label: "Find 4 Terragroup report folders",
+      description: "on Labs",
+    },
   },
   {
-    id: "1a-find-folders",
-    type: "story",
-    position: { x: -41, y: 1050 },
-    data: { label: "Find 4 Terragroup Folders", description: "Report Folders on Labs" },
-  },
-  {
-    id: "1a-craft-5h",
+    id: "sl-5",
     type: "craft",
-    position: { x: -43, y: 1136 },
-    data: { label: "5H Craft at Intel Center", description: "Process the data", isCraft: true, craftHours: 5 },
+    position: { x: 250, y: 1440 },
+    data: {
+      label: "5h Craft at Intel Centre",
+      description: "Process the data",
+      isCraft: true,
+      craftHours: 5,
+    },
   },
   {
-    id: "1a-give-flash",
+    id: "sl-flash",
     type: "story",
-    position: { x: -41, y: 1228 },
-    data: { label: "Give Prapor Flash Drive", description: "Hand over the data" },
+    position: { x: 250, y: 1540 },
+    data: {
+      label: "Give Prapor the Flash Drive with Data",
+      description: "Hand over the processed intel",
+    },
   },
   {
-    id: "1a-kill-50",
+    id: "sl-kill-50",
     type: "story",
-    position: { x: -45, y: 1325 },
-    data: { label: "Kill 50 Targets", description: "Any targets on Streets of Tarkov" },
+    position: { x: 250, y: 1640 },
+    data: {
+      label: "Kill 50 targets",
+      description: "on Streets of Tarkov",
+    },
   },
   {
-    id: "1a-kill-4-pmcs",
+    id: "sl-kill-4",
     type: "story",
-    position: { x: -41, y: 1426 },
-    data: { label: "Kill 4 PMCs", description: "Single Raid and survive" },
+    position: { x: 250, y: 1740 },
+    data: {
+      label: "Kill 4 PMCs",
+      description: "(single raid and survive)",
+    },
   },
   {
-    id: "1a-get-note",
+    id: "sl-48",
+    type: "craft",
+    position: { x: 250, y: 1840 },
+    data: {
+      label: "48h Timegate",
+      description: "Wait for Prapor",
+      isTimeGate: true,
+      timeGateHours: 48,
+    },
+  },
+
+  // Convergence point for both cost paths
+  {
+    id: "sl-note",
     type: "story",
-    position: { x: -41, y: 1524 },
-    data: { label: "Get Note from Prapor", description: "Note for Terminal soldiers" },
+    position: { x: 150, y: 1960 },
+    data: {
+      label: "Prapor hands you a Note",
+      description: "for the Soldiers at the Terminal",
+    },
   },
   {
-    id: "1a-achievement-easy",
+    id: "sl-easy",
+    type: "achievement",
+    position: { x: 150, y: 2060 },
+    data: {
+      label: "Easy Way",
+      description: "Achievement Unlocked",
+      note: "🏆 Achievement: Easy Way",
+    },
+  },
+
+  // Survivor ending sequence
+  {
+    id: "end-setup-survivor",
     type: "story",
-    position: { x: -41, y: 1614 },
-    data: { label: "Achievement Unlocked", description: "🏆 Easy Way", note: "🏆 Achievement: Easy Way" },
+    position: { x: 150, y: 2180 },
+    data: {
+      label: "Head to Shoreline (22:00 to 04:00)",
+      description:
+        "Intercom at Tower, swipe Keycard. Approach Terminal (no weapon in hand). Start escape attempt",
+      note: "Final extraction sequence",
+    },
   },
   {
-    id: "1a-shoreline-escape",
+    id: "fail-survivor",
     type: "story",
-    position: { x: -70, y: 1743 },
-    data: { label: "Head to Shoreline", description: "22:00-04:00, Intercom at Tower, No weapon", note: "If fail: 5M ₽ for new Note (limit 2)" },
+    position: { x: 150, y: 2300 },
+    data: {
+      label: "If attempt fails:",
+      description: "Buy a new Note for 5M roubles at Prapor (2 per reset)",
+      cost: 5000000,
+      currency: "roubles",
+    },
   },
   {
     id: "survivor-ending",
     type: "ending",
-    position: { x: -38, y: 2881 },
-    data: { label: "Survivor Ending", description: "You escaped Tarkov as a Survivor", endingType: "survivor" },
+    position: { x: 50, y: 3720 },
+    data: {
+      label: "Survivor Ending",
+      description: "You escaped Tarkov as a Survivor",
+      endingType: "survivor",
+    },
   },
 
-  // ==========================================================================
-  // PATH 1-B: KEEP CASE + WORK WITH Kerman
-  // ==========================================================================
+  // ==================== WORK TOGETHER PATH ====================
   {
-    id: "1b-search-labs",
+    id: "wt-search",
     type: "story",
-    position: { x: 641, y: 703 },
-    data: { label: "Search Labs", description: "Search for Masterkeycard and RFID Device" },
+    position: { x: 1000, y: 1000 },
+    data: {
+      label: "Search for Masterkeycard and RFID Device",
+      description: "on Labs",
+    },
   },
   {
-    id: "1b-keycard-acquired",
+    id: "wt-keycard",
     type: "story",
-    position: { x: 662, y: 795 },
-    data: { label: "Keycard Acquired", description: "Device missing - talk to Mechanic" },
+    position: { x: 1000, y: 1100 },
+    data: {
+      label: "Keycard acquired, device not:",
+      description: "talk to Mechanic",
+    },
   },
   {
-    id: "1b-pay-mechanic",
-    type: "story",
-    position: { x: 664, y: 875 },
-    data: { label: "Pay Mechanic 40 Bitcoin", description: "Payment for services", cost: 40, note: "40 BTC" },
-  },
-  {
-    id: "1b-get-rfid",
-    type: "story",
-    position: { x: 663, y: 1028 },
-    data: { label: "Get RFID Device", description: "Elektroniks Apartment (Streets)" },
-  },
-  {
-    id: "1b-activate-rfid",
-    type: "story",
-    position: { x: 663, y: 1120 },
-    data: { label: "Activate RFID Card", description: "From Armored Case" },
-  },
-  {
-    id: "1b-craft-50h",
+    id: "tg-24",
     type: "craft",
-    position: { x: 660, y: 1206 },
-    data: { label: "50H Craft at Intel Center", description: "Prepare for Shoreline", isCraft: true, craftHours: 50 },
+    position: { x: 1000, y: 1200 },
+    data: {
+      label: "24h timegate",
+      description: "Wait for Mechanic",
+      isTimeGate: true,
+      timeGateHours: 24,
+    },
   },
   {
-    id: "1b-shoreline-keycard",
+    id: "wt-pay-mech",
     type: "story",
-    position: { x: 658, y: 1296 },
-    data: { label: "Shoreline Port Entrance", description: "Swipe Keycard at Intercom" },
+    position: { x: 1000, y: 1300 },
+    data: {
+      label: "Pay Mechanic 40 Bitcoins",
+      description: "Payment for RFID device info",
+      cost: 40,
+      currency: "btc",
+      note: "40 BTC",
+    },
   },
   {
-    id: "Kerman-evidence-decision",
-    type: "decision",
-    position: { x: 657, y: 1384 },
-    data: { label: "Help Kerman find Evidence?", description: "Choose your path to escape", isIrreversible: true },
+    id: "wt-elekt",
+    type: "story",
+    position: { x: 1000, y: 1400 },
+    data: {
+      label: "Go with Mechanic's keys to Elektronik apartment",
+      description: "and get RFID Device",
+    },
+  },
+  {
+    id: "wt-activate",
+    type: "story",
+    position: { x: 1000, y: 1500 },
+    data: {
+      label: "Activate RFID Card from Armored Case",
+      description: "Prepare the card",
+    },
+  },
+  {
+    id: "tg-50",
+    type: "craft",
+    position: { x: 1000, y: 1600 },
+    data: {
+      label: "50h Craft at Intel Centre",
+      description: "Process the RFID card",
+      isCraft: true,
+      craftHours: 50,
+    },
+  },
+  {
+    id: "wt-shore",
+    type: "story",
+    position: { x: 1000, y: 1700 },
+    data: {
+      label: "Head to Shoreline",
+      description: "Port Entrance (Intercom) swipe Keycard",
+    },
   },
 
-  // ==========================================================================
-  // PATH 1-B1: HELP KERMAN (FENCE PATH) → SAVIOR ENDING
-  // ==========================================================================
+  // ==================== POST-SWIPE: 3 branches ====================
   {
-    id: "1b1-help-evidence",
-    type: "story",
-    position: { x: 303, y: 1598 },
-    data: { label: "Help Kerman find Evidence", description: "On Terragroup" },
+    id: "hk-savior",
+    type: "decision",
+    position: { x: 700, y: 1850 },
+    data: {
+      label: "Help Kerman find Evidence on Terragroup",
+      description: "Point of no return - Savior path",
+      isIrreversible: true,
+    },
   },
   {
-    id: "1b1-complete-chapters",
-    type: "story",
-    position: { x: 273, y: 1692 },
-    data: { label: "Complete Story Chapters", description: "Complete every other chapter, hand in evidence" },
+    id: "nk-fallen",
+    type: "decision",
+    position: { x: 1200, y: 1850 },
+    data: {
+      label: "Do not help Kerman find Evidence on Terragroup",
+      description: "Point of no return - Fallen path",
+      isIrreversible: true,
+    },
   },
   {
-    id: "1b1-fence-contact",
+    id: "hk-debtor",
+    type: "decision",
+    position: { x: 1700, y: 1850 },
+    data: {
+      label: "Help Kerman find Evidence on Terragroup",
+      description: "Point of no return - Debtor path (partial help)",
+      isIrreversible: true,
+    },
+  },
+
+  // ==================== SAVIOR PATH ====================
+  {
+    id: "audio-note",
     type: "story",
-    position: { x: 296, y: 1804 },
-    data: { label: "Kerman's Contact (Fence)", description: "Fence reaches out" },
+    position: { x: 700, y: 2000 },
+    data: {
+      label: "Listen to every audiotape and read every note",
+      description: "for all storys",
+    },
   },
   {
-    id: "1b1-fence-rep",
+    id: "complete-all",
     type: "story",
-    position: { x: 293, y: 1904 },
-    data: { label: "Get 4.0 Fence Rep", description: "Raise Fence reputation" },
+    position: { x: 700, y: 2100 },
+    data: {
+      label: "Complete every other story chapter",
+      description: "and hand evidence in",
+    },
   },
   {
-    id: "1b1-pvp-pve-task",
-    type: "story",
-    position: { x: 249, y: 2019 },
-    data: { label: "PvP/PvE Task", description: "PvP: Co-Op Extract with Scav (Woods/Reserve)\nPvE: Kill 5 PMCs w/o killing Scavs" },
+    id: "tg-48b",
+    type: "craft",
+    position: { x: 700, y: 2200 },
+    data: {
+      label: "48h timegate",
+      description: "Wait for Kerman",
+      isTimeGate: true,
+      timeGateHours: 48,
+    },
   },
   {
-    id: "1b1-btr-rep",
+    id: "trusted",
     type: "story",
-    position: { x: 263, y: 2168 },
-    data: { label: "BTR Driver 0.4 Rep", description: "Complete 'The Price of Independence'" },
+    position: { x: 700, y: 2300 },
+    data: {
+      label: "Kerman's trusted contact reaches out (Fence)",
+      description: "New contact established",
+    },
   },
   {
-    id: "1b1-solar-power",
+    id: "fence-4",
     type: "story",
-    position: { x: 270, y: 2282 },
-    data: { label: "Build Solar Power", description: "Hideout upgrade", isCraft: true },
+    position: { x: 700, y: 2400 },
+    data: {
+      label: "Get 4.0 Fence reputation",
+      description: "Required reputation level",
+    },
+  },
+
+  // PVP/PVE split
+  {
+    id: "pvp",
+    type: "story",
+    position: { x: 600, y: 2500 },
+    data: {
+      label: "PVP",
+      description: "Combat path",
+    },
   },
   {
-    id: "1b1-final-craft",
+    id: "pve",
     type: "story",
-    position: { x: 269, y: 2379 },
-    data: { label: "Final Keycard Craft", description: "Craft the escape keycard", isCraft: true },
+    position: { x: 800, y: 2500 },
+    data: {
+      label: "PVE",
+      description: "Cooperative path",
+    },
   },
   {
-    id: "1b1-shoreline-escape",
+    id: "kill-5-no-scav",
     type: "story",
-    position: { x: 242, y: 2514 },
-    data: { label: "Head to Shoreline", description: "22:00-04:00, Intercom at Tower, No weapon", note: "If fail: 11H craft + new Blank RFID Card" },
+    position: { x: 600, y: 2600 },
+    data: {
+      label: "Kill 5 PMCs in a raid without killing scavs",
+      description: "(Shoreline and Interchange)",
+    },
+  },
+  {
+    id: "coop",
+    type: "story",
+    position: { x: 800, y: 2600 },
+    data: {
+      label: "Use Co-Op extract with a scav",
+      description: "(Woods and Reserve)",
+    },
+  },
+  {
+    id: "btr-04",
+    type: "story",
+    position: { x: 700, y: 2720 },
+    data: {
+      label: "Raise BTR driver reputation to 0.4",
+      description: "(complete The Price of Independence)",
+    },
+  },
+  {
+    id: "warn-btr",
+    type: "story",
+    position: { x: 500, y: 2820 },
+    data: {
+      label: "⚠️ Warning",
+      description:
+        "Failing BTR rep (or missing Major Evidence) can force you onto Survivor path",
+      note: "Be careful!",
+    },
+  },
+  {
+    id: "solar-savior",
+    type: "story",
+    position: { x: 700, y: 2920 },
+    data: {
+      label: "Build Solar Power (mandatory)",
+      description: "Hideout requirement",
+    },
+  },
+  {
+    id: "build-72-savior",
+    type: "craft",
+    position: { x: 700, y: 3020 },
+    data: {
+      label: "72h build time",
+      description: "Solar Power construction",
+      isCraft: true,
+      craftHours: 72,
+    },
+  },
+  {
+    id: "final-craft-savior",
+    type: "craft",
+    position: { x: 700, y: 3120 },
+    data: {
+      label: "Final craft for the Keycard",
+      description: "Prepare escape keycard",
+      isCraft: true,
+    },
+  },
+
+  // Savior ending sequence
+  {
+    id: "end-setup-savior",
+    type: "story",
+    position: { x: 700, y: 3240 },
+    data: {
+      label: "Head to Shoreline (22:00 to 04:00)",
+      description:
+        "Intercom at Tower, swipe Keycard. Approach Terminal (no weapon in hand). Start escape attempt",
+      note: "Final extraction sequence",
+    },
+  },
+  {
+    id: "fail-savior",
+    type: "story",
+    position: { x: 700, y: 3360 },
+    data: {
+      label: "If attempt fails:",
+      description: "Craft the Keycard again (11h), needs a new Blank RFID Card",
+      isCraft: true,
+      craftHours: 11,
+    },
   },
   {
     id: "savior-ending",
     type: "ending",
-    position: { x: 258, y: 2881 },
-    data: { label: "Savior Ending", description: "You escaped as a Savior with Kerman", endingType: "savior" },
+    position: { x: 800, y: 3720 },
+    data: {
+      label: "Savior Ending",
+      description: "You escaped Tarkov as a Savior",
+      endingType: "savior",
+    },
   },
 
-  // ==========================================================================
-  // PATH 1-B2: DON'T HELP (PRAPOR HARD MODE) → FALLEN ENDING (WIP)
-  // ==========================================================================
+  // ==================== FALLEN PATH ====================
   {
-    id: "1b2-no-help-prapor",
-    type: "story",
-    position: { x: 634, y: 1634 },
-    data: { label: "Don't Help Kerman", description: "Talk to Prapor (only if LK not unlocked)", note: "🏆 Achievement: Enough of your Games!" },
+    id: "enough",
+    type: "achievement",
+    position: { x: 1200, y: 2000 },
+    data: {
+      label: "Enough of your Games!",
+      description: "Achievement Unlocked",
+      note: "🏆 Achievement: Enough of your Games!",
+    },
   },
   {
-    id: "1b2-repair-kits",
+    id: "talk-prapor",
     type: "story",
-    position: { x: 650, y: 1751 },
-    data: { label: "Hand Over 40 Repair Kits", description: "100% Durability, Non-FIR" },
+    position: { x: 1200, y: 2100 },
+    data: {
+      label: "Talk to Prapor",
+      description: "Discuss next steps",
+    },
+  },
+
+  // Conditional branches based on earlier case decision
+  {
+    id: "case-back",
+    type: "story",
+    position: { x: 1100, y: 2220 },
+    data: {
+      label: "If you handed the case to Prapor earlier",
+      description: "and got it back from Lightkeeper",
+      note: "Shorter path",
+    },
   },
   {
-    id: "1b2-secure-container",
+    id: "no-case-back",
     type: "story",
-    position: { x: 642, y: 1843 },
-    data: { label: "Hand Over Secure Container", description: "Kappa, Theta, or Epsilon" },
+    position: { x: 1300, y: 2220 },
+    data: {
+      label: "If you did not hand the case to Prapor earlier",
+      description: "Longer path required",
+      note: "More requirements",
+    },
+  },
+
+  // No case back path requirements
+  {
+    id: "repair-40",
+    type: "story",
+    position: { x: 1300, y: 2340 },
+    data: {
+      label: "Hand over 40 Repair Kits",
+      description: "(100% durability, non-FIR)",
+    },
   },
   {
-    id: "1b2-mil-components",
+    id: "secure-cont",
     type: "story",
-    position: { x: 621, y: 1950 },
-    data: { label: "Hand Over 50 Military Components", description: "Virtex, COFDM, etc. (Non-FIR)" },
+    position: { x: 1300, y: 2440 },
+    data: {
+      label: "Hand over Gamma/Theta/Epsilon Secure Container",
+      description: "Give up your secure container",
+    },
   },
   {
-    id: "1b2-bio-weapon",
+    id: "military-50",
     type: "story",
-    position: { x: 649, y: 2041 },
-    data: { label: "Get Bio Weapon Case", description: "Reserve RB-PKPTS", note: "🏆 Achievement: Will it Blow" },
+    position: { x: 1300, y: 2540 },
+    data: {
+      label: "Hand over 50 Military Components",
+      description: "(Virtex/COFDM/etc, non-FIR)",
+    },
+  },
+
+  // Convergence for Fallen path
+  {
+    id: "bio-case",
+    type: "story",
+    position: { x: 1200, y: 2660 },
+    data: {
+      label: "Get the Bio Weapon Case (Reserve RB-PKPM?)",
+      description: "Hand it over to Prapor",
+    },
   },
   {
-    id: "1b2-pay-usd",
+    id: "usd-1m",
     type: "story",
-    position: { x: 652, y: 2155 },
-    data: { label: "Hand Over 1 Million USD", description: "Final payment", cost: 1000000, note: "1M USD" },
+    position: { x: 1200, y: 2760 },
+    data: {
+      label: "Hand over 1M USD",
+      description: "Payment to Prapor",
+      cost: 1000000,
+      currency: "usd",
+      note: "1M USD",
+    },
   },
   {
-    id: "1b2-get-usb-stick",
-    type: "story",
-    position: { x: 638, y: 2300 },
-    data: { label: "Get USB Stick from Prapor", description: "Prapor gives you USB Stick with his Hash Code" },
+    id: "will-blow",
+    type: "achievement",
+    position: { x: 1200, y: 2860 },
+    data: {
+      label: "Will it Blow?",
+      description: "Achievement Unlocked",
+      note: "🏆 Achievement: Will it Blow?",
+    },
   },
   {
-    id: "1b2-final-keycard-craft",
+    id: "tg-48c",
     type: "craft",
-    position: { x: 638, y: 2400 },
-    data: { label: "Final Keycard Craft", description: "Craft the escape keycard", isCraft: true, craftHours: 11 },
+    position: { x: 1200, y: 2960 },
+    data: {
+      label: "48h timegate",
+      description: "Wait for Prapor",
+      isTimeGate: true,
+      timeGateHours: 48,
+    },
   },
   {
-    id: "1b2-shoreline-escape",
+    id: "hash-usb",
     type: "story",
-    position: { x: 638, y: 2520 },
-    data: { label: "Head to Shoreline", description: "22:00-04:00, Intercom at Tower, approach Terminal without weapon", note: "If fail: 11H craft + new Blank RFID Card" },
+    position: { x: 1200, y: 3060 },
+    data: {
+      label: "Prapor gives you a USB stick with his Hash Code",
+      description: "Key item received",
+    },
+  },
+  {
+    id: "solar-fallen",
+    type: "story",
+    position: { x: 1200, y: 3160 },
+    data: {
+      label: "Build Solar Power (mandatory)",
+      description: "Hideout requirement",
+    },
+  },
+  {
+    id: "build-72-fallen",
+    type: "craft",
+    position: { x: 1200, y: 3260 },
+    data: {
+      label: "72h build time",
+      description: "Solar Power construction",
+      isCraft: true,
+      craftHours: 72,
+    },
+  },
+  {
+    id: "final-craft-fallen",
+    type: "craft",
+    position: { x: 1200, y: 3360 },
+    data: {
+      label: "Final craft for the Keycard",
+      description: "Prepare escape keycard",
+      isCraft: true,
+    },
+  },
+
+  // Fallen ending sequence
+  {
+    id: "end-setup-fallen",
+    type: "story",
+    position: { x: 1200, y: 3480 },
+    data: {
+      label: "Head to Shoreline (22:00 to 04:00)",
+      description:
+        "Intercom at Tower, swipe Keycard. Approach Terminal (no weapon in hand). Start escape attempt",
+      note: "Final extraction sequence",
+    },
+  },
+  {
+    id: "fail-fallen",
+    type: "story",
+    position: { x: 1200, y: 3600 },
+    data: {
+      label: "If attempt fails:",
+      description: "Craft the Keycard again (11h), needs a new Blank RFID Card",
+      isCraft: true,
+      craftHours: 11,
+    },
   },
   {
     id: "fallen-ending",
     type: "ending",
-    position: { x: 660, y: 2876 },
-    data: { label: "Fallen Ending", description: "You fell from grace", endingType: "fallen" },
+    position: { x: 1200, y: 3720 },
+    data: {
+      label: "Fallen Ending",
+      description: "You escaped Tarkov, but at what cost?",
+      endingType: "fallen",
+    },
   },
 
-  // ==========================================================================
-  // PATH 1-B3: DON'T HELP (LIGHTKEEPER PATH) → DEBTOR ENDING
-  // ==========================================================================
+  // ==================== DEBTOR PATH ====================
   {
-    id: "1b3-no-help-lk",
+    id: "hand-2-major",
     type: "story",
-    position: { x: 998, y: 1539 },
-    data: { label: "Don't Help Kerman", description: "Talk to Lightkeeper", note: "🏆 Achievement: U Turn" },
+    position: { x: 1700, y: 2000 },
+    data: {
+      label: "Hand 2 Major Evidence in to Kerman",
+      description: "then stop working with him",
+    },
   },
   {
-    id: "1b3-topo-recon",
-    type: "story",
-    position: { x: 998, y: 1656 },
-    data: { label: "Find 5 Topographic Recon", description: "5 different maps, 1 per map" },
+    id: "u-turn",
+    type: "achievement",
+    position: { x: 1700, y: 2100 },
+    data: {
+      label: "U Turn",
+      description: "Achievement Unlocked",
+      note: "🏆 Achievement: U Turn",
+    },
   },
   {
-    id: "1b3-craft-6h",
+    id: "talk-lk",
+    type: "story",
+    position: { x: 1700, y: 2200 },
+    data: {
+      label: "Talk to Lightkeeper",
+      description: "Switch allegiance",
+    },
+  },
+  {
+    id: "topo",
+    type: "story",
+    position: { x: 1700, y: 2300 },
+    data: {
+      label: "Find topographic recommendations (5 total)",
+      description: "5 maps, 1 per map",
+    },
+  },
+  {
+    id: "tg-24b",
     type: "craft",
-    position: { x: 998, y: 1757 },
-    data: { label: "6H Craft at Intel Center", description: "Process the data", isCraft: true, craftHours: 6 },
+    position: { x: 1700, y: 2400 },
+    data: {
+      label: "6h Craft at Intel Centre",
+      description: "Process the maps",
+      isCraft: true,
+      craftHours: 6,
+    },
   },
   {
-    id: "1b3-flash-drive",
+    id: "hash-drive",
     type: "story",
-    position: { x: 997, y: 1854 },
-    data: { label: "Bring Flash Drive to LK", description: "Special Flash Drive with material" },
+    position: { x: 1700, y: 2500 },
+    data: {
+      label: "Bring a special flash drive with Hashmail",
+      description: "to Lightkeeper",
+    },
   },
   {
-    id: "1b3-kill-30-pmcs",
+    id: "kill-30",
     type: "story",
-    position: { x: 997, y: 1951 },
-    data: { label: "Kill 30 PMCs on Woods", description: "Hand over 100 PMC Dogtags" },
+    position: { x: 1700, y: 2600 },
+    data: {
+      label: "Kill 30 PMCs on Woods",
+      description: "and hand over 100 PMC dogtags",
+    },
   },
   {
-    id: "1b3-cultist-amulets",
+    id: "amulet",
     type: "story",
-    position: { x: 996, y: 2041 },
-    data: { label: "Find Cultist Amulets", description: "One in each Marked Room" },
+    position: { x: 1700, y: 2700 },
+    data: {
+      label: "Find Cultist Amulet in each Marked Room",
+      description: "Collect all amulets",
+    },
   },
   {
-    id: "1b3-place-amulets",
+    id: "place",
     type: "story",
-    position: { x: 968, y: 2134 },
-    data: { label: "Place Amulets", description: "Shared Bedroom Marked Key on LK Island" },
+    position: { x: 1700, y: 2800 },
+    data: {
+      label: "Place all amulets at Shared Bedroom Marked Key",
+      description: "on Lightkeeper Island",
+    },
   },
   {
-    id: "1b3-get-keycard",
-    type: "story",
-    position: { x: 974, y: 2224 },
-    data: { label: "Get Keycard from LK", description: "Lightkeeper hands you Terminal keycard" },
+    id: "tg-48d",
+    type: "craft",
+    position: { x: 1700, y: 2900 },
+    data: {
+      label: "48h timegate",
+      description: "Wait for Lightkeeper",
+      isTimeGate: true,
+      timeGateHours: 48,
+    },
   },
   {
-    id: "1b3-shoreline-escape",
+    id: "lk-key",
     type: "story",
-    position: { x: 966, y: 2327 },
-    data: { label: "Head to Shoreline", description: "22:00-04:00, Intercom at Tower, No weapon", note: "If fail: Barter 1 Blue Folder from LK" },
+    position: { x: 1700, y: 3000 },
+    data: {
+      label: "Lightkeeper hands you a Keycard for Terminal",
+      description: "Key item received",
+    },
+  },
+
+  // Debtor ending sequence
+  {
+    id: "end-setup-debtor",
+    type: "story",
+    position: { x: 1700, y: 3120 },
+    data: {
+      label: "Head to Shoreline (22:00 to 04:00)",
+      description:
+        "Intercom at Tower, swipe Keycard. Approach Terminal (no weapon in hand). Start escape attempt",
+      note: "Final extraction sequence",
+    },
+  },
+  {
+    id: "fail-debtor",
+    type: "story",
+    position: { x: 1700, y: 3240 },
+    data: {
+      label: "If attempt fails:",
+      description: "Barter a new keycard from Lightkeeper for 1 Blue Folder",
+    },
   },
   {
     id: "debtor-ending",
     type: "ending",
-    position: { x: 982, y: 2876 },
-    data: { label: "Debtor Ending", description: "You escaped as Lightkeeper's Debtor", endingType: "debtor" },
-  },
-
-  // ==========================================================================
-  // BRANCH 2: GIVE CASE TO PRAPOR (HARDCORE PATH)
-  // ==========================================================================
-  {
-    id: "give-prapor",
-    type: "story",
-    position: { x: 1605, y: 2 },
-    data: { label: "Hand Over Case to Prapor", description: "Decision: Give the case to Prapor" },
-  },
-  {
-    id: "2-find-compromat",
-    type: "story",
-    position: { x: 1604, y: 97 },
-    data: { label: "Find Compromising Material", description: "On Prapor in Lighthouse" },
-  },
-  {
-    id: "2-lk-access",
-    type: "story",
-    position: { x: 1611, y: 191 },
-    data: { label: "Get Lightkeeper Access", description: "Gain access to Lightkeeper" },
-  },
-  {
-    id: "2-talk-lk",
-    type: "story",
-    position: { x: 1601, y: 292 },
-    data: { label: "Talk to Lightkeeper", description: "Hand over 3 TerraGroup Blue Folders", note: "3 Blue Folders" },
-  },
-  {
-    id: "2-fire-flare",
-    type: "story",
-    position: { x: 1606, y: 428 },
-    data: { label: "Fire Yellow Flare", description: "In front of Ultra Mall (Interchange)" },
-  },
-  {
-    id: "2-kill-15",
-    type: "story",
-    position: { x: 1606, y: 532 },
-    data: { label: "Kill 15 Targets", description: "Without dying (One Raid) on Streets" },
-  },
-  {
-    id: "2-signal-jammer",
-    type: "story",
-    position: { x: 1619, y: 631 },
-    data: { label: "Open the Case", description: "Find Signal Jammer on Labs" },
-  },
-  {
-    id: "2-craft-55h",
-    type: "craft",
-    position: { x: 1619, y: 728 },
-    data: { label: "55H Craft at Workbench", description: "Craft to unlock the case", isCraft: true, craftHours: 55 },
-  },
-  {
-    id: "2-case-open",
-    type: "story",
-    position: { x: 1620, y: 854 },
-    data: { label: "Case is Open", description: "Case unlocked and ready" },
-  },
-  {
-    id: "Kerman-decision-2",
-    type: "decision",
-    position: { x: 1601, y: 940 },
-    data: { label: "Work with Kerman?", description: "Choose to work with Kerman or go solo", isIrreversible: true },
-  },
-
-  // ==========================================================================
-  // PATH 2-A: PRAPOR + DON'T WORK WITH Kerman → SURVIVOR ENDING
-  // ==========================================================================
-  {
-    id: "2a-shoreline-keycard",
-    type: "story",
-    position: { x: 1600, y: 1177 },
-    data: { label: "Shoreline Port Entrance", description: "Swipe Keycard at Intercom" },
-  },
-  {
-    id: "2a-keycard-fail",
-    type: "story",
-    position: { x: 1603, y: 1271 },
-    data: { label: "Keycard Failed", description: "Ask Prapor for Help" },
-  },
-  {
-    id: "2a-pay-prapor",
-    type: "story",
-    position: { x: 1597, y: 1370 },
-    data: { label: "Pay Prapor 300M Roubles", description: "Discounted from 500M (gave Case)", cost: 300000000, note: "300M ₽ (discounted)" },
-  },
-  {
-    id: "2a-find-folders",
-    type: "story",
-    position: { x: 1605, y: 1539 },
-    data: { label: "Find 4 Terragroup Folders", description: "Report Folders on Labs" },
-  },
-  {
-    id: "2a-craft-5h",
-    type: "craft",
-    position: { x: 1603, y: 1624 },
-    data: { label: "5H Craft at Intel Center", description: "Process the data", isCraft: true, craftHours: 5 },
-  },
-  {
-    id: "2a-give-flash",
-    type: "story",
-    position: { x: 1592, y: 1711 },
-    data: { label: "Give Prapor Flash Drive", description: "Hand over the data", note: "72h bonus: 'I am Speed' achievement" },
-  },
-  {
-    id: "2a-kill-50",
-    type: "story",
-    position: { x: 1601, y: 1824 },
-    data: { label: "Kill 50 Targets", description: "Any targets on Streets of Tarkov" },
-  },
-  {
-    id: "2a-kill-4-pmcs",
-    type: "story",
-    position: { x: 1601, y: 1913 },
-    data: { label: "Kill 4 PMCs", description: "Single Raid and survive" },
-  },
-  {
-    id: "2a-get-note",
-    type: "story",
-    position: { x: 1600, y: 2000 },
-    data: { label: "Get Note from Prapor", description: "Note for Terminal soldiers" },
-  },
-  {
-    id: "2a-achievement-easy",
-    type: "story",
-    position: { x: 1600, y: 2100 },
-    data: { label: "Achievement Unlocked", description: "🏆 Easy Way", note: "🏆 Achievement: Easy Way" },
-  },
-  {
-    id: "2a-shoreline-escape",
-    type: "story",
-    position: { x: 1569, y: 2245 },
-    data: { label: "Head to Shoreline", description: "22:00-04:00, Intercom at Tower, No weapon", note: "If fail: 5M ₽ for new Note (limit 2)" },
-  },
-  {
-    id: "survivor-ending-2",
-    type: "ending",
-    position: { x: 1578, y: 2865 },
-    data: { label: "Survivor Ending", description: "You escaped Tarkov as a Survivor (Prapor path)", endingType: "survivor" },
-  },
-
-  // ==========================================================================
-  // PATH 2-B: PRAPOR + WORK WITH Kerman → EXILE ENDING (ALTERNATE)
-  // ==========================================================================
-  {
-    id: "2b-meet-Kerman",
-    type: "story",
-    position: { x: 1918, y: 1097 },
-    data: { label: "Meet Kerman at Safehouse", description: "Hand over RFID Device on Labs" },
-  },
-  {
-    id: "2b-keycard",
-    type: "story",
-    position: { x: 1921, y: 1180 },
-    data: { label: "Keycard Acquired", description: "Obtain access keycard" },
-  },
-  {
-    id: "2b-pay-mechanic",
-    type: "story",
-    position: { x: 1917, y: 1267 },
-    data: { label: "Pay Mechanic 40 Bitcoin", description: "Payment for services", cost: 40, note: "40 BTC" },
-  },
-  {
-    id: "2b-get-rfid",
-    type: "story",
-    position: { x: 1918, y: 1417 },
-    data: { label: "Get RFID Device", description: "Elektroniks Apartment (Streets)" },
-  },
-  {
-    id: "2b-activate-rfid",
-    type: "story",
-    position: { x: 1920, y: 1500 },
-    data: { label: "Activate RFID Card", description: "From Armored Case" },
-  },
-  {
-    id: "2b-craft-50h",
-    type: "craft",
-    position: { x: 1920, y: 1600 },
-    data: { label: "50H Craft at Intel Center", description: "Prepare for Shoreline", isCraft: true, craftHours: 50 },
-  },
-  {
-    id: "2b-shoreline-keycard",
-    type: "story",
-    position: { x: 1920, y: 1700 },
-    data: { label: "Shoreline Port Entrance", description: "Swipe Keycard at Intercom" },
-  },
-  {
-    id: "2b-Kerman-decision",
-    type: "decision",
-    position: { x: 1921, y: 1793 },
-    data: { label: "Help Kerman find Evidence?", description: "Choose your path to escape", isIrreversible: true },
-  },
-
-  // ==========================================================================
-  // PATH 2-B1: HELP KERMAN (FENCE PATH) → SAVIOR ENDING
-  // ==========================================================================
-  {
-    id: "2b1-help-evidence",
-    type: "story",
-    position: { x: 1914, y: 1963 },
-    data: { label: "Help Kerman find Evidence", description: "On Terragroup" },
-  },
-  {
-    id: "2b1-complete-chapters",
-    type: "story",
-    position: { x: 1887, y: 2044 },
-    data: { label: "Complete Story Chapters", description: "Complete every other chapter, hand in evidence" },
-  },
-  {
-    id: "2b1-fence-contact",
-    type: "story",
-    position: { x: 1917, y: 2147 },
-    data: { label: "Kerman's Contact (Fence)", description: "Fence reaches out" },
-  },
-  {
-    id: "2b1-fence-rep",
-    type: "story",
-    position: { x: 1919, y: 2234 },
-    data: { label: "Get 4.0 Fence Rep", description: "Raise Fence reputation" },
-  },
-  {
-    id: "2b1-pvp-pve-task",
-    type: "story",
-    position: { x: 1894, y: 2314 },
-    data: { label: "PvP/PvE Task", description: "PvP: Co-Op Extract with Scav (Woods/Reserve)\nPvE: Kill 5 PMCs w/o killing Scavs" },
-  },
-  {
-    id: "2b1-btr-rep",
-    type: "story",
-    position: { x: 1909, y: 2435 },
-    data: { label: "BTR Driver 0.4 Rep", description: "Complete 'The Price of Independence'" },
-  },
-  {
-    id: "2b1-solar-power",
-    type: "story",
-    position: { x: 1927, y: 2525 },
-    data: { label: "Build Solar Power", description: "Hideout upgrade", isCraft: true },
-  },
-  {
-    id: "2b1-final-craft",
-    type: "story",
-    position: { x: 1926, y: 2605 },
-    data: { label: "Final Keycard Craft", description: "Craft the escape keycard", isCraft: true },
-  },
-  {
-    id: "2b1-shoreline-escape",
-    type: "story",
-    position: { x: 1894, y: 2712 },
-    data: { label: "Head to Shoreline", description: "22:00-04:00, Intercom at Tower, No weapon", note: "If fail: 11H craft + new Blank RFID Card" },
-  },
-  {
-    id: "savior-ending-2",
-    type: "ending",
-    position: { x: 1904, y: 2870 },
-    data: { label: "Savior Ending", description: "You escaped as a Savior with Kerman (Prapor path)", endingType: "savior" },
-  },
-
-  // ==========================================================================
-  // PATH 2-B3: DON'T HELP (LIGHTKEEPER PATH) → DEBTOR ENDING
-  // ==========================================================================
-  {
-    id: "2b3-no-help-lk",
-    type: "story",
-    position: { x: 2304, y: 2025 },
-    data: { label: "Don't Help Kerman", description: "Talk to Lightkeeper", note: "🏆 Achievement: U Turn" },
-  },
-  {
-    id: "2b3-topo-recon",
-    type: "story",
-    position: { x: 2305, y: 2144 },
-    data: { label: "Find 5 Topographic Recon", description: "5 different maps, 1 per map" },
-  },
-  {
-    id: "2b3-craft-6h",
-    type: "craft",
-    position: { x: 2306, y: 2237 },
-    data: { label: "6H Craft at Intel Center", description: "Process the data", isCraft: true, craftHours: 6 },
-  },
-  {
-    id: "2b3-flash-drive",
-    type: "story",
-    position: { x: 2304, y: 2329 },
-    data: { label: "Bring Flash Drive to LK", description: "Special Flash Drive with material" },
-  },
-  {
-    id: "2b3-kill-30-pmcs",
-    type: "story",
-    position: { x: 2305, y: 2427 },
-    data: { label: "Kill 30 PMCs on Woods", description: "Hand over 100 PMC Dogtags" },
-  },
-  {
-    id: "2b3-cultist-amulets",
-    type: "story",
-    position: { x: 2306, y: 2510 },
-    data: { label: "Find Cultist Amulets", description: "One in each Marked Room" },
-  },
-  {
-    id: "2b3-place-amulets",
-    type: "story",
-    position: { x: 2285, y: 2590 },
-    data: { label: "Place Amulets", description: "Shared Bedroom Marked Key on LK Island" },
-  },
-  {
-    id: "2b3-get-keycard",
-    type: "story",
-    position: { x: 2288, y: 2669 },
-    data: { label: "Get Keycard from LK", description: "Lightkeeper hands you Terminal keycard" },
-  },
-  {
-    id: "2b3-shoreline-escape",
-    type: "story",
-    position: { x: 2279, y: 2750 },
-    data: { label: "Head to Shoreline", description: "22:00-04:00, Intercom at Tower, No weapon", note: "If fail: Barter 1 Blue Folder from LK" },
-  },
-  {
-    id: "debtor-ending-2",
-    type: "ending",
-    position: { x: 2292, y: 2871 },
-    data: { label: "Debtor Ending", description: "You escaped as Lightkeeper's Debtor (Prapor path)", endingType: "debtor" },
+    position: { x: 1800, y: 3720 },
+    data: {
+      label: "Debtor Ending",
+      description: "You escaped Tarkov through Lightkeeper's debt",
+      endingType: "debtor",
+    },
   },
 ];
 
 // ============================================================================
-// EDGES
+// EDGES - Based on Mermaid flowchart connections
 // ============================================================================
 
 export const initialEdges: Edge[] = [
-  // ==================== START → INITIAL DECISION ====================
-  { id: "e-start-decision", source: "start", target: "case-decision", style: { stroke: "#666" } },
+  // ==================== TOP: ARMORED CASE ====================
+  // Title -> Recover
+  {
+    id: "e-title-recover",
+    source: "title",
+    target: "recover",
+    style: { stroke: "#666" },
+  },
 
-  // ==================== INITIAL DECISION BRANCHES ====================
-  { id: "e-decision-keep", source: "case-decision", target: "keep-case", label: "Keep Case", style: { stroke: "#3b82f6" } },
-  { id: "e-decision-give", source: "case-decision", target: "give-prapor", label: "Give to Prapor", style: { stroke: "#ef4444" } },
+  // Recover -> Keep/Give decision
+  {
+    id: "e-recover-keep",
+    source: "recover",
+    target: "keep-self",
+    style: { stroke: "#3b82f6" },
+  },
+  {
+    id: "e-recover-give",
+    source: "recover",
+    target: "give-prapor-0",
+    style: { stroke: "#ef4444" },
+  },
 
-  // ==================== BRANCH 1: KEEP CASE PATH (Common Setup) ====================
-  { id: "e-keep-open", source: "keep-case", target: "1-open-case", style: { stroke: "#3b82f6" } },
-  { id: "e-open-craft", source: "1-open-case", target: "1-craft-55h", style: { stroke: "#3b82f6" } },
-  { id: "e-craft-open", source: "1-craft-55h", target: "1-case-open", style: { stroke: "#3b82f6" } },
-  { id: "e-open-Kerman1", source: "1-case-open", target: "Kerman-decision-1", style: { stroke: "#3b82f6" } },
+  // Keep path -> Armored Hands (direct)
+  {
+    id: "e-keep-armored",
+    source: "keep-self",
+    target: "armored-hands",
+    style: { stroke: "#3b82f6" },
+  },
 
-  // ==================== Kerman DECISION 1 BRANCHES ====================
-  { id: "e-Kerman1-solo", source: "Kerman-decision-1", target: "1a-shoreline-keycard", label: "Don't work with Kerman", style: { stroke: "#22c55e" } },
-  { id: "e-Kerman1-work", source: "Kerman-decision-1", target: "1b-search-labs", label: "Work together", style: { stroke: "#f59e0b" } },
+  // Give Prapor path (longer route to get case back)
+  {
+    id: "e-give-comp",
+    source: "give-prapor-0",
+    target: "prapor-comp",
+    style: { stroke: "#ef4444" },
+  },
+  {
+    id: "e-comp-lkaccess",
+    source: "prapor-comp",
+    target: "lk-access",
+    style: { stroke: "#ef4444" },
+  },
+  {
+    id: "e-lkaccess-talklk0",
+    source: "lk-access",
+    target: "talk-lk-0",
+    style: { stroke: "#ef4444" },
+  },
+  {
+    id: "e-talklk0-flare",
+    source: "talk-lk-0",
+    target: "yellow-flare",
+    style: { stroke: "#ef4444" },
+  },
+  {
+    id: "e-flare-kill15",
+    source: "yellow-flare",
+    target: "kill-15",
+    style: { stroke: "#ef4444" },
+  },
+  {
+    id: "e-kill15-lkcase",
+    source: "kill-15",
+    target: "lk-case",
+    style: { stroke: "#ef4444" },
+  },
+  {
+    id: "e-lkcase-armored",
+    source: "lk-case",
+    target: "armored-hands",
+    style: { stroke: "#ef4444" },
+  },
 
-  // ==================== PATH 1-A: SURVIVOR PATH ====================
-  { id: "e-1a-1", source: "1a-shoreline-keycard", target: "1a-keycard-fail", style: { stroke: "#22c55e" } },
-  { id: "e-1a-2", source: "1a-keycard-fail", target: "1a-pay-prapor", style: { stroke: "#22c55e" } },
-  { id: "e-1a-3", source: "1a-pay-prapor", target: "1a-find-folders", style: { stroke: "#22c55e" } },
-  { id: "e-1a-4", source: "1a-find-folders", target: "1a-craft-5h", style: { stroke: "#22c55e" } },
-  { id: "e-1a-5", source: "1a-craft-5h", target: "1a-give-flash", style: { stroke: "#22c55e" } },
-  { id: "e-1a-6", source: "1a-give-flash", target: "1a-kill-50", style: { stroke: "#22c55e" } },
-  { id: "e-1a-7", source: "1a-kill-50", target: "1a-kill-4-pmcs", style: { stroke: "#22c55e" } },
-  { id: "e-1a-8", source: "1a-kill-4-pmcs", target: "1a-get-note", style: { stroke: "#22c55e" } },
-  { id: "e-1a-9", source: "1a-get-note", target: "1a-achievement-easy", style: { stroke: "#22c55e" } },
-  { id: "e-1a-10", source: "1a-achievement-easy", target: "1a-shoreline-escape", style: { stroke: "#22c55e" } },
-  { id: "e-1a-ending", source: "1a-shoreline-escape", target: "survivor-ending", style: { stroke: "#22c55e" } },
+  // Armored Hands -> Open Case -> Craft -> Case Open
+  {
+    id: "e-armored-open",
+    source: "armored-hands",
+    target: "open-case",
+    style: { stroke: "#666" },
+  },
+  {
+    id: "e-open-tg48",
+    source: "open-case",
+    target: "tg-48",
+    style: { stroke: "#666" },
+  },
+  {
+    id: "e-tg48-caseopen",
+    source: "tg-48",
+    target: "case-open",
+    style: { stroke: "#666" },
+  },
 
-  // ==================== PATH 1-B: WORK WITH Kerman ====================
-  { id: "e-1b-1", source: "1b-search-labs", target: "1b-keycard-acquired", style: { stroke: "#f59e0b" } },
-  { id: "e-1b-2", source: "1b-keycard-acquired", target: "1b-pay-mechanic", style: { stroke: "#f59e0b" } },
-  { id: "e-1b-3", source: "1b-pay-mechanic", target: "1b-get-rfid", style: { stroke: "#f59e0b" } },
-  { id: "e-1b-4", source: "1b-get-rfid", target: "1b-activate-rfid", style: { stroke: "#f59e0b" } },
-  { id: "e-1b-5", source: "1b-activate-rfid", target: "1b-craft-50h", style: { stroke: "#f59e0b" } },
-  { id: "e-1b-6", source: "1b-craft-50h", target: "1b-shoreline-keycard", style: { stroke: "#f59e0b" } },
-  { id: "e-1b-7", source: "1b-shoreline-keycard", target: "Kerman-evidence-decision", style: { stroke: "#f59e0b" } },
+  // ==================== SPLIT: Work with Kerman ====================
+  {
+    id: "e-caseopen-dontwork",
+    source: "case-open",
+    target: "dont-work",
+    style: { stroke: "#3b82f6" },
+  },
+  {
+    id: "e-caseopen-worktogether",
+    source: "case-open",
+    target: "work-together",
+    style: { stroke: "#f59e0b" },
+  },
 
-  // ==================== Kerman EVIDENCE DECISION BRANCHES ====================
-  { id: "e-evidence-help", source: "Kerman-evidence-decision", target: "1b1-help-evidence", label: "Help Kerman", style: { stroke: "#22c55e" } },
-  { id: "e-evidence-prapor", source: "Kerman-evidence-decision", target: "1b2-no-help-prapor", label: "Prapor (if no LK)", style: { stroke: "#6b7280" } },
-  { id: "e-evidence-lk", source: "Kerman-evidence-decision", target: "1b3-no-help-lk", label: "Lightkeeper", style: { stroke: "#8b5cf6" } },
+  // ==================== SURVIVOR PATH (Don't work with Kerman) ====================
+  {
+    id: "e-dontwork-slshore",
+    source: "dont-work",
+    target: "sl-shore",
+    style: { stroke: "#3b82f6" },
+  },
+  {
+    id: "e-slshore-keyfail",
+    source: "sl-shore",
+    target: "sl-key-fail",
+    style: { stroke: "#3b82f6" },
+  },
 
-  // ==================== PATH 1-B1: SAVIOR (FENCE PATH) ====================
-  { id: "e-1b1-1", source: "1b1-help-evidence", target: "1b1-complete-chapters", style: { stroke: "#22c55e" } },
-  { id: "e-1b1-2", source: "1b1-complete-chapters", target: "1b1-fence-contact", style: { stroke: "#22c55e" } },
-  { id: "e-1b1-3", source: "1b1-fence-contact", target: "1b1-fence-rep", style: { stroke: "#22c55e" } },
-  { id: "e-1b1-4", source: "1b1-fence-rep", target: "1b1-pvp-pve-task", style: { stroke: "#22c55e" } },
-  { id: "e-1b1-5", source: "1b1-pvp-pve-task", target: "1b1-btr-rep", style: { stroke: "#22c55e" } },
-  { id: "e-1b1-6", source: "1b1-btr-rep", target: "1b1-solar-power", style: { stroke: "#22c55e" } },
-  { id: "e-1b1-7", source: "1b1-solar-power", target: "1b1-final-craft", style: { stroke: "#22c55e" } },
-  { id: "e-1b1-8", source: "1b1-final-craft", target: "1b1-shoreline-escape", style: { stroke: "#22c55e" } },
-  { id: "e-1b1-ending", source: "1b1-shoreline-escape", target: "savior-ending", style: { stroke: "#22c55e" } },
+  // Cost branches (parallel)
+  {
+    id: "e-keyfail-300",
+    source: "sl-key-fail",
+    target: "sl-300",
+    style: { stroke: "#ef4444" },
+  },
+  {
+    id: "e-keyfail-500",
+    source: "sl-key-fail",
+    target: "sl-500",
+    style: { stroke: "#3b82f6" },
+  },
 
-  // ==================== PATH 1-B2: FALLEN (PRAPOR HARD MODE) ====================
-  { id: "e-1b2-1", source: "1b2-no-help-prapor", target: "1b2-repair-kits", style: { stroke: "#6b7280" } },
-  { id: "e-1b2-2", source: "1b2-repair-kits", target: "1b2-secure-container", style: { stroke: "#6b7280" } },
-  { id: "e-1b2-3", source: "1b2-secure-container", target: "1b2-mil-components", style: { stroke: "#6b7280" } },
-  { id: "e-1b2-4", source: "1b2-mil-components", target: "1b2-bio-weapon", style: { stroke: "#6b7280" } },
-  { id: "e-1b2-5", source: "1b2-bio-weapon", target: "1b2-pay-usd", style: { stroke: "#6b7280" } },
-  { id: "e-1b2-6", source: "1b2-pay-usd", target: "1b2-get-usb-stick", style: { stroke: "#6b7280" } },
-  { id: "e-1b2-7", source: "1b2-get-usb-stick", target: "1b2-final-keycard-craft", style: { stroke: "#6b7280" } },
-  { id: "e-1b2-8", source: "1b2-final-keycard-craft", target: "1b2-shoreline-escape", style: { stroke: "#6b7280" } },
-  { id: "e-1b2-ending", source: "1b2-shoreline-escape", target: "fallen-ending", style: { stroke: "#6b7280" } },
+  // 300M path (gave case to Prapor) -> direct to Note
+  {
+    id: "e-300-note",
+    source: "sl-300",
+    target: "sl-note",
+    style: { stroke: "#ef4444" },
+  },
 
-  // ==================== PATH 1-B3: DEBTOR (LIGHTKEEPER PATH) ====================
-  { id: "e-1b3-1", source: "1b3-no-help-lk", target: "1b3-topo-recon", style: { stroke: "#8b5cf6" } },
-  { id: "e-1b3-2", source: "1b3-topo-recon", target: "1b3-craft-6h", style: { stroke: "#8b5cf6" } },
-  { id: "e-1b3-3", source: "1b3-craft-6h", target: "1b3-flash-drive", style: { stroke: "#8b5cf6" } },
-  { id: "e-1b3-4", source: "1b3-flash-drive", target: "1b3-kill-30-pmcs", style: { stroke: "#8b5cf6" } },
-  { id: "e-1b3-5", source: "1b3-kill-30-pmcs", target: "1b3-cultist-amulets", style: { stroke: "#8b5cf6" } },
-  { id: "e-1b3-6", source: "1b3-cultist-amulets", target: "1b3-place-amulets", style: { stroke: "#8b5cf6" } },
-  { id: "e-1b3-7", source: "1b3-place-amulets", target: "1b3-get-keycard", style: { stroke: "#8b5cf6" } },
-  { id: "e-1b3-8", source: "1b3-get-keycard", target: "1b3-shoreline-escape", style: { stroke: "#8b5cf6" } },
-  { id: "e-1b3-ending", source: "1b3-shoreline-escape", target: "debtor-ending", style: { stroke: "#8b5cf6" } },
+  // 500M path (kept case) -> longer task chain
+  {
+    id: "e-500-tg",
+    source: "sl-500",
+    target: "sl-tg",
+    style: { stroke: "#3b82f6" },
+  },
+  {
+    id: "e-tg-5",
+    source: "sl-tg",
+    target: "sl-5",
+    style: { stroke: "#3b82f6" },
+  },
+  {
+    id: "e-5-flash",
+    source: "sl-5",
+    target: "sl-flash",
+    style: { stroke: "#3b82f6" },
+  },
+  {
+    id: "e-flash-kill50",
+    source: "sl-flash",
+    target: "sl-kill-50",
+    style: { stroke: "#3b82f6" },
+  },
+  {
+    id: "e-kill50-kill4",
+    source: "sl-kill-50",
+    target: "sl-kill-4",
+    style: { stroke: "#3b82f6" },
+  },
+  {
+    id: "e-kill4-48",
+    source: "sl-kill-4",
+    target: "sl-48",
+    style: { stroke: "#3b82f6" },
+  },
+  {
+    id: "e-48-note",
+    source: "sl-48",
+    target: "sl-note",
+    style: { stroke: "#3b82f6" },
+  },
 
-  // ==================== BRANCH 2: PRAPOR PATH ====================
-  { id: "e-prapor-1", source: "give-prapor", target: "2-find-compromat", style: { stroke: "#ef4444" } },
-  { id: "e-prapor-2", source: "2-find-compromat", target: "2-lk-access", style: { stroke: "#ef4444" } },
-  { id: "e-prapor-3", source: "2-lk-access", target: "2-talk-lk", style: { stroke: "#ef4444" } },
-  { id: "e-prapor-4", source: "2-talk-lk", target: "2-fire-flare", style: { stroke: "#ef4444" } },
-  { id: "e-prapor-5", source: "2-fire-flare", target: "2-kill-15", style: { stroke: "#ef4444" } },
-  { id: "e-prapor-6", source: "2-kill-15", target: "2-signal-jammer", style: { stroke: "#ef4444" } },
-  { id: "e-prapor-7", source: "2-signal-jammer", target: "2-craft-55h", style: { stroke: "#ef4444" } },
-  { id: "e-prapor-8", source: "2-craft-55h", target: "2-case-open", style: { stroke: "#ef4444" } },
-  { id: "e-prapor-9", source: "2-case-open", target: "Kerman-decision-2", style: { stroke: "#ef4444" } },
+  // Note -> Easy Way -> Ending sequence
+  {
+    id: "e-note-easy",
+    source: "sl-note",
+    target: "sl-easy",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-easy-endsetup",
+    source: "sl-easy",
+    target: "end-setup-survivor",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-endsetup-fail-survivor",
+    source: "end-setup-survivor",
+    target: "fail-survivor",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-fail-survivor-ending",
+    source: "fail-survivor",
+    target: "survivor-ending",
+    style: { stroke: "#22c55e" },
+  },
 
-  // ==================== Kerman DECISION 2 BRANCHES ====================
-  { id: "e-Kerman2-solo", source: "Kerman-decision-2", target: "2a-shoreline-keycard", label: "Don't work with Kerman", style: { stroke: "#22c55e" } },
-  { id: "e-Kerman2-work", source: "Kerman-decision-2", target: "2b-meet-Kerman", label: "Work together", style: { stroke: "#a855f7" } },
+  // ==================== WORK TOGETHER PATH ====================
+  {
+    id: "e-worktogether-search",
+    source: "work-together",
+    target: "wt-search",
+    style: { stroke: "#f59e0b" },
+  },
+  {
+    id: "e-search-keycard",
+    source: "wt-search",
+    target: "wt-keycard",
+    style: { stroke: "#f59e0b" },
+  },
+  {
+    id: "e-keycard-tg24",
+    source: "wt-keycard",
+    target: "tg-24",
+    style: { stroke: "#f59e0b" },
+  },
+  {
+    id: "e-tg24-paymech",
+    source: "tg-24",
+    target: "wt-pay-mech",
+    style: { stroke: "#f59e0b" },
+  },
+  {
+    id: "e-paymech-elekt",
+    source: "wt-pay-mech",
+    target: "wt-elekt",
+    style: { stroke: "#f59e0b" },
+  },
+  {
+    id: "e-elekt-activate",
+    source: "wt-elekt",
+    target: "wt-activate",
+    style: { stroke: "#f59e0b" },
+  },
+  {
+    id: "e-activate-tg50",
+    source: "wt-activate",
+    target: "tg-50",
+    style: { stroke: "#f59e0b" },
+  },
+  {
+    id: "e-tg50-wtshore",
+    source: "tg-50",
+    target: "wt-shore",
+    style: { stroke: "#f59e0b" },
+  },
 
-  // ==================== PATH 2-A: SURVIVOR PATH ====================
-  { id: "e-2a-1", source: "2a-shoreline-keycard", target: "2a-keycard-fail", style: { stroke: "#22c55e" } },
-  { id: "e-2a-2", source: "2a-keycard-fail", target: "2a-pay-prapor", style: { stroke: "#22c55e" } },
-  { id: "e-2a-3", source: "2a-pay-prapor", target: "2a-find-folders", style: { stroke: "#22c55e" } },
-  { id: "e-2a-4", source: "2a-find-folders", target: "2a-craft-5h", style: { stroke: "#22c55e" } },
-  { id: "e-2a-5", source: "2a-craft-5h", target: "2a-give-flash", style: { stroke: "#22c55e" } },
-  { id: "e-2a-6", source: "2a-give-flash", target: "2a-kill-50", style: { stroke: "#22c55e" } },
-  { id: "e-2a-7", source: "2a-kill-50", target: "2a-kill-4-pmcs", style: { stroke: "#22c55e" } },
-  { id: "e-2a-8", source: "2a-kill-4-pmcs", target: "2a-get-note", style: { stroke: "#22c55e" } },
-  { id: "e-2a-9", source: "2a-get-note", target: "2a-achievement-easy", style: { stroke: "#22c55e" } },
-  { id: "e-2a-10", source: "2a-achievement-easy", target: "2a-shoreline-escape", style: { stroke: "#22c55e" } },
-  { id: "e-2a-ending", source: "2a-shoreline-escape", target: "survivor-ending-2", style: { stroke: "#22c55e" } },
+  // ==================== POST-SWIPE: 3 branches ====================
+  {
+    id: "e-wtshore-hksavior",
+    source: "wt-shore",
+    target: "hk-savior",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-wtshore-nkfallen",
+    source: "wt-shore",
+    target: "nk-fallen",
+    style: { stroke: "#ef4444" },
+  },
+  {
+    id: "e-wtshore-hkdebtor",
+    source: "wt-shore",
+    target: "hk-debtor",
+    style: { stroke: "#a78bfa" },
+  },
 
-  // ==================== PATH 2-B: WORK WITH KERMAN (COMMON) ====================
-  { id: "e-2b-1", source: "2b-meet-Kerman", target: "2b-keycard", style: { stroke: "#a855f7" } },
-  { id: "e-2b-2", source: "2b-keycard", target: "2b-pay-mechanic", style: { stroke: "#a855f7" } },
-  { id: "e-2b-3", source: "2b-pay-mechanic", target: "2b-get-rfid", style: { stroke: "#a855f7" } },
-  { id: "e-2b-4", source: "2b-get-rfid", target: "2b-activate-rfid", style: { stroke: "#a855f7" } },
-  { id: "e-2b-5", source: "2b-activate-rfid", target: "2b-craft-50h", style: { stroke: "#a855f7" } },
-  { id: "e-2b-6", source: "2b-craft-50h", target: "2b-shoreline-keycard", style: { stroke: "#a855f7" } },
-  { id: "e-2b-7", source: "2b-shoreline-keycard", target: "2b-Kerman-decision", style: { stroke: "#a855f7" } },
+  // ==================== SAVIOR PATH ====================
+  {
+    id: "e-hksavior-audio",
+    source: "hk-savior",
+    target: "audio-note",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-audio-complete",
+    source: "audio-note",
+    target: "complete-all",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-complete-tg48b",
+    source: "complete-all",
+    target: "tg-48b",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-tg48b-trusted",
+    source: "tg-48b",
+    target: "trusted",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-trusted-fence4",
+    source: "trusted",
+    target: "fence-4",
+    style: { stroke: "#22c55e" },
+  },
 
-  // ==================== KERMAN DECISION 2B BRANCHES ====================
-  { id: "e-2b-Kerman-help", source: "2b-Kerman-decision", target: "2b1-help-evidence", label: "Help Kerman", style: { stroke: "#22c55e" } },
-  { id: "e-2b-Kerman-no-help", source: "2b-Kerman-decision", target: "2b3-no-help-lk", label: "Don't help", style: { stroke: "#8b5cf6" } },
+  // PVP/PVE split
+  {
+    id: "e-fence4-pvp",
+    source: "fence-4",
+    target: "pvp",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-fence4-pve",
+    source: "fence-4",
+    target: "pve",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-pvp-kill5",
+    source: "pvp",
+    target: "kill-5-no-scav",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-pve-coop",
+    source: "pve",
+    target: "coop",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-kill5-btr",
+    source: "kill-5-no-scav",
+    target: "btr-04",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-coop-btr",
+    source: "coop",
+    target: "btr-04",
+    style: { stroke: "#22c55e" },
+  },
 
-  // ==================== PATH 2-B1: SAVIOR (FENCE PATH) ====================
-  { id: "e-2b1-1", source: "2b1-help-evidence", target: "2b1-complete-chapters", style: { stroke: "#22c55e" } },
-  { id: "e-2b1-2", source: "2b1-complete-chapters", target: "2b1-fence-contact", style: { stroke: "#22c55e" } },
-  { id: "e-2b1-3", source: "2b1-fence-contact", target: "2b1-fence-rep", style: { stroke: "#22c55e" } },
-  { id: "e-2b1-4", source: "2b1-fence-rep", target: "2b1-pvp-pve-task", style: { stroke: "#22c55e" } },
-  { id: "e-2b1-5", source: "2b1-pvp-pve-task", target: "2b1-btr-rep", style: { stroke: "#22c55e" } },
-  { id: "e-2b1-6", source: "2b1-btr-rep", target: "2b1-solar-power", style: { stroke: "#22c55e" } },
-  { id: "e-2b1-7", source: "2b1-solar-power", target: "2b1-final-craft", style: { stroke: "#22c55e" } },
-  { id: "e-2b1-8", source: "2b1-final-craft", target: "2b1-shoreline-escape", style: { stroke: "#22c55e" } },
-  { id: "e-2b1-ending", source: "2b1-shoreline-escape", target: "savior-ending-2", style: { stroke: "#22c55e" } },
+  // Warning connection (dashed)
+  {
+    id: "e-complete-warn",
+    source: "complete-all",
+    target: "warn-btr",
+    style: { stroke: "#a78bfa", strokeDasharray: "5,5" },
+  },
+  {
+    id: "e-btr-warn",
+    source: "btr-04",
+    target: "warn-btr",
+    style: { stroke: "#a78bfa", strokeDasharray: "5,5" },
+  },
+  {
+    id: "e-warn-slshore",
+    source: "warn-btr",
+    target: "sl-shore",
+    style: { stroke: "#a78bfa", strokeDasharray: "5,5" },
+  },
 
-  // ==================== PATH 2-B3: DEBTOR (LIGHTKEEPER PATH) ====================
-  { id: "e-2b3-1", source: "2b3-no-help-lk", target: "2b3-topo-recon", style: { stroke: "#8b5cf6" } },
-  { id: "e-2b3-2", source: "2b3-topo-recon", target: "2b3-craft-6h", style: { stroke: "#8b5cf6" } },
-  { id: "e-2b3-3", source: "2b3-craft-6h", target: "2b3-flash-drive", style: { stroke: "#8b5cf6" } },
-  { id: "e-2b3-4", source: "2b3-flash-drive", target: "2b3-kill-30-pmcs", style: { stroke: "#8b5cf6" } },
-  { id: "e-2b3-5", source: "2b3-kill-30-pmcs", target: "2b3-cultist-amulets", style: { stroke: "#8b5cf6" } },
-  { id: "e-2b3-6", source: "2b3-cultist-amulets", target: "2b3-place-amulets", style: { stroke: "#8b5cf6" } },
-  { id: "e-2b3-7", source: "2b3-place-amulets", target: "2b3-get-keycard", style: { stroke: "#8b5cf6" } },
-  { id: "e-2b3-8", source: "2b3-get-keycard", target: "2b3-shoreline-escape", style: { stroke: "#8b5cf6" } },
-  { id: "e-2b3-ending", source: "2b3-shoreline-escape", target: "debtor-ending-2", style: { stroke: "#8b5cf6" } },
+  // Continue Savior path
+  {
+    id: "e-btr-solar",
+    source: "btr-04",
+    target: "solar-savior",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-solar-build72",
+    source: "solar-savior",
+    target: "build-72-savior",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-build72-finalcraft",
+    source: "build-72-savior",
+    target: "final-craft-savior",
+    style: { stroke: "#22c55e" },
+  },
+
+  // Savior ending sequence
+  {
+    id: "e-finalcraft-endsetup-savior",
+    source: "final-craft-savior",
+    target: "end-setup-savior",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-endsetup-fail-savior",
+    source: "end-setup-savior",
+    target: "fail-savior",
+    style: { stroke: "#22c55e" },
+  },
+  {
+    id: "e-fail-savior-ending",
+    source: "fail-savior",
+    target: "savior-ending",
+    style: { stroke: "#22c55e" },
+  },
+
+  // ==================== FALLEN PATH ====================
+  {
+    id: "e-nkfallen-enough",
+    source: "nk-fallen",
+    target: "enough",
+    style: { stroke: "#ef4444" },
+  },
+  {
+    id: "e-enough-talkprapor",
+    source: "enough",
+    target: "talk-prapor",
+    style: { stroke: "#ef4444" },
+  },
+
+  // Conditional branches
+  {
+    id: "e-talkprapor-caseback",
+    source: "talk-prapor",
+    target: "case-back",
+    style: { stroke: "#ef4444" },
+  },
+  {
+    id: "e-talkprapor-nocaseback",
+    source: "talk-prapor",
+    target: "no-case-back",
+    style: { stroke: "#ef4444" },
+  },
+
+  // Case back path (shorter) -> Bio Case
+  {
+    id: "e-caseback-bio",
+    source: "case-back",
+    target: "bio-case",
+    style: { stroke: "#ef4444" },
+  },
+
+  // No case back path (longer)
+  {
+    id: "e-nocaseback-repair",
+    source: "no-case-back",
+    target: "repair-40",
+    style: { stroke: "#ef4444" },
+  },
+  {
+    id: "e-repair-secure",
+    source: "repair-40",
+    target: "secure-cont",
+    style: { stroke: "#ef4444" },
+  },
+  {
+    id: "e-secure-military",
+    source: "secure-cont",
+    target: "military-50",
+    style: { stroke: "#ef4444" },
+  },
+  {
+    id: "e-military-bio",
+    source: "military-50",
+    target: "bio-case",
+    style: { stroke: "#ef4444" },
+  },
+
+  // Convergence -> Bio Case onward
+  {
+    id: "e-bio-usd",
+    source: "bio-case",
+    target: "usd-1m",
+    style: { stroke: "#ef4444" },
+  },
+  {
+    id: "e-usd-willblow",
+    source: "usd-1m",
+    target: "will-blow",
+    style: { stroke: "#ef4444" },
+  },
+  {
+    id: "e-willblow-tg48c",
+    source: "will-blow",
+    target: "tg-48c",
+    style: { stroke: "#ef4444" },
+  },
+  {
+    id: "e-tg48c-hash",
+    source: "tg-48c",
+    target: "hash-usb",
+    style: { stroke: "#ef4444" },
+  },
+  {
+    id: "e-hash-solar-fallen",
+    source: "hash-usb",
+    target: "solar-fallen",
+    style: { stroke: "#ef4444" },
+  },
+  {
+    id: "e-solar-build72-fallen",
+    source: "solar-fallen",
+    target: "build-72-fallen",
+    style: { stroke: "#ef4444" },
+  },
+  {
+    id: "e-build72-finalcraft-fallen",
+    source: "build-72-fallen",
+    target: "final-craft-fallen",
+    style: { stroke: "#ef4444" },
+  },
+
+  // Fallen ending sequence
+  {
+    id: "e-finalcraft-endsetup-fallen",
+    source: "final-craft-fallen",
+    target: "end-setup-fallen",
+    style: { stroke: "#ef4444" },
+  },
+  {
+    id: "e-endsetup-fail-fallen",
+    source: "end-setup-fallen",
+    target: "fail-fallen",
+    style: { stroke: "#ef4444" },
+  },
+  {
+    id: "e-fail-fallen-ending",
+    source: "fail-fallen",
+    target: "fallen-ending",
+    style: { stroke: "#ef4444" },
+  },
+
+  // ==================== DEBTOR PATH ====================
+  {
+    id: "e-hkdebtor-hand2",
+    source: "hk-debtor",
+    target: "hand-2-major",
+    style: { stroke: "#a78bfa" },
+  },
+  {
+    id: "e-hand2-uturn",
+    source: "hand-2-major",
+    target: "u-turn",
+    style: { stroke: "#a78bfa" },
+  },
+  {
+    id: "e-uturn-talklk",
+    source: "u-turn",
+    target: "talk-lk",
+    style: { stroke: "#a78bfa" },
+  },
+  {
+    id: "e-talklk-topo",
+    source: "talk-lk",
+    target: "topo",
+    style: { stroke: "#a78bfa" },
+  },
+  {
+    id: "e-topo-tg24b",
+    source: "topo",
+    target: "tg-24b",
+    style: { stroke: "#a78bfa" },
+  },
+  {
+    id: "e-tg24b-hashdrive",
+    source: "tg-24b",
+    target: "hash-drive",
+    style: { stroke: "#a78bfa" },
+  },
+  {
+    id: "e-hashdrive-kill30",
+    source: "hash-drive",
+    target: "kill-30",
+    style: { stroke: "#a78bfa" },
+  },
+  {
+    id: "e-kill30-amulet",
+    source: "kill-30",
+    target: "amulet",
+    style: { stroke: "#a78bfa" },
+  },
+  {
+    id: "e-amulet-place",
+    source: "amulet",
+    target: "place",
+    style: { stroke: "#a78bfa" },
+  },
+  {
+    id: "e-place-tg48d",
+    source: "place",
+    target: "tg-48d",
+    style: { stroke: "#a78bfa" },
+  },
+  {
+    id: "e-tg48d-lkkey",
+    source: "tg-48d",
+    target: "lk-key",
+    style: { stroke: "#a78bfa" },
+  },
+
+  // Debtor ending sequence
+  {
+    id: "e-lkkey-endsetup-debtor",
+    source: "lk-key",
+    target: "end-setup-debtor",
+    style: { stroke: "#a78bfa" },
+  },
+  {
+    id: "e-endsetup-fail-debtor",
+    source: "end-setup-debtor",
+    target: "fail-debtor",
+    style: { stroke: "#a78bfa" },
+  },
+  {
+    id: "e-fail-debtor-ending",
+    source: "fail-debtor",
+    target: "debtor-ending",
+    style: { stroke: "#a78bfa" },
+  },
 ];
 
 // ============================================================================
@@ -897,30 +1608,57 @@ export const initialEdges: Edge[] = [
 
 /**
  * Find the path from the start node to a target node using BFS
+ * Updated to handle multiple parents and branching paths
  */
 export function findPathToNode(
   targetId: string,
   nodes: Node[],
   edges: Edge[]
 ): Node[] {
-  // Build adjacency list (reverse direction - from target to sources)
-  const parentMap = new Map<string, string>();
+  // Build adjacency list (forward direction - from sources to targets)
+  const adjacencyList = new Map<string, string[]>();
   for (const edge of edges) {
-    parentMap.set(edge.target, edge.source);
+    const existing = adjacencyList.get(edge.source) || [];
+    adjacencyList.set(edge.source, [...existing, edge.target]);
   }
 
-  // Trace back from target to start
-  const path: string[] = [];
-  let current: string | undefined = targetId;
-  
-  while (current) {
-    path.unshift(current);
-    current = parentMap.get(current);
-  }
-
-  // Convert IDs to nodes
+  // BFS from title to find the shortest path to target
   const nodeMap = new Map(nodes.map((n) => [n.id, n]));
-  return path.map((id) => nodeMap.get(id)).filter((n): n is Node => n !== undefined);
+  const startNode = nodes.find((n) => n.id === "title");
+  if (!startNode) return [];
+
+  const queue: { id: string; path: string[] }[] = [
+    { id: "title", path: ["title"] },
+  ];
+  const visited = new Set<string>();
+
+  while (queue.length > 0) {
+    const { id: current, path } = queue.shift()!;
+
+    if (visited.has(current)) continue;
+    visited.add(current);
+
+    if (current === targetId) {
+      // Found the target - convert path to nodes
+      return path
+        .map((id) => nodeMap.get(id))
+        .filter((n): n is Node => n !== undefined);
+    }
+
+    // Find all children of current node
+    const children = adjacencyList.get(current) || [];
+    for (const child of children) {
+      if (!visited.has(child)) {
+        queue.push({
+          id: child,
+          path: [...path, child],
+        });
+      }
+    }
+  }
+
+  // If no path found, return empty array
+  return [];
 }
 
 /**
@@ -945,23 +1683,43 @@ export function getPathEdgeIds(pathNodes: Node[], edges: Edge[]): Set<string> {
 export function getPathBreakdown(pathNodes: Node[]): PathBreakdown {
   let totalCostRoubles = 0;
   let totalCostBTC = 0;
+  let totalCostUSD = 0;
   let totalCraftHours = 0;
   let totalTimeGateHours = 0;
 
   const steps: PathStep[] = pathNodes.map((node) => {
     const data = node.data as Record<string, unknown>;
     const cost = (data.cost as number) || 0;
+    const currency = data.currency as PathStep["currency"] | undefined;
     const isCraft = data.isCraft as boolean;
     const craftHours = (data.craftHours as number) || 0;
     const isTimeGate = data.isTimeGate as boolean;
     const timeGateHours = (data.timeGateHours as number) || 0;
 
-    // Determine if cost is BTC (small number) or Roubles (large number)
     if (cost > 0) {
-      if (cost < 100) {
+      // Use explicit currency when specified, otherwise detect from note
+      if (currency === "usd") {
+        totalCostUSD += cost;
+      } else if (currency === "btc") {
         totalCostBTC += cost;
-      } else {
+      } else if (currency === "roubles") {
         totalCostRoubles += cost;
+      } else {
+        // Detect currency from note field for backward compatibility
+        const note = (data.note as string) || "";
+        if (note.includes("BTC") || note.includes("Bitcoin")) {
+          totalCostBTC += cost;
+        } else if (note.includes("USD") || note.includes("$")) {
+          totalCostUSD += cost;
+        } else if (note.includes("M ₽") || note.includes("₽")) {
+          totalCostRoubles += cost;
+        } else if (cost < 100) {
+          // Legacy heuristic: small amounts are likely BTC
+          totalCostBTC += cost;
+        } else {
+          // Default to roubles for large amounts
+          totalCostRoubles += cost;
+        }
       }
     }
 
@@ -979,6 +1737,7 @@ export function getPathBreakdown(pathNodes: Node[]): PathBreakdown {
       description: data.description as string | undefined,
       note: data.note as string | undefined,
       cost,
+      currency,
       isCraft,
       craftHours,
       isTimeGate,
@@ -990,6 +1749,7 @@ export function getPathBreakdown(pathNodes: Node[]): PathBreakdown {
     steps,
     totalCostRoubles,
     totalCostBTC,
+    totalCostUSD,
     totalCraftHours,
     totalTimeGateHours,
   };

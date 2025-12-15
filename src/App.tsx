@@ -246,6 +246,12 @@ function App() {
     Set<string>
   >(new Set());
 
+  // Storyline view state for URL synchronization
+  const [storylineView, setStorylineView] = useState<
+    "selector" | "ending" | "fullMap"
+  >("selector");
+  const [selectedEndingId, setSelectedEndingId] = useState<string | null>(null);
+
   // Lightweight client-side routing for deep links like /Items/CollectorItems?search=...
   function normalizePath(pathname: string) {
     return pathname.replace(/\/+$/, "");
@@ -258,6 +264,8 @@ function App() {
     // Defaults
     let nextView: typeof viewMode = "grouped";
     let nextCollectorGroupBy: typeof collectorGroupBy | undefined;
+    let nextStorylineView: "selector" | "ending" | "fullMap" | undefined;
+    let nextEndingId: string | undefined;
 
     if (parts.length === 0) {
       // root -> default to Quests Checklist
@@ -277,8 +285,16 @@ function App() {
     } else if (parts[0] === "achievements") {
       nextView = "achievements";
     } else if (parts[0] === "storyline") {
-      if (parts[1] === "map") {
+      if (parts[1] === "choose-ending" || parts[1] === "map") {
         nextView = "storyline-map";
+        nextStorylineView = "selector";
+      } else if (parts[1] === "ending" && parts[2]) {
+        nextView = "storyline-map";
+        nextStorylineView = "ending";
+        nextEndingId = parts[2];
+      } else if (parts[1] === "full-map") {
+        nextView = "storyline-map";
+        nextStorylineView = "fullMap";
       } else {
         nextView = "storyline";
       }
@@ -286,7 +302,7 @@ function App() {
       nextView = "current";
     }
 
-    return { nextView, nextCollectorGroupBy };
+    return { nextView, nextCollectorGroupBy, nextStorylineView, nextEndingId };
   }
   // buildPath removed in favor of inlined computation inside effect
 
@@ -294,9 +310,18 @@ function App() {
   useEffect(() => {
     const applyFromLocation = () => {
       const { pathname } = window.location;
-      const { nextView, nextCollectorGroupBy } = parsePath(pathname);
+      const {
+        nextView,
+        nextCollectorGroupBy,
+        nextStorylineView,
+        nextEndingId,
+      } = parsePath(pathname);
       setViewMode(nextView);
       if (nextCollectorGroupBy) setCollectorGroupBy(nextCollectorGroupBy);
+      if (nextStorylineView) {
+        setStorylineView(nextStorylineView);
+        setSelectedEndingId(nextEndingId || null);
+      }
     };
     applyFromLocation();
     // Normalize legacy checklist routes to root (default view), preserving query
@@ -331,7 +356,16 @@ function App() {
     } else if (viewMode === "storyline") {
       nextPath = "/Storyline";
     } else if (viewMode === "storyline-map") {
-      nextPath = "/Storyline/Map";
+      // Generate specific URLs for storyline views
+      if (storylineView === "selector") {
+        nextPath = "/Storyline/Choose-Ending";
+      } else if (storylineView === "ending" && selectedEndingId) {
+        nextPath = `/Storyline/Ending/${selectedEndingId}`;
+      } else if (storylineView === "fullMap") {
+        nextPath = "/Storyline/Full-Map";
+      } else {
+        nextPath = "/Storyline/Choose-Ending"; // fallback
+      }
     } else if (viewMode === "flow") {
       nextPath = "/Quests/Flow";
     } else if (viewMode === "tree") {
@@ -344,7 +378,7 @@ function App() {
       // Clear query string (e.g., ?search=...) when navigating to a new view/tab
       window.history.pushState(null, "", nextPath);
     }
-  }, [viewMode, groupBy, collectorGroupBy]);
+  }, [viewMode, groupBy, collectorGroupBy, storylineView, selectedEndingId]);
 
   // Note: preserve query params (e.g., ?tasksSearch=...) to enable deep links
   // When navigating between views we already replace the path without query above.
@@ -1609,6 +1643,12 @@ function App() {
                         completedNodes={completedStorylineMapNodes}
                         onToggleNode={handleToggleStorylineMapNode}
                         onBack={() => setViewMode("storyline")}
+                        viewMode={storylineView}
+                        selectedEndingId={selectedEndingId}
+                        onViewChange={(newView, endingId) => {
+                          setStorylineView(newView);
+                          setSelectedEndingId(endingId || null);
+                        }}
                       />
                     ) : viewMode === "hideout-requirements" ? (
                       <HideoutRequirementsView

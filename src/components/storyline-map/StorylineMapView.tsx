@@ -19,6 +19,7 @@ import StoryNode from "./StoryNode";
 import CraftNode from "./CraftNode";
 import DecisionNode from "./DecisionNode";
 import EndingNode from "./EndingNode";
+import AchievementNode from "./AchievementNode";
 import UnknownZone from "./UnknownZone";
 import { CostPanel } from "./CostPanel";
 import { EndingBreakdownPanel } from "./EndingBreakdownPanel";
@@ -43,6 +44,7 @@ const nodeTypes = {
   craft: CraftNode,
   decision: DecisionNode,
   ending: EndingNode,
+  achievement: AchievementNode,
   zone: UnknownZone,
 };
 
@@ -248,17 +250,6 @@ export function StorylineMapView({
     [onToggleNode, nodesLocked]
   );
 
-  const calculateTotalCost = useCallback(() => {
-    return nodes
-      .filter(
-        (n) => n.data.isCompleted && (n.data as Record<string, unknown>).cost
-      )
-      .reduce(
-        (sum, n) => sum + ((n.data as Record<string, unknown>).cost as number),
-        0
-      );
-  }, [nodes]);
-
   // Compute path breakdown for selected node
   const selectedNodeBreakdown = useMemo(() => {
     if (!selectedNodeId) return null;
@@ -379,7 +370,7 @@ export function StorylineMapView({
             </div>
           </div>
         </Panel>
-        <CostPanel totalCost={calculateTotalCost()} nodes={nodes} />
+        <CostPanel nodes={nodes} />
         {selectedNodeId && selectedNodeBreakdown && (
           <EndingBreakdownPanel
             endingLabel={

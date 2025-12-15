@@ -18,7 +18,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { endingInfos, formatRoubles, formatHours } from "./endingData";
+import {
+  endingInfos,
+  formatRoubles,
+  formatUSD,
+  formatHours,
+} from "./endingData";
 import type { EndingInfo } from "./endingData";
 
 interface EndingSelectorProps {
@@ -109,6 +114,17 @@ function EndingCard({
             <div>
               <p className="text-[10px] text-muted-foreground">Bitcoin</p>
               <p className="text-sm font-semibold">{ending.totalCostBTC} BTC</p>
+            </div>
+          </div>
+        )}
+        {ending.totalCostUSD > 0 && (
+          <div className="flex items-center gap-2 rounded-md bg-muted/50 px-2 py-1.5">
+            <Coins className="h-4 w-4 text-emerald-500" />
+            <div>
+              <p className="text-[10px] text-muted-foreground">USD</p>
+              <p className="text-sm font-semibold">
+                {formatUSD(ending.totalCostUSD)}
+              </p>
             </div>
           </div>
         )}

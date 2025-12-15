@@ -487,7 +487,17 @@ export function AppSidebar({
                             ? "border-l-2 border-emerald-500 pl-6"
                             : "pl-6"
                         } cursor-pointer`}
-                        onClick={() => onSetViewMode("storyline-map")}
+                        onClick={() => {
+                          // Navigate to the Choose Your Ending view specifically
+                          if (typeof window !== "undefined") {
+                            window.history.pushState(
+                              null,
+                              "",
+                              "/Storyline/Choose-Ending"
+                            );
+                            window.dispatchEvent(new PopStateEvent("popstate"));
+                          }
+                        }}
                       >
                         <Map />
                         <span>Decision Map</span>

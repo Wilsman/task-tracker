@@ -2,13 +2,7 @@ import { Handle, Position } from "@xyflow/react";
 import { memo } from "react";
 import { cn } from "@/lib/utils";
 
-export type EndingType =
-  | "survivor"
-  | "debtor"
-  | "savior"
-  | "fallen"
-  | "cultist"
-  | "utopia";
+export type EndingType = "survivor" | "savior" | "fallen" | "debtor";
 
 export interface EndingNodeData {
   label: string;
@@ -19,26 +13,21 @@ export interface EndingNodeData {
 }
 
 const endingColors: Record<EndingType, string> = {
-  survivor: "#3b82f6",
-  debtor: "#ef4444",
-  savior: "#22c55e",
-  utopia: "#22c55e",
-  fallen: "#6b7280",
-  cultist: "#8b5cf6",
+  survivor: "#22c55e", // Survivor (green)
+  savior: "#f59e0b", // Savior (orange/amber)
+  fallen: "#6b7280", // Fallen (gray)
+  debtor: "#a78bfa", // Debtor (purple)
 };
 
 const endingIconUrls: Record<EndingType, string> = {
   survivor:
     "https://assets.tarkov.dev/achievement-68e8f02ff3a1196d1a05f2cb-icon.webp",
-  debtor:
-    "https://assets.tarkov.dev/achievement-68e8f04eb841bc8ac305350a-icon.webp",
   savior:
-    "https://assets.tarkov.dev/achievement-68e8f0575eb7e5ce5000ba0a-icon.webp",
-  utopia:
     "https://assets.tarkov.dev/achievement-68e8f0575eb7e5ce5000ba0a-icon.webp",
   fallen:
     "https://assets.tarkov.dev/achievement-68e8f042b8efa2bbeb009d89-icon.webp",
-  cultist: "",
+  debtor:
+    "https://assets.tarkov.dev/achievement-68e8f04eb841bc8ac305350a-icon.webp",
 };
 
 function EndingNode({ data }: { data: EndingNodeData }) {

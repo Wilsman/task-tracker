@@ -18,6 +18,7 @@ export function EndingBreakdownPanel({
     steps,
     totalCostRoubles,
     totalCostBTC,
+    totalCostUSD,
     totalCraftHours,
     totalTimeGateHours,
   } = breakdown;
@@ -90,10 +91,22 @@ export function EndingBreakdownPanel({
               <p className="text-sm font-bold">{totalCostBTC} BTC</p>
             </div>
           )}
+          {totalCostUSD > 0 && (
+            <div className="space-y-0.5">
+              <div className="flex items-center justify-center gap-1 text-emerald-500">
+                <Coins className="h-3.5 w-3.5" />
+                <span className="text-xs font-semibold">USD</span>
+              </div>
+              <p className="text-sm font-bold">
+                {totalCostUSD.toLocaleString()}
+              </p>
+            </div>
+          )}
           {totalCraftHours === 0 &&
             totalTimeGateHours === 0 &&
             totalCostRoubles === 0 &&
-            totalCostBTC === 0 && (
+            totalCostBTC === 0 &&
+            totalCostUSD === 0 && (
               <div className="col-span-4 text-xs text-muted-foreground">
                 No major costs or time requirements
               </div>
@@ -139,10 +152,18 @@ export function EndingBreakdownPanel({
                     {step.cost !== undefined && step.cost > 0 && (
                       <span className="inline-flex items-center gap-0.5 text-[10px] text-yellow-500">
                         <Coins className="h-2.5 w-2.5" />
-                        {step.cost >= 1000000
-                          ? `${(step.cost / 1000000).toFixed(0)}M ₽`
-                          : step.cost < 1000
+                        {step.currency === "usd"
+                          ? `${step.cost.toLocaleString()} USD`
+                          : step.currency === "btc"
                           ? `${step.cost} BTC`
+                          : step.currency === "roubles"
+                          ? step.cost >= 1000000
+                            ? `${(step.cost / 1000000).toFixed(0)}M ₽`
+                            : `${step.cost.toLocaleString()} ₽`
+                          : step.cost < 100
+                          ? `${step.cost} BTC`
+                          : step.cost >= 1000000
+                          ? `${(step.cost / 1000000).toFixed(0)}M ₽`
                           : `${step.cost.toLocaleString()} ₽`}
                       </span>
                     )}

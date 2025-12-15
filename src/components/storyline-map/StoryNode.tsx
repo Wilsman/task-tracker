@@ -7,6 +7,7 @@ export interface StoryNodeData {
   label: string;
   description?: string;
   cost?: number;
+  currency?: "roubles" | "btc" | "usd";
   isCompleted?: boolean;
   isCurrentStep?: boolean;
   isIrreversible?: boolean;
@@ -123,10 +124,18 @@ function StoryNode({ data }: { data: StoryNodeData }) {
         {data.cost !== undefined && data.cost > 0 && (
           <div className="text-xs font-medium text-yellow-600 dark:text-yellow-400">
             💰{" "}
-            {data.cost >= 1000000
-              ? `${(data.cost / 1000000).toFixed(0)}M ₽`
+            {data.currency === "usd"
+              ? `${data.cost.toLocaleString()} USD`
+              : data.currency === "btc"
+              ? `${data.cost} BTC`
+              : data.currency === "roubles"
+              ? data.cost >= 1000000
+                ? `${(data.cost / 1000000).toFixed(0)}M ₽`
+                : `${data.cost.toLocaleString()} ₽`
               : data.cost < 100
               ? `${data.cost} BTC`
+              : data.cost >= 1000000
+              ? `${(data.cost / 1000000).toFixed(0)}M ₽`
               : `${data.cost.toLocaleString()} ₽`}
           </div>
         )}

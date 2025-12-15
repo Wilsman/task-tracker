@@ -26,6 +26,7 @@ import {
   endingInfos,
   getEndingPathData,
   formatRoubles,
+  formatUSD,
   formatHours,
 } from "./endingData";
 
@@ -167,6 +168,17 @@ export function EndingFlowView({ endingId, onBack }: EndingFlowViewProps) {
                     <p className="text-[10px] text-muted-foreground">Bitcoin</p>
                     <p className="text-sm font-semibold">
                       {breakdown.totalCostBTC} BTC
+                    </p>
+                  </div>
+                </div>
+              )}
+              {breakdown.totalCostUSD > 0 && (
+                <div className="flex items-center gap-2 rounded-md bg-muted/50 px-2 py-1.5">
+                  <Coins className="h-4 w-4 text-emerald-500" />
+                  <div>
+                    <p className="text-[10px] text-muted-foreground">USD</p>
+                    <p className="text-sm font-semibold">
+                      {formatUSD(breakdown.totalCostUSD)}
                     </p>
                   </div>
                 </div>
