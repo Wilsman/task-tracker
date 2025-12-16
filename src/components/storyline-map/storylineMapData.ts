@@ -26,17 +26,132 @@ export interface PathBreakdown {
   totalTimeGateHours: number;
 }
 
+type StorylineNode = Node<Record<string, unknown>, string>;
+type StorylineNodeInput = Omit<StorylineNode, "position"> & {
+  position?: StorylineNode["position"];
+};
+
+const storylineNodePositions = {
+  title: { x: 800, y: -500 },
+  recover: { x: 800, y: -400 },
+  "keep-self": { x: 500, y: -280 },
+  "give-prapor-0": { x: 1074, y: -276 },
+  "prapor-comp": { x: 1042, y: -132 },
+  "lk-access": { x: 1070, y: -29 },
+  "talk-lk-0": { x: 1061, y: 55 },
+  "yellow-flare": { x: 1043, y: 145 },
+  "kill-15": { x: 1065, y: 255 },
+  "lk-case": { x: 1057, y: 356 },
+  "armored-hands": { x: 791, y: 457 },
+  "open-case": { x: 799, y: 546 },
+  "tg-48": { x: 790, y: 628 },
+  "case-open": { x: 800, y: 728 },
+  "dont-work": { x: 400, y: 850 },
+  "work-together": { x: 1200, y: 850 },
+  "sl-shore": { x: 50, y: 1000 },
+  "sl-key-fail": { x: 50, y: 1100 },
+  "sl-300": { x: -212, y: 1228 },
+  "sl-500": { x: 315, y: 1225 },
+  "sl-tg": { x: 315, y: 1394 },
+  "sl-5": { x: 329, y: 1480 },
+  "sl-flash": { x: 302, y: 1576 },
+  "sl-kill-50": { x: 329, y: 1680 },
+  "sl-kill-4": { x: 331, y: 1768 },
+  "sl-48": { x: 326, y: 1856 },
+  "sl-note": { x: 31, y: 2006 },
+  "sl-easy": { x: 31, y: 2106 },
+  "end-setup-survivor": { x: 137, y: 3533 },
+  "fail-survivor": { x: 138, y: 3673 },
+  "survivor-ending": { x: 160, y: 3834 },
+  "wt-search": { x: 1193, y: 1011 },
+  "wt-keycard": { x: 1193, y: 1111 },
+  "tg-24": { x: 1197, y: 1189 },
+  "wt-pay-mech": { x: 1197, y: 1289 },
+  "wt-elekt": { x: 1192, y: 1442 },
+  "wt-activate": { x: 1192, y: 1542 },
+  "tg-50": { x: 1192, y: 1642 },
+  "wt-shore": { x: 1192, y: 1742 },
+  "hk-savior": { x: 724, y: 1877 },
+  "nk-fallen": { x: 1200, y: 1850 },
+  "hk-debtor": { x: 1792, y: 1864 },
+  "audio-note": { x: 716, y: 2057 },
+  "complete-all": { x: 716, y: 2157 },
+  "tg-48b": { x: 746, y: 2271 },
+  trusted: { x: 716, y: 2374 },
+  "fence-4": { x: 716, y: 2474 },
+  pvp: { x: 613, y: 2596 },
+  pve: { x: 882, y: 2603 },
+  "kill-5-no-scav": { x: 584, y: 2709 },
+  coop: { x: 870, y: 2719 },
+  "btr-04": { x: 733, y: 2872 },
+  "warn-btr": { x: -424, y: 2577 },
+  "solar-savior": { x: 749, y: 3039 },
+  "build-72-savior": { x: 770, y: 3186 },
+  "final-craft-savior": { x: 770, y: 3286 },
+  "end-setup-savior": { x: 775, y: 3545 },
+  "fail-savior": { x: 775, y: 3678 },
+  "savior-ending": { x: 807, y: 3827 },
+  enough: { x: 1182, y: 2018 },
+  "talk-prapor": { x: 1223, y: 2129 },
+  "case-back": { x: 1030, y: 2222 },
+  "no-case-back": { x: 1320, y: 2223 },
+  "repair-40": { x: 1350, y: 2353 },
+  "secure-cont": { x: 1320, y: 2443 },
+  "military-50": { x: 1320, y: 2543 },
+  "bio-case": { x: 1200, y: 2660 },
+  "usd-1m": { x: 1229, y: 2770 },
+  "will-blow": { x: 1214, y: 2941 },
+  "tg-48c": { x: 1222, y: 3044 },
+  "hash-usb": { x: 1193, y: 3141 },
+  "solar-fallen": { x: 1211, y: 3242 },
+  "build-72-fallen": { x: 1225, y: 3339 },
+  "final-craft-fallen": { x: 1213, y: 3442 },
+  "end-setup-fallen": { x: 1196, y: 3563 },
+  "fail-fallen": { x: 1196, y: 3698 },
+  "fallen-ending": { x: 1207, y: 3827 },
+  "hand-2-major": { x: 1776, y: 2053 },
+  "u-turn": { x: 1812, y: 2169 },
+  "talk-lk": { x: 1812, y: 2277 },
+  topo: { x: 1785, y: 2360 },
+  "tg-24b": { x: 1810, y: 2475 },
+  "hash-drive": { x: 1780, y: 2573 },
+  "kill-30": { x: 1803, y: 2686 },
+  amulet: { x: 1783, y: 2782 },
+  place: { x: 1787, y: 2907 },
+  "tg-48d": { x: 1814, y: 3034 },
+  "lk-key": { x: 1787, y: 3154 },
+  "end-setup-debtor": { x: 1795, y: 3581 },
+  "fail-debtor": { x: 1796, y: 3714 },
+  "debtor-ending": { x: 1807, y: 3827 },
+} as const;
+
+function applyStorylineNodePositions(
+  nodes: StorylineNodeInput[]
+): StorylineNode[] {
+  const positionMap = storylineNodePositions as Record<
+    string,
+    { x: number; y: number }
+  >;
+
+  return nodes.map((node) => {
+    const pos = positionMap[node.id];
+    return {
+      ...node,
+      position: pos || node.position || { x: 0, y: 0 },
+    };
+  });
+}
+
 // ============================================================================
 // NODES - Version 1.3.1 (last edited: 14.12.2025)
 // Based on Mermaid flowchart from @Callsign_Smokey
 // ============================================================================
 
-export const initialNodes: Node[] = [
+export const initialNodes: StorylineNode[] = applyStorylineNodePositions([
   // ==================== TITLE / VERSION ====================
   {
     id: "title",
     type: "story",
-    position: { x: 800, y: -500 },
     data: {
       label: "The Ticket",
       description: "Unlock by completing the Fallen Skies storyline chapter",
@@ -47,7 +162,6 @@ export const initialNodes: Node[] = [
   {
     id: "recover",
     type: "story",
-    position: { x: 800, y: -400 },
     data: {
       label: "Recover Armored Case from Wrecked Crashed Plane",
       description: "Starting point of the storyline",
@@ -58,7 +172,6 @@ export const initialNodes: Node[] = [
   {
     id: "keep-self",
     type: "decision",
-    position: { x: 500, y: -280 },
     data: {
       label: "Keep Case for yourself",
       description: "Point of no return",
@@ -68,7 +181,6 @@ export const initialNodes: Node[] = [
   {
     id: "give-prapor-0",
     type: "decision",
-    position: { x: 1100, y: -280 },
     data: {
       label: "Hand over Case to Prapor",
       description: "Point of no return",
@@ -80,7 +192,6 @@ export const initialNodes: Node[] = [
   {
     id: "prapor-comp",
     type: "story",
-    position: { x: 1100, y: -180 },
     data: {
       label: "Find compromising material on Prapor",
       description: "on Lighthouse",
@@ -89,7 +200,6 @@ export const initialNodes: Node[] = [
   {
     id: "lk-access",
     type: "story",
-    position: { x: 1100, y: -80 },
     data: {
       label: "Gain Lightkeeper Access",
       description: "(Network Provider 1 is available)",
@@ -98,7 +208,6 @@ export const initialNodes: Node[] = [
   {
     id: "talk-lk-0",
     type: "story",
-    position: { x: 1100, y: 20 },
     data: {
       label: "Talk to Lightkeeper",
       description: "(Pay him 3x Terragroup Blue Folder)",
@@ -107,7 +216,6 @@ export const initialNodes: Node[] = [
   {
     id: "yellow-flare",
     type: "story",
-    position: { x: 1100, y: 120 },
     data: {
       label: "Fire Yellow Flare in front of Ultra Mall",
       description: "(Interchange)",
@@ -116,7 +224,6 @@ export const initialNodes: Node[] = [
   {
     id: "kill-15",
     type: "story",
-    position: { x: 1100, y: 220 },
     data: {
       label: "Kill 15 Targets without dying",
       description: "(one Raid)",
@@ -125,7 +232,6 @@ export const initialNodes: Node[] = [
   {
     id: "lk-case",
     type: "story",
-    position: { x: 1100, y: 320 },
     data: {
       label: "Collect Case from Lightkeeper",
       description: "(goes into Special Slot)",
@@ -136,7 +242,6 @@ export const initialNodes: Node[] = [
   {
     id: "armored-hands",
     type: "story",
-    position: { x: 800, y: 420 },
     data: {
       label: "Armored Case in your Hands",
       description: "Both paths converge here",
@@ -145,7 +250,6 @@ export const initialNodes: Node[] = [
   {
     id: "open-case",
     type: "story",
-    position: { x: 800, y: 520 },
     data: {
       label: "Open the Case",
       description: "(find Signal Jammer on Labs)",
@@ -154,7 +258,6 @@ export const initialNodes: Node[] = [
   {
     id: "tg-48",
     type: "craft",
-    position: { x: 800, y: 620 },
     data: {
       label: "48h Craft at Workbench",
       description: "Craft to open the case",
@@ -165,7 +268,6 @@ export const initialNodes: Node[] = [
   {
     id: "case-open",
     type: "story",
-    position: { x: 800, y: 720 },
     data: {
       label: "Case is open",
       description: "Ready to proceed",
@@ -176,7 +278,6 @@ export const initialNodes: Node[] = [
   {
     id: "dont-work",
     type: "decision",
-    position: { x: 400, y: 850 },
     data: {
       label: "Don't work with Kerman",
       description: "Point of no return - Survivor path",
@@ -186,7 +287,6 @@ export const initialNodes: Node[] = [
   {
     id: "work-together",
     type: "decision",
-    position: { x: 1200, y: 850 },
     data: {
       label: "Work together with Kerman",
       description: "Point of no return - Multiple endings available",
@@ -198,7 +298,6 @@ export const initialNodes: Node[] = [
   {
     id: "sl-shore",
     type: "story",
-    position: { x: 50, y: 1000 },
     data: {
       label: "Head to Shoreline Port Entrance",
       description: "(Intercom) swipe Keycard",
@@ -207,7 +306,6 @@ export const initialNodes: Node[] = [
   {
     id: "sl-key-fail",
     type: "story",
-    position: { x: 50, y: 1100 },
     data: {
       label: "Keycard didn't work",
       description: "Ask Prapor for help",
@@ -218,7 +316,6 @@ export const initialNodes: Node[] = [
   {
     id: "sl-300",
     type: "story",
-    position: { x: 50, y: 1220 },
     data: {
       label: "Prapor wants 300 Million Roubles",
       description: "since you gave him the Case",
@@ -230,7 +327,6 @@ export const initialNodes: Node[] = [
   {
     id: "sl-500",
     type: "story",
-    position: { x: 250, y: 1220 },
     data: {
       label: "Prapor wants 500 Million Roubles",
       description: "since you kept the Case",
@@ -244,7 +340,6 @@ export const initialNodes: Node[] = [
   {
     id: "sl-tg",
     type: "story",
-    position: { x: 250, y: 1340 },
     data: {
       label: "Find 4 Terragroup report folders",
       description: "on Labs",
@@ -253,7 +348,6 @@ export const initialNodes: Node[] = [
   {
     id: "sl-5",
     type: "craft",
-    position: { x: 250, y: 1440 },
     data: {
       label: "5h Craft at Intel Centre",
       description: "Process the data",
@@ -264,7 +358,6 @@ export const initialNodes: Node[] = [
   {
     id: "sl-flash",
     type: "story",
-    position: { x: 250, y: 1540 },
     data: {
       label: "Give Prapor the Flash Drive with Data",
       description: "Hand over the processed intel",
@@ -273,7 +366,6 @@ export const initialNodes: Node[] = [
   {
     id: "sl-kill-50",
     type: "story",
-    position: { x: 250, y: 1640 },
     data: {
       label: "Kill 50 targets",
       description: "on Streets of Tarkov",
@@ -282,7 +374,6 @@ export const initialNodes: Node[] = [
   {
     id: "sl-kill-4",
     type: "story",
-    position: { x: 250, y: 1740 },
     data: {
       label: "Kill 4 PMCs",
       description: "(single raid and survive)",
@@ -291,7 +382,6 @@ export const initialNodes: Node[] = [
   {
     id: "sl-48",
     type: "craft",
-    position: { x: 250, y: 1840 },
     data: {
       label: "48h Timegate",
       description: "Wait for Prapor",
@@ -304,7 +394,6 @@ export const initialNodes: Node[] = [
   {
     id: "sl-note",
     type: "story",
-    position: { x: 150, y: 1960 },
     data: {
       label: "Prapor hands you a Note",
       description: "for the Soldiers at the Terminal",
@@ -313,7 +402,6 @@ export const initialNodes: Node[] = [
   {
     id: "sl-easy",
     type: "achievement",
-    position: { x: 150, y: 2060 },
     data: {
       label: "Easy Way",
       description: "Achievement Unlocked",
@@ -325,7 +413,6 @@ export const initialNodes: Node[] = [
   {
     id: "end-setup-survivor",
     type: "story",
-    position: { x: 150, y: 2180 },
     data: {
       label: "Head to Shoreline (22:00 to 04:00)",
       description:
@@ -336,7 +423,6 @@ export const initialNodes: Node[] = [
   {
     id: "fail-survivor",
     type: "story",
-    position: { x: 150, y: 2300 },
     data: {
       label: "If attempt fails:",
       description: "Buy a new Note for 5M roubles at Prapor (2 per reset)",
@@ -347,7 +433,6 @@ export const initialNodes: Node[] = [
   {
     id: "survivor-ending",
     type: "ending",
-    position: { x: 50, y: 3720 },
     data: {
       label: "Survivor Ending",
       description: "You escaped Tarkov as a Survivor",
@@ -359,7 +444,6 @@ export const initialNodes: Node[] = [
   {
     id: "wt-search",
     type: "story",
-    position: { x: 1000, y: 1000 },
     data: {
       label: "Search for Masterkeycard and RFID Device",
       description: "on Labs",
@@ -368,7 +452,6 @@ export const initialNodes: Node[] = [
   {
     id: "wt-keycard",
     type: "story",
-    position: { x: 1000, y: 1100 },
     data: {
       label: "Keycard acquired, device not:",
       description: "talk to Mechanic",
@@ -377,7 +460,6 @@ export const initialNodes: Node[] = [
   {
     id: "tg-24",
     type: "craft",
-    position: { x: 1000, y: 1200 },
     data: {
       label: "24h timegate",
       description: "Wait for Mechanic",
@@ -388,7 +470,6 @@ export const initialNodes: Node[] = [
   {
     id: "wt-pay-mech",
     type: "story",
-    position: { x: 1000, y: 1300 },
     data: {
       label: "Pay Mechanic 40 Bitcoins",
       description: "Payment for RFID device info",
@@ -400,7 +481,6 @@ export const initialNodes: Node[] = [
   {
     id: "wt-elekt",
     type: "story",
-    position: { x: 1000, y: 1400 },
     data: {
       label: "Go with Mechanic's keys to Elektronik apartment",
       description: "and get RFID Device",
@@ -409,7 +489,6 @@ export const initialNodes: Node[] = [
   {
     id: "wt-activate",
     type: "story",
-    position: { x: 1000, y: 1500 },
     data: {
       label: "Activate RFID Card from Armored Case",
       description: "Prepare the card",
@@ -418,7 +497,6 @@ export const initialNodes: Node[] = [
   {
     id: "tg-50",
     type: "craft",
-    position: { x: 1000, y: 1600 },
     data: {
       label: "50h Craft at Intel Centre",
       description: "Process the RFID card",
@@ -429,7 +507,6 @@ export const initialNodes: Node[] = [
   {
     id: "wt-shore",
     type: "story",
-    position: { x: 1000, y: 1700 },
     data: {
       label: "Head to Shoreline",
       description: "Port Entrance (Intercom) swipe Keycard",
@@ -440,7 +517,6 @@ export const initialNodes: Node[] = [
   {
     id: "hk-savior",
     type: "decision",
-    position: { x: 700, y: 1850 },
     data: {
       label: "Help Kerman find Evidence on Terragroup",
       description: "Point of no return - Savior path",
@@ -450,7 +526,6 @@ export const initialNodes: Node[] = [
   {
     id: "nk-fallen",
     type: "decision",
-    position: { x: 1200, y: 1850 },
     data: {
       label: "Do not help Kerman find Evidence on Terragroup",
       description: "Point of no return - Fallen path",
@@ -460,7 +535,6 @@ export const initialNodes: Node[] = [
   {
     id: "hk-debtor",
     type: "decision",
-    position: { x: 1700, y: 1850 },
     data: {
       label: "Help Kerman find Evidence on Terragroup",
       description: "Point of no return - Debtor path (partial help)",
@@ -472,7 +546,6 @@ export const initialNodes: Node[] = [
   {
     id: "audio-note",
     type: "story",
-    position: { x: 700, y: 2000 },
     data: {
       label: "Listen to every audiotape and read every note",
       description: "for all storys",
@@ -481,7 +554,6 @@ export const initialNodes: Node[] = [
   {
     id: "complete-all",
     type: "story",
-    position: { x: 700, y: 2100 },
     data: {
       label: "Complete every other story chapter",
       description: "and hand evidence in",
@@ -490,7 +562,6 @@ export const initialNodes: Node[] = [
   {
     id: "tg-48b",
     type: "craft",
-    position: { x: 700, y: 2200 },
     data: {
       label: "48h timegate",
       description: "Wait for Kerman",
@@ -501,7 +572,6 @@ export const initialNodes: Node[] = [
   {
     id: "trusted",
     type: "story",
-    position: { x: 700, y: 2300 },
     data: {
       label: "Kerman's trusted contact reaches out (Fence)",
       description: "New contact established",
@@ -510,7 +580,6 @@ export const initialNodes: Node[] = [
   {
     id: "fence-4",
     type: "story",
-    position: { x: 700, y: 2400 },
     data: {
       label: "Get 4.0 Fence reputation",
       description: "Required reputation level",
@@ -521,7 +590,6 @@ export const initialNodes: Node[] = [
   {
     id: "pvp",
     type: "story",
-    position: { x: 600, y: 2500 },
     data: {
       label: "PVP",
       description: "Combat path",
@@ -530,7 +598,6 @@ export const initialNodes: Node[] = [
   {
     id: "pve",
     type: "story",
-    position: { x: 800, y: 2500 },
     data: {
       label: "PVE",
       description: "Cooperative path",
@@ -539,7 +606,6 @@ export const initialNodes: Node[] = [
   {
     id: "kill-5-no-scav",
     type: "story",
-    position: { x: 600, y: 2600 },
     data: {
       label: "Kill 5 PMCs in a raid without killing scavs",
       description: "(Shoreline and Interchange)",
@@ -548,7 +614,6 @@ export const initialNodes: Node[] = [
   {
     id: "coop",
     type: "story",
-    position: { x: 800, y: 2600 },
     data: {
       label: "Use Co-Op extract with a scav",
       description: "(Woods and Reserve)",
@@ -557,7 +622,6 @@ export const initialNodes: Node[] = [
   {
     id: "btr-04",
     type: "story",
-    position: { x: 700, y: 2720 },
     data: {
       label: "Raise BTR driver reputation to 0.4",
       description: "(complete The Price of Independence)",
@@ -566,7 +630,6 @@ export const initialNodes: Node[] = [
   {
     id: "warn-btr",
     type: "story",
-    position: { x: 500, y: 2820 },
     data: {
       label: "⚠️ Warning",
       description:
@@ -577,7 +640,6 @@ export const initialNodes: Node[] = [
   {
     id: "solar-savior",
     type: "story",
-    position: { x: 700, y: 2920 },
     data: {
       label: "Build Solar Power (mandatory)",
       description: "Hideout requirement",
@@ -586,7 +648,6 @@ export const initialNodes: Node[] = [
   {
     id: "build-72-savior",
     type: "craft",
-    position: { x: 700, y: 3020 },
     data: {
       label: "72h build time",
       description: "Solar Power construction",
@@ -597,7 +658,6 @@ export const initialNodes: Node[] = [
   {
     id: "final-craft-savior",
     type: "craft",
-    position: { x: 700, y: 3120 },
     data: {
       label: "Final craft for the Keycard",
       description: "Prepare escape keycard",
@@ -609,7 +669,6 @@ export const initialNodes: Node[] = [
   {
     id: "end-setup-savior",
     type: "story",
-    position: { x: 700, y: 3240 },
     data: {
       label: "Head to Shoreline (22:00 to 04:00)",
       description:
@@ -620,7 +679,6 @@ export const initialNodes: Node[] = [
   {
     id: "fail-savior",
     type: "story",
-    position: { x: 700, y: 3360 },
     data: {
       label: "If attempt fails:",
       description: "Craft the Keycard again (11h), needs a new Blank RFID Card",
@@ -631,7 +689,6 @@ export const initialNodes: Node[] = [
   {
     id: "savior-ending",
     type: "ending",
-    position: { x: 800, y: 3720 },
     data: {
       label: "Savior Ending",
       description: "You escaped Tarkov as a Savior",
@@ -643,7 +700,6 @@ export const initialNodes: Node[] = [
   {
     id: "enough",
     type: "achievement",
-    position: { x: 1200, y: 2000 },
     data: {
       label: "Enough of your Games!",
       description: "Achievement Unlocked",
@@ -653,7 +709,6 @@ export const initialNodes: Node[] = [
   {
     id: "talk-prapor",
     type: "story",
-    position: { x: 1200, y: 2100 },
     data: {
       label: "Talk to Prapor",
       description: "Discuss next steps",
@@ -664,7 +719,6 @@ export const initialNodes: Node[] = [
   {
     id: "case-back",
     type: "story",
-    position: { x: 1100, y: 2220 },
     data: {
       label: "If you handed the case to Prapor earlier",
       description: "and got it back from Lightkeeper",
@@ -674,7 +728,6 @@ export const initialNodes: Node[] = [
   {
     id: "no-case-back",
     type: "story",
-    position: { x: 1300, y: 2220 },
     data: {
       label: "If you did not hand the case to Prapor earlier",
       description: "Longer path required",
@@ -686,7 +739,6 @@ export const initialNodes: Node[] = [
   {
     id: "repair-40",
     type: "story",
-    position: { x: 1300, y: 2340 },
     data: {
       label: "Hand over 40 Repair Kits",
       description: "(100% durability, non-FIR)",
@@ -695,7 +747,6 @@ export const initialNodes: Node[] = [
   {
     id: "secure-cont",
     type: "story",
-    position: { x: 1300, y: 2440 },
     data: {
       label: "Hand over Gamma/Theta/Epsilon Secure Container",
       description: "Give up your secure container",
@@ -704,7 +755,6 @@ export const initialNodes: Node[] = [
   {
     id: "military-50",
     type: "story",
-    position: { x: 1300, y: 2540 },
     data: {
       label: "Hand over 50 Military Components",
       description: "(Virtex/COFDM/etc, non-FIR)",
@@ -715,7 +765,6 @@ export const initialNodes: Node[] = [
   {
     id: "bio-case",
     type: "story",
-    position: { x: 1200, y: 2660 },
     data: {
       label: "Get the Bio Weapon Case (Reserve RB-PKPM?)",
       description: "Hand it over to Prapor",
@@ -724,7 +773,6 @@ export const initialNodes: Node[] = [
   {
     id: "usd-1m",
     type: "story",
-    position: { x: 1200, y: 2760 },
     data: {
       label: "Hand over 1M USD",
       description: "Payment to Prapor",
@@ -736,7 +784,6 @@ export const initialNodes: Node[] = [
   {
     id: "will-blow",
     type: "achievement",
-    position: { x: 1200, y: 2860 },
     data: {
       label: "Will it Blow?",
       description: "Achievement Unlocked",
@@ -746,7 +793,6 @@ export const initialNodes: Node[] = [
   {
     id: "tg-48c",
     type: "craft",
-    position: { x: 1200, y: 2960 },
     data: {
       label: "48h timegate",
       description: "Wait for Prapor",
@@ -757,7 +803,6 @@ export const initialNodes: Node[] = [
   {
     id: "hash-usb",
     type: "story",
-    position: { x: 1200, y: 3060 },
     data: {
       label: "Prapor gives you a USB stick with his Hash Code",
       description: "Key item received",
@@ -766,7 +811,6 @@ export const initialNodes: Node[] = [
   {
     id: "solar-fallen",
     type: "story",
-    position: { x: 1200, y: 3160 },
     data: {
       label: "Build Solar Power (mandatory)",
       description: "Hideout requirement",
@@ -775,7 +819,6 @@ export const initialNodes: Node[] = [
   {
     id: "build-72-fallen",
     type: "craft",
-    position: { x: 1200, y: 3260 },
     data: {
       label: "72h build time",
       description: "Solar Power construction",
@@ -786,7 +829,6 @@ export const initialNodes: Node[] = [
   {
     id: "final-craft-fallen",
     type: "craft",
-    position: { x: 1200, y: 3360 },
     data: {
       label: "Final craft for the Keycard",
       description: "Prepare escape keycard",
@@ -798,7 +840,6 @@ export const initialNodes: Node[] = [
   {
     id: "end-setup-fallen",
     type: "story",
-    position: { x: 1200, y: 3480 },
     data: {
       label: "Head to Shoreline (22:00 to 04:00)",
       description:
@@ -809,7 +850,6 @@ export const initialNodes: Node[] = [
   {
     id: "fail-fallen",
     type: "story",
-    position: { x: 1200, y: 3600 },
     data: {
       label: "If attempt fails:",
       description: "Craft the Keycard again (11h), needs a new Blank RFID Card",
@@ -820,7 +860,6 @@ export const initialNodes: Node[] = [
   {
     id: "fallen-ending",
     type: "ending",
-    position: { x: 1200, y: 3720 },
     data: {
       label: "Fallen Ending",
       description: "You escaped Tarkov, but at what cost?",
@@ -832,7 +871,6 @@ export const initialNodes: Node[] = [
   {
     id: "hand-2-major",
     type: "story",
-    position: { x: 1700, y: 2000 },
     data: {
       label: "Hand 2 Major Evidence in to Kerman",
       description: "then stop working with him",
@@ -841,7 +879,6 @@ export const initialNodes: Node[] = [
   {
     id: "u-turn",
     type: "achievement",
-    position: { x: 1700, y: 2100 },
     data: {
       label: "U Turn",
       description: "Achievement Unlocked",
@@ -851,7 +888,6 @@ export const initialNodes: Node[] = [
   {
     id: "talk-lk",
     type: "story",
-    position: { x: 1700, y: 2200 },
     data: {
       label: "Talk to Lightkeeper",
       description: "Switch allegiance",
@@ -860,7 +896,6 @@ export const initialNodes: Node[] = [
   {
     id: "topo",
     type: "story",
-    position: { x: 1700, y: 2300 },
     data: {
       label: "Find topographic recommendations (5 total)",
       description: "5 maps, 1 per map",
@@ -869,7 +904,6 @@ export const initialNodes: Node[] = [
   {
     id: "tg-24b",
     type: "craft",
-    position: { x: 1700, y: 2400 },
     data: {
       label: "6h Craft at Intel Centre",
       description: "Process the maps",
@@ -880,7 +914,6 @@ export const initialNodes: Node[] = [
   {
     id: "hash-drive",
     type: "story",
-    position: { x: 1700, y: 2500 },
     data: {
       label: "Bring a special flash drive with Hashmail",
       description: "to Lightkeeper",
@@ -889,7 +922,6 @@ export const initialNodes: Node[] = [
   {
     id: "kill-30",
     type: "story",
-    position: { x: 1700, y: 2600 },
     data: {
       label: "Kill 30 PMCs on Woods",
       description: "and hand over 100 PMC dogtags",
@@ -898,7 +930,6 @@ export const initialNodes: Node[] = [
   {
     id: "amulet",
     type: "story",
-    position: { x: 1700, y: 2700 },
     data: {
       label: "Find Cultist Amulet in each Marked Room",
       description: "Collect all amulets",
@@ -907,7 +938,6 @@ export const initialNodes: Node[] = [
   {
     id: "place",
     type: "story",
-    position: { x: 1700, y: 2800 },
     data: {
       label: "Place all amulets at Shared Bedroom Marked Key",
       description: "on Lightkeeper Island",
@@ -916,7 +946,6 @@ export const initialNodes: Node[] = [
   {
     id: "tg-48d",
     type: "craft",
-    position: { x: 1700, y: 2900 },
     data: {
       label: "48h timegate",
       description: "Wait for Lightkeeper",
@@ -927,7 +956,6 @@ export const initialNodes: Node[] = [
   {
     id: "lk-key",
     type: "story",
-    position: { x: 1700, y: 3000 },
     data: {
       label: "Lightkeeper hands you a Keycard for Terminal",
       description: "Key item received",
@@ -938,7 +966,6 @@ export const initialNodes: Node[] = [
   {
     id: "end-setup-debtor",
     type: "story",
-    position: { x: 1700, y: 3120 },
     data: {
       label: "Head to Shoreline (22:00 to 04:00)",
       description:
@@ -949,7 +976,6 @@ export const initialNodes: Node[] = [
   {
     id: "fail-debtor",
     type: "story",
-    position: { x: 1700, y: 3240 },
     data: {
       label: "If attempt fails:",
       description: "Barter a new keycard from Lightkeeper for 1 Blue Folder",
@@ -958,14 +984,13 @@ export const initialNodes: Node[] = [
   {
     id: "debtor-ending",
     type: "ending",
-    position: { x: 1800, y: 3720 },
     data: {
       label: "Debtor Ending",
       description: "You escaped Tarkov through Lightkeeper's debt",
       endingType: "debtor",
     },
   },
-];
+]);
 
 // ============================================================================
 // EDGES - Based on Mermaid flowchart connections

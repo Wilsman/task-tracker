@@ -36,6 +36,7 @@ import {
   AlertTriangle,
   Download,
   ExternalLink,
+  Copy,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -123,6 +124,50 @@ function DownloadButton() {
   );
 }
 
+async function copyTextToClipboard(text: string): Promise<boolean> {
+  try {
+    if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch {
+    return false;
+  }
+
+  try {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.style.position = "fixed";
+    textarea.style.left = "-9999px";
+    textarea.style.top = "0";
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    const ok = document.execCommand("copy");
+    document.body.removeChild(textarea);
+    return ok;
+  } catch {
+    return false;
+  }
+}
+
+function formatNodePositionsForPaste(nodes: Node[]): string {
+  const positions = nodes.map((n) => ({
+    id: n.id,
+    x: Math.round(n.position.x),
+    y: Math.round(n.position.y),
+  }));
+
+  const lines = positions.map((p) => `  "${p.id}": { x: ${p.x}, y: ${p.y} },`);
+
+  return [
+    "export const storylineNodePositions = {",
+    ...lines,
+    "} as const;",
+    "",
+  ].join("\n");
+}
+
 export function StorylineMapView({
   completedNodes,
   currentNodeId,
@@ -133,6 +178,9 @@ export function StorylineMapView({
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   // Start with interactivity locked by default
   const [nodesLocked, setNodesLocked] = useState(true);
+
+  const [isExportingPositions, setIsExportingPositions] = useState(false);
+  const [didCopyPositions, setDidCopyPositions] = useState(false);
 
   // Compute path to selected node
   const { pathNodeIds, pathEdgeIds } = useMemo(() => {
@@ -200,6 +248,21 @@ export function StorylineMapView({
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodesWithState);
   const [edges, , onEdgesChange] = useEdgesState(initialEdges);
+
+  const handleExportPositions = useCallback(async () => {
+    setIsExportingPositions(true);
+    setDidCopyPositions(false);
+
+    try {
+      const text = formatNodePositionsForPaste(nodes);
+      const didCopy = await copyTextToClipboard(text);
+      if (!didCopy) console.log(text);
+      setDidCopyPositions(didCopy);
+      if (didCopy) setTimeout(() => setDidCopyPositions(false), 1500);
+    } finally {
+      setIsExportingPositions(false);
+    }
+  }, [nodes]);
 
   // Update nodes when completedNodes or selectedNodeId changes
   useEffect(() => {
@@ -332,6 +395,20 @@ export function StorylineMapView({
             </div>
             <div className="mb-2 flex gap-2">
               <DownloadButton />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleExportPositions}
+                disabled={isExportingPositions}
+                className="gap-2"
+              >
+                <Copy className="h-4 w-4" />
+                {isExportingPositions
+                  ? "Exporting..."
+                  : didCopyPositions
+                  ? "Copied!"
+                  : "Export positions"}
+              </Button>
             </div>
             <div className="mb-2">
               <a
