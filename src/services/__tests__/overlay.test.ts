@@ -1,0 +1,141 @@
+import { describe, expect, test } from "bun:test";
+import { applyTaskOverlay, fetchOverlay, OVERLAY_URL } from "../tarkovApi";
+import type { Task, Overlay } from "../../types";
+import localOverlay from "../../../overlay-refs/overlay.json";
+
+describe("Overlay Integration", () => {
+    const mockOverlay: Overlay = {
+        tasks: {
+            "task-1": {
+                experience: 99999,
+                name: "Overridden Task Name",
+            },
+            "disabled-task": {
+                disabled: true,
+            },
+        },
+        $meta: {
+            version: "1.0.0",
+            generated: new Date().toISOString(),
+        },
+    };
+
+    const baseTask: Task = {
+        id: "task-1",
+        name: "Original Task Name",
+        experience: 1000,
+        minPlayerLevel: 1,
+        taskRequirements: [],
+        wikiLink: "",
+        map: { name: "Customs" },
+        maps: [],
+        trader: { name: "Prapor" },
+    } as any;
+
+    test("should apply top-level field overrides", () => {
+        const patched = applyTaskOverlay(baseTask, mockOverlay);
+        expect(patched).not.toBeNull();
+        expect(patched?.name).toBe("Overridden Task Name");
+        expect(patched?.experience).toBe(99999);
+    });
+
+    test("should return null for disabled tasks", () => {
+        const disabledBase: Task = { ...baseTask, id: "disabled-task" };
+        const patched = applyTaskOverlay(disabledBase, mockOverlay);
+        expect(patched).toBeNull();
+    });
+
+    test("should return original task if no override exists", () => {
+        const otherTask: Task = { ...baseTask, id: "other-task" };
+        const patched = applyTaskOverlay(otherTask, mockOverlay);
+        expect(patched).toEqual(otherTask);
+    });
+
+    test("should merge taskRequirements (append, not replace)", () => {
+        const overlayWithReqs: Overlay = {
+            tasks: {
+                "task-1": {
+                    taskRequirements: [
+                        { task: { id: "new-req", name: "New Requirement" } }
+                    ]
+                }
+            },
+            $meta: { version: "1.0.0", generated: new Date().toISOString() }
+        };
+
+        const taskWithExistingReqs: Task = {
+            ...baseTask,
+            taskRequirements: [
+                { task: { id: "existing-req", name: "Existing Requirement" } }
+            ]
+        } as any;
+
+        const patched = applyTaskOverlay(taskWithExistingReqs, overlayWithReqs);
+        expect(patched?.taskRequirements).toHaveLength(2);
+        expect(patched?.taskRequirements.map((r: any) => r.task.id)).toContain("existing-req");
+        expect(patched?.taskRequirements.map((r: any) => r.task.id)).toContain("new-req");
+    });
+
+    describe("Collector Task (Nut Sack Overlay)", () => {
+        test("should work with real local overlay data", () => {
+            const overlay = localOverlay as Overlay;
+            const collectorTaskId = "5c51aac186f77432ea65c552";
+
+            const baseCollectorTask: Task = {
+                id: collectorTaskId,
+                name: "Collector",
+                objectives: [
+                    { description: "Existing Objective", items: [{ id: "item1", name: "Existing Item" }] }
+                ]
+            } as any;
+
+            const patched = applyTaskOverlay(baseCollectorTask, overlay);
+
+            expect(patched).not.toBeNull();
+            // Verify objectivesAdd appended Nut Sack items
+            const objectives = patched?.objectives || [];
+            expect(objectives.length).toBeGreaterThan(1);
+
+            const nutSackObjective = objectives.find(obj =>
+                obj.items?.some(i => i.name === "Nut Sack balaclava")
+            );
+            expect(nutSackObjective).toBeDefined();
+        });
+    });
+
+    describe("Remote Fetching", () => {
+        test("should fetch the overlay from the remote URL", async () => {
+            const overlay = await fetchOverlay();
+            expect(overlay).toBeDefined();
+            expect(overlay.$meta).toBeDefined();
+            expect(overlay.$meta.version).toBeDefined();
+            console.log(`[Test] Remote version: ${overlay.$meta.version}`);
+        });
+    });
+
+    describe("Data Comparison (Showcase)", () => {
+        test("demonstrate merge: Grenadier experience", () => {
+            const overlay = localOverlay as Overlay;
+            const grenadierId = "5c0d190cd09282029f5390d8";
+
+            const apiData: Task = {
+                id: grenadierId,
+                name: "Grenadier",
+                experience: 10000, // Tarkov Dev API might say 10k
+            } as any;
+
+            const overlayData = overlay.tasks?.[grenadierId];
+            const result = applyTaskOverlay(apiData, overlay);
+
+            console.log(`\n--- Grenadier Merge Result ---`);
+            console.log(`API Data Exp: ${apiData.experience}`);
+            console.log(`Overlay Data Exp: ${overlayData?.experience}`);
+            console.log(`Merged Result Exp: ${result?.experience}`);
+            console.log(`------------------------------\n`);
+
+            if (overlayData?.experience) {
+                expect(result?.experience).toBe(overlayData.experience);
+            }
+        });
+    });
+});

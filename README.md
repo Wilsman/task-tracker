@@ -2,7 +2,6 @@ A comprehensive quest and progression tracker for Escape from Tarkov, featuring 
 
 [![Discord](https://img.shields.io/discord/111111111111111111?color=7289da&label=discord&logo=discord&style=flat-square)](https://discord.gg/X6v7RVQAC8)
 
-
 ### Quest Tracking
 
 - **Checklist View** - Track all quests with trader/map grouping and filtering
@@ -36,7 +35,6 @@ A comprehensive quest and progression tracker for Escape from Tarkov, featuring 
 - **Live API Data** - Toggle between static data and live tarkov.dev API
 - **Offline Support** - All data stored locally in IndexedDB
 - **Christmas Theme** - Seasonal theme toggle for some festive cheer
-
 
 ## Tarkov.dev API
 
@@ -102,7 +100,6 @@ API responses are cached in localStorage for 30 minutes.
 - **nuqs** - Type-safe URL state management
 - **Vitest** - Testing framework
 
-
 ## Getting Started
 
 1. Clone the repository
@@ -156,6 +153,17 @@ All user data is stored locally in the browser using IndexedDB:
 - User preferences and notes
 
 Profile metadata is stored in localStorage for quick access during initialization.
+
+## Contributing
+
+Contributions are welcome! Please see our [Contributing Guide](.github/CONTRIBUTING.md) for details on:
+
+- How to submit bug reports and feature requests
+- How to set up your development environment
+- Our code style and commit conventions
+- The pull request process
+
+Please read our [Code of Conduct](CODE_OF_CONDUCT.md) before contributing.
 
 ## License
 

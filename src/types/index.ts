@@ -78,15 +78,15 @@ export interface TaskData {
 export interface CollectorItemsData {
   data: {
     task: {
+      id: string;
       objectives: {
         items: {
-          id: string;
+          id?: string;
           name: string;
-          iconLink: string;
+          iconLink?: string;
         }[];
       }[];
     };
-
   };
 }
 
@@ -157,4 +157,55 @@ export interface AchievementsData {
   data: {
     achievements: Achievement[];
   };
+}
+
+// Data Overlay Types
+export interface Overlay {
+  tasks?: Record<string, TaskOverride>;
+  items?: Record<string, ItemOverride>;
+  editions?: Record<string, Edition>;
+  $meta: {
+    version: string;
+    generated: string;
+    sha256?: string;
+  };
+}
+
+export interface TaskOverride {
+  minPlayerLevel?: number;
+  name?: string;
+  wikiLink?: string;
+  disabled?: boolean;
+  experience?: number;
+  map?: { id: string; name: string };
+  objectives?: Record<string, ObjectiveOverride>;
+  objectivesAdd?: ObjectiveAdd[];
+}
+
+export interface ItemOverride {
+  name?: string;
+  shortName?: string;
+}
+
+export interface ObjectiveOverride {
+  count?: number;
+  maps?: Array<{ id: string; name: string }>;
+  items?: Array<{ id?: string; name: string }>;
+}
+
+export interface ObjectiveAdd {
+  id?: string;
+  count?: number;
+  description?: string;
+  maps?: Array<{ id: string; name: string }>;
+  items?: Array<{ id?: string; name: string }>;
+}
+
+export interface Edition {
+  id: string;
+  title: string;
+  value: number;
+  defaultStashLevel: number;
+  defaultCultistCircleLevel: number;
+  traderRepBonus: Record<string, number>;
 }

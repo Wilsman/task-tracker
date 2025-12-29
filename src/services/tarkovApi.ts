@@ -1,6 +1,88 @@
-import { TaskData, CollectorItemsData, HideoutStationsData, AchievementsData } from '../types';
+import { TaskData, CollectorItemsData, HideoutStationsData, AchievementsData, Overlay, Task } from '../types';
+import localOverlay from '../../overlay-refs/overlay.json';
 
 const TARKOV_API_URL = 'https://api.tarkov.dev/graphql';
+export const OVERLAY_URL = 'https://cdn.jsdelivr.net/gh/tarkovtracker-org/tarkov-data-overlay@main/dist/overlay.json';
+
+export function applyTaskOverlay(baseTask: Task, overlay: Overlay): Task | null {
+  const taskOverride = overlay.tasks?.[baseTask.id];
+  if (!taskOverride) return baseTask;
+
+  if (taskOverride.disabled === true) return null;
+
+  const result = { ...baseTask };
+
+  // Fields that need special merge handling (arrays that should append, not replace)
+  const arrayMergeFields = ['taskRequirements'];
+  const nestedArrayMergeFields = ['finishRewards', 'startRewards']; // These have .items arrays
+
+  // Apply top-level fields
+  for (const [key, value] of Object.entries(taskOverride)) {
+    if (key === 'objectives' || key === 'objectivesAdd') continue; // Handle separately
+
+    // Smart merge for taskRequirements (append new ones)
+    if (arrayMergeFields.includes(key) && Array.isArray(value)) {
+      const existing = (result as any)[key] || [];
+      const existingIds = new Set(existing.map((r: any) => r.task?.id));
+      const newItems = (value as any[]).filter(item => !existingIds.has(item.task?.id));
+      (result as any)[key] = [...existing, ...newItems];
+      continue;
+    }
+
+    // Smart merge for finishRewards/startRewards (append new items)
+    if (nestedArrayMergeFields.includes(key) && typeof value === 'object' && value !== null) {
+      const existingRewards = (result as any)[key] || {};
+      const newRewards = value as any;
+
+      if (newRewards.items && Array.isArray(newRewards.items)) {
+        const existingItems = existingRewards.items || [];
+        const existingItemIds = new Set(existingItems.map((i: any) => i.item?.id));
+        const newItems = newRewards.items.filter((i: any) => !existingItemIds.has(i.item?.id));
+        (result as any)[key] = {
+          ...existingRewards,
+          items: [...existingItems, ...newItems],
+        };
+      } else {
+        (result as any)[key] = { ...existingRewards, ...newRewards };
+      }
+      continue;
+    }
+
+    // Default: direct assignment
+    (result as any)[key] = value;
+  }
+
+  // Apply objective patches (ID-keyed object)
+  if (taskOverride.objectives && typeof taskOverride.objectives === 'object') {
+    result.objectives = (baseTask.objectives || []).map(obj => {
+      const patch = (taskOverride.objectives as Record<string, any>)[(obj as any).id];
+      return patch ? { ...obj, ...patch } : obj;
+    });
+  }
+
+  // Append missing objectives
+  if (taskOverride.objectivesAdd && Array.isArray(taskOverride.objectivesAdd)) {
+    result.objectives = [
+      ...(result.objectives || []),
+      ...taskOverride.objectivesAdd,
+    ] as any;
+  }
+
+  return result;
+}
+
+export async function fetchOverlay(): Promise<Overlay> {
+  try {
+    const response = await fetch(OVERLAY_URL);
+    if (!response.ok) throw new Error(`Overlay fetch failed: ${response.status}`);
+    const data = await response.json();
+    console.log(`[Overlay] Successfully fetched latest from: ${OVERLAY_URL}`);
+    return data;
+  } catch (err) {
+    console.warn('Failed to fetch remote overlay, falling back to local:', err);
+    return localOverlay as Overlay;
+  }
+}
 
 // ============================================================================
 // TEMPORARY TASK REQUIREMENT OVERRIDES
@@ -18,11 +100,11 @@ const TASK_REQUIREMENT_OVERRIDES: Record<string, string[]> = {
 
 function applyTaskRequirementOverrides<T extends { id: string; taskRequirements: { task: { id: string; name: string } }[] }>(tasks: T[]): T[] {
   if (!ENABLE_TASK_REQUIREMENT_OVERRIDES) return tasks;
-  
+
   return tasks.map(task => {
     const overrides = TASK_REQUIREMENT_OVERRIDES[task.id];
     if (!overrides || overrides.length === 0) return task;
-    
+
     return {
       ...task,
       taskRequirements: task.taskRequirements.filter(
@@ -43,7 +125,7 @@ interface CombinedApiData {
 }
 
 // Simple localStorage cache for combined API payload
-export const API_CACHE_KEY = 'taskTracker_api_cache_v1';
+export const API_CACHE_KEY = 'taskTracker_api_cache_v2';
 export const API_CACHE_TTL_MS = 1000 * 60 * 30; // 30 minutes
 
 export interface CombinedCachePayload {
@@ -174,7 +256,8 @@ const COMBINED_QUERY = `
       ... on TaskObjectivePlayerLevel { playerLevel }
     }
   }
-  task(id: "5c51aac186f77432ea65c552") {
+  task(id: "5c51aac186f77432ea65c552", lang: en) {
+    id
     objectives { ... on TaskObjectiveItem { items { id name iconLink } } }
   }
   achievements {
@@ -222,35 +305,40 @@ export async function fetchCombinedData(): Promise<{
   }
 
   const result: CombinedApiData = await response.json();
-  
+
   if (result.errors) {
     throw new Error(`GraphQL error: ${result.errors.map((e: { message: string }) => e.message).join(', ')}`);
   }
 
-  // Transform the combined result into separate TaskData and CollectorItemsData
-  // Aggregate maps from objectives into task.maps array
+  // Aggregated maps from objectives into task.maps array
   // Apply task requirement overrides before processing
   const tasksWithOverrides = applyTaskRequirementOverrides(result.data.tasks);
-  
-  const tasksWithMaps = tasksWithOverrides.map(task => {
+
+  // Apply Overlay (Remote with Local Fallback)
+  const overlay = await fetchOverlay();
+  const tasksWithOverlay = tasksWithOverrides
+    .map(task => applyTaskOverlay(task, overlay))
+    .filter((task): task is Task => task !== null);
+
+  const tasksWithMaps = tasksWithOverlay.map(task => {
     const mapsSet = new Set<string>();
-    
+
     // Collect unique map names from all objectives
     task.objectives?.forEach(objective => {
       objective.maps?.forEach(map => {
         if (map.name) mapsSet.add(map.name);
       });
     });
-    
+
     // Convert Set to array of map objects
     const maps = Array.from(mapsSet).map(name => ({ name }));
-    
+
     return {
       ...task,
       maps
     };
   });
-  
+
   const tasks: TaskData = {
     data: {
       tasks: tasksWithMaps
@@ -259,7 +347,7 @@ export async function fetchCombinedData(): Promise<{
 
   const collectorItems: CollectorItemsData = {
     data: {
-      task: result.data.task
+      task: result.data.task ? (applyTaskOverlay(result.data.task as any, overlay) as any) : result.data.task
     }
   };
 
@@ -297,7 +385,7 @@ export async function fetchHideoutStations(): Promise<{ data: HideoutStationsDat
   }
 
   const result = await response.json();
-  
+
   if (result.errors) {
     throw new Error(`GraphQL error: ${result.errors.map((e: { message: string }) => e.message).join(', ')}`);
   }

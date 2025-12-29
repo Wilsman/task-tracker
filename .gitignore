@@ -35,3 +35,6 @@ coverage/
 .vitest/
 junit.xml
 test-results.xml
+
+# deploy
+deploy.md
