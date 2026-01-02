@@ -19,6 +19,7 @@ export interface ResetOptions {
   collectorItems: boolean;
   achievements: boolean;
   prestiges: boolean;
+  workingOnItems: boolean;
 }
 
 interface SelectiveResetDialogProps {
@@ -41,6 +42,7 @@ export function SelectiveResetDialog({
     collectorItems: false,
     achievements: false,
     prestiges: false,
+    workingOnItems: false,
   });
 
   // Reset state when dialog opens
@@ -53,6 +55,7 @@ export function SelectiveResetDialog({
         collectorItems: false,
         achievements: false,
         prestiges: false,
+        workingOnItems: false,
       });
     }
   }, [open]);
@@ -69,6 +72,7 @@ export function SelectiveResetDialog({
       collectorItems: checked,
       achievements: checked,
       prestiges: checked,
+      workingOnItems: checked,
     });
   };
 
@@ -199,6 +203,22 @@ export function SelectiveResetDialog({
               />
               <Label htmlFor="prestiges" className="text-sm cursor-pointer">
                 Prestiges
+              </Label>
+            </div>
+
+            <div className="flex items-center space-x-3">
+              <Checkbox
+                id="working-on"
+                checked={options.workingOnItems}
+                onCheckedChange={(checked) =>
+                  setOptions((prev) => ({
+                    ...prev,
+                    workingOnItems: checked as boolean,
+                  }))
+                }
+              />
+              <Label htmlFor="working-on" className="text-sm cursor-pointer">
+                Currently Working On
               </Label>
             </div>
           </div>

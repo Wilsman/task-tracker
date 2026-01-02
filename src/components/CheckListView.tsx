@@ -23,6 +23,12 @@ import {
 } from "./ui/collapsible";
 import { Button } from "./ui/button";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
+import {
   Link2,
   ChevronDown,
   ChevronUp,
@@ -91,6 +97,7 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
   const [prefsLoaded, setPrefsLoaded] = useState(false);
   const [enableLevelFilter, setEnableLevelFilter] = useState<boolean>(false);
   const [showCompleted, setShowCompleted] = useState<boolean>(true);
+  const [showNextOnly, setShowNextOnly] = useState<boolean>(false);
   const [sortMode, setSortMode] = useState<
     | "name-asc"
     | "level-asc"
@@ -237,6 +244,25 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
   // (moved global search listener below after allGroupNames is defined)
 
   // Apply filters
+  const nextQuestIds = useMemo(() => {
+    const completed = completedTasks;
+    const level = Number.isFinite(playerLevel) ? playerLevel : 1;
+    return new Set(
+      tasks
+        .filter((task) => {
+          if (completed.has(task.id)) return false;
+          if (task.minPlayerLevel > level) return false;
+          if (task.taskRequirements?.length > 0) {
+            return task.taskRequirements.every((req) =>
+              completed.has(req.task.id)
+            );
+          }
+          return true;
+        })
+        .map((task) => task.id)
+    );
+  }, [tasks, completedTasks, playerLevel]);
+
   const filteredTasks = useMemo(
     () =>
       tasks.filter((task) => {
@@ -266,6 +292,8 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
         }
         // Completed filter
         if (!showCompleted && completedTasks.has(task.id)) return false;
+        // Next quests filter (only immediate successors)
+        if (showNextOnly && !nextQuestIds.has(task.id)) return false;
         // Search filter
         if (searchTerm.trim()) {
           const term = searchTerm.toLowerCase();
@@ -293,6 +321,8 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
       playerLevel,
       showCompleted,
       completedTasks,
+      showNextOnly,
+      nextQuestIds,
     ]
   );
 
@@ -507,6 +537,16 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
             id="show-completed"
             checked={showCompleted}
             onCheckedChange={setShowCompleted}
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <Label htmlFor="show-next" className="text-sm">
+            Next Only
+          </Label>
+          <Switch
+            id="show-next"
+            checked={showNextOnly}
+            onCheckedChange={setShowNextOnly}
           />
         </div>
         <Button
@@ -894,13 +934,113 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
                                     </div>
                                     <ul className="list-disc pl-5 space-y-0.5">
                                       {task.objectives.map(
-                                        (objective, index) => (
-                                          <li key={index}>
-                                            {"playerLevel" in objective
-                                              ? `Reach level ${objective.playerLevel}`
-                                              : objective.description}
-                                          </li>
-                                        )
+                                        (objective, index) => {
+                                          const inlineItem =
+                                            objective.items?.length === 1
+                                              ? objective.items[0]
+                                              : undefined;
+                                          const inlineIconLink =
+                                            inlineItem?.iconLink ||
+                                            (inlineItem?.id
+                                              ? `https://assets.tarkov.dev/${inlineItem.id}-icon.webp`
+                                              : "");
+                                          const showInlineIcon =
+                                            inlineIconLink &&
+                                            objective.description?.includes(
+                                              inlineItem.name
+                                            );
+                                          return (
+                                            <li key={index}>
+                                              <span className="inline-flex items-center gap-2">
+                                                {showInlineIcon && (
+                                                  <TooltipProvider delayDuration={150}>
+                                                    <Tooltip>
+                                                      <TooltipTrigger asChild>
+                                                        <img
+                                                          src={inlineIconLink}
+                                                          alt={inlineItem?.name}
+                                                          className="h-4 w-4 object-contain"
+                                                          loading="lazy"
+                                                        />
+                                                      </TooltipTrigger>
+                                                      <TooltipContent
+                                                        side="top"
+                                                        align="center"
+                                                        className="bg-background text-foreground p-2 shadow-md border"
+                                                      >
+                                                        <div className="flex flex-col items-center gap-1">
+                                                          <img
+                                                            src={inlineIconLink}
+                                                            alt={inlineItem?.name}
+                                                            className="h-16 w-16 object-contain"
+                                                            loading="lazy"
+                                                          />
+                                                          <span className="text-xs">{inlineItem?.name}</span>
+                                                        </div>
+                                                      </TooltipContent>
+                                                    </Tooltip>
+                                                  </TooltipProvider>
+                                                )}
+                                                {"playerLevel" in objective
+                                                  ? `Reach level ${objective.playerLevel}`
+                                                  : objective.description}
+                                              </span>
+                                              {objective.items &&
+                                                objective.items.length > 0 &&
+                                                !showInlineIcon && (
+                                                  <div className="mt-1 flex flex-wrap gap-2">
+                                                    {objective.items.map(
+                                                      (item) => {
+                                                        const iconLink =
+                                                          item.iconLink ||
+                                                          (item.id
+                                                            ? `https://assets.tarkov.dev/${item.id}-icon.webp`
+                                                            : "");
+                                                        return (
+                                                          <span
+                                                            key={item.id || item.name}
+                                                            className="inline-flex items-center rounded bg-muted px-1.5 py-0.5 text-xs text-muted-foreground"
+                                                          >
+                                                            {iconLink ? (
+                                                              <TooltipProvider delayDuration={150}>
+                                                                <Tooltip>
+                                                                  <TooltipTrigger asChild>
+                                                                    <img
+                                                                      src={iconLink}
+                                                                      alt={item.name}
+                                                                      className="h-4 w-4 object-contain"
+                                                                      loading="lazy"
+                                                                    />
+                                                                  </TooltipTrigger>
+                                                                  <TooltipContent
+                                                                    side="top"
+                                                                    align="center"
+                                                                    className="bg-background text-foreground p-2 shadow-md border"
+                                                                  >
+                                                                    <div className="flex flex-col items-center gap-1">
+                                                                      <img
+                                                                        src={iconLink}
+                                                                        alt={item.name}
+                                                                        className="h-16 w-16 object-contain"
+                                                                        loading="lazy"
+                                                                      />
+                                                                      <span className="text-xs">{item.name}</span>
+                                                                    </div>
+                                                                  </TooltipContent>
+                                                                </Tooltip>
+                                                              </TooltipProvider>
+                                                            ) : (
+                                                              item.name
+                                                            )}
+                                                          </span>
+                                                        );
+                                                      }
+                                                    )}
+                                                  </div>
+                                                )}
+                                            </li>
+                                          );
+                                        }
                                       )}
                                     </ul>
                                   </div>
@@ -921,7 +1061,38 @@ export const CheckListView: React.FC<CheckListViewProps> = ({
                                       ...(task.finishRewards?.items ?? []),
                                     ].map((reward, index) => (
                                       <li key={index}>
-                                        {reward.item.name}
+                                        <span className="inline-flex items-center gap-1">
+                                          {reward.item.iconLink && (
+                                            <TooltipProvider delayDuration={150}>
+                                              <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                  <img
+                                                    src={reward.item.iconLink}
+                                                    alt={reward.item.name}
+                                                    className="h-4 w-4 object-contain"
+                                                    loading="lazy"
+                                                  />
+                                                </TooltipTrigger>
+                                                <TooltipContent
+                                                  side="top"
+                                                  align="center"
+                                                  className="bg-background text-foreground p-2 shadow-md border"
+                                                >
+                                                  <div className="flex flex-col items-center gap-1">
+                                                    <img
+                                                      src={reward.item.iconLink}
+                                                      alt={reward.item.name}
+                                                      className="h-16 w-16 object-contain"
+                                                      loading="lazy"
+                                                    />
+                                                    <span className="text-xs">{reward.item.name}</span>
+                                                  </div>
+                                                </TooltipContent>
+                                              </Tooltip>
+                                            </TooltipProvider>
+                                          )}
+                                          {reward.item.name}
+                                        </span>
                                         {reward.count > 1
                                           ? ` (${reward.count})`
                                           : ""}

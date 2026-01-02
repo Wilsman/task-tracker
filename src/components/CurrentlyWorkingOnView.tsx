@@ -24,9 +24,16 @@ import {
   ChevronUp,
   ExternalLink,
   Lightbulb,
+  Plus,
 } from "lucide-react";
 import { TRADER_COLORS } from "@/data/traders";
 import { cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface CurrentlyWorkingOnViewProps {
   tasks: Task[];
@@ -39,6 +46,7 @@ interface CurrentlyWorkingOnViewProps {
   completedTasks: Set<string>;
   completedStorylineObjectives: Set<string>;
   completedHideoutItems: Set<string>;
+  playerLevel: number;
   onToggleWorkingOnTask: (taskId: string) => void;
   onToggleWorkingOnStorylineObjective: (objectiveId: string) => void;
   onToggleCollectorItem: (itemId: string) => void;
@@ -61,6 +69,7 @@ export function CurrentlyWorkingOnView({
   completedTasks,
   completedStorylineObjectives,
   completedHideoutItems,
+  playerLevel,
   onToggleWorkingOnTask,
   onToggleWorkingOnStorylineObjective,
   onToggleCollectorItem,
@@ -75,6 +84,7 @@ export function CurrentlyWorkingOnView({
   const [expandedHideout, setExpandedHideout] = useState<Set<string>>(
     new Set()
   );
+  const [showAllNextTasks, setShowAllNextTasks] = useState(false);
 
   const toggleTaskExpanded = (taskId: string) => {
     setExpandedTasks((prev) => {
@@ -99,20 +109,48 @@ export function CurrentlyWorkingOnView({
     return tasks.filter((task) => workingOnTasks.has(task.id));
   }, [tasks, workingOnTasks]);
 
+  const nextTasks = useMemo(() => {
+    const level = Number.isFinite(playerLevel) ? playerLevel : 1;
+    return tasks.filter((task) => {
+      if (completedTasks.has(task.id)) return false;
+      if (workingOnTasks.has(task.id)) return false;
+      if (task.minPlayerLevel > level) return false;
+      if (task.taskRequirements && task.taskRequirements.length > 0) {
+        return task.taskRequirements.every((req) =>
+          completedTasks.has(req.task.id)
+        );
+      }
+      return true;
+    });
+  }, [tasks, completedTasks, workingOnTasks, playerLevel]);
+
   // Group active tasks by map - tasks with multiple maps appear under each map
+  const normalizeMapName = (name?: string | null) => {
+    if (!name) return "No specific map";
+    if (name.toLowerCase().startsWith("ground zero")) return "Ground Zero";
+    return name;
+  };
+
   const tasksByMap = useMemo(() => {
     const grouped = new Map<string, Task[]>();
+    const seenByMap = new Map<string, Set<string>>();
+    const addTaskToMap = (mapName: string, task: Task) => {
+      if (!grouped.has(mapName)) grouped.set(mapName, []);
+      if (!seenByMap.has(mapName)) seenByMap.set(mapName, new Set());
+      const seen = seenByMap.get(mapName)!;
+      if (seen.has(task.id)) return;
+      seen.add(task.id);
+      grouped.get(mapName)!.push(task);
+    };
     activeTasks.forEach((task) => {
       if (task.maps && task.maps.length > 0) {
         task.maps.forEach((map) => {
-          const mapName = map.name || "No specific map";
-          if (!grouped.has(mapName)) grouped.set(mapName, []);
-          grouped.get(mapName)!.push(task);
+          const mapName = normalizeMapName(map.name);
+          addTaskToMap(mapName, task);
         });
       } else {
-        const mapName = task.map?.name || "No specific map";
-        if (!grouped.has(mapName)) grouped.set(mapName, []);
-        grouped.get(mapName)!.push(task);
+        const mapName = normalizeMapName(task.map?.name);
+        addTaskToMap(mapName, task);
       }
     });
     return grouped;
@@ -237,8 +275,78 @@ export function CurrentlyWorkingOnView({
           </Card>
         )}
 
-      {/* Active Quests Section */}
-      {activeTasks.length > 0 && (
+        {/* Next Quests Section */}
+        {nextTasks.length > 0 && (
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <Target className="h-5 w-5" />
+                <CardTitle>Next Quests ({nextTasks.length})</CardTitle>
+              </div>
+              <CardDescription>
+                Unlocked by your completed quests
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {(showAllNextTasks
+                ? nextTasks
+                : nextTasks.slice(0, 3)
+              ).map((task) => (
+                <div
+                  key={task.id}
+                  className="flex items-center justify-between gap-4 rounded-lg border bg-card px-3 py-2"
+                >
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-medium">{task.name}</span>
+                    <Badge
+                      variant="outline"
+                      style={{
+                        borderColor:
+                          TRADER_COLORS[
+                            task.trader.name as keyof typeof TRADER_COLORS
+                          ] || "#6b7280",
+                        color:
+                          TRADER_COLORS[
+                            task.trader.name as keyof typeof TRADER_COLORS
+                          ] || "#6b7280",
+                      }}
+                    >
+                      {task.trader.name}
+                    </Badge>
+                    <Badge variant="secondary">Lvl {task.minPlayerLevel}</Badge>
+                    {task.map?.name && (
+                      <Badge variant="outline">{task.map.name}</Badge>
+                    )}
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => onToggleWorkingOnTask(task.id)}
+                    title="Add to working on"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+              {nextTasks.length > 1 && (
+                <div className="pt-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowAllNextTasks((prev) => !prev)}
+                  >
+                    {showAllNextTasks
+                      ? "Show less"
+                      : `Show all (${nextTasks.length})`}
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Active Quests Section */}
+        {activeTasks.length > 0 && (
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
@@ -383,32 +491,108 @@ export function CurrentlyWorkingOnView({
                                       className="mt-0.5 h-4 w-4"
                                     />
                                     <div className="flex-1">
-                                      <p
-                                        className={cn(
-                                          "text-muted-foreground",
-                                          isObjCompleted && "line-through"
-                                        )}
-                                      >
-                                        {obj.description}
-                                      </p>
-                                      {obj.count && obj.count > 1 && (
-                                        <span className="text-xs text-primary font-medium">
-                                          (×{obj.count})
-                                        </span>
-                                      )}
-                                      {obj.items && obj.items.length > 0 && (
-                                        <div className="flex flex-wrap gap-1 mt-1">
-                                          {obj.items.map((item) => (
-                                            <Badge
-                                              key={item.id}
-                                              variant="secondary"
-                                              className="text-xs"
+                                      {(() => {
+                                        const inlineItem =
+                                          obj.items?.length === 1
+                                            ? obj.items[0]
+                                            : undefined;
+                                        const showInlineIcon =
+                                          inlineItem?.iconLink &&
+                                          obj.description?.includes(
+                                            inlineItem.name
+                                          );
+                                        return (
+                                          <>
+                                            <p
+                                              className={cn(
+                                                "text-muted-foreground",
+                                                isObjCompleted && "line-through"
+                                              )}
                                             >
-                                              {item.name}
-                                            </Badge>
-                                          ))}
-                                        </div>
-                                      )}
+                                              {showInlineIcon && (
+                                                <TooltipProvider delayDuration={150}>
+                                                  <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                      <img
+                                                        src={inlineItem?.iconLink}
+                                                        alt={inlineItem?.name}
+                                                        className="mr-2 inline h-4 w-4 object-contain"
+                                                        loading="lazy"
+                                                      />
+                                                    </TooltipTrigger>
+                                                    <TooltipContent
+                                                      side="top"
+                                                      align="center"
+                                                      className="bg-background text-foreground p-2 shadow-md border"
+                                                    >
+                                                      <div className="flex flex-col items-center gap-1">
+                                                        <img
+                                                          src={inlineItem?.iconLink}
+                                                          alt={inlineItem?.name}
+                                                          className="h-16 w-16 object-contain"
+                                                          loading="lazy"
+                                                        />
+                                                        <span className="text-xs">{inlineItem?.name}</span>
+                                                      </div>
+                                                    </TooltipContent>
+                                                  </Tooltip>
+                                                </TooltipProvider>
+                                              )}
+                                              {obj.description}
+                                            </p>
+                                            {obj.count && obj.count > 1 && (
+                                              <span className="text-xs text-primary font-medium">
+                                                (×{obj.count})
+                                              </span>
+                                            )}
+                                            {obj.items &&
+                                              obj.items.length > 0 &&
+                                              !showInlineIcon && (
+                                                <div className="flex flex-wrap gap-1 mt-1">
+                                                  {obj.items.map((item) => (
+                                                    <Badge
+                                                      key={item.id}
+                                                      variant="secondary"
+                                                      className="text-xs"
+                                                    >
+                                                      {item.iconLink ? (
+                                                        <TooltipProvider delayDuration={150}>
+                                                          <Tooltip>
+                                                            <TooltipTrigger asChild>
+                                                              <img
+                                                                src={item.iconLink}
+                                                                alt={item.name}
+                                                                className="h-4 w-4 object-contain"
+                                                                loading="lazy"
+                                                              />
+                                                            </TooltipTrigger>
+                                                            <TooltipContent
+                                                              side="top"
+                                                              align="center"
+                                                              className="bg-background text-foreground p-2 shadow-md border"
+                                                            >
+                                                              <div className="flex flex-col items-center gap-1">
+                                                                <img
+                                                                  src={item.iconLink}
+                                                                  alt={item.name}
+                                                                  className="h-16 w-16 object-contain"
+                                                                  loading="lazy"
+                                                                />
+                                                                <span className="text-xs">{item.name}</span>
+                                                              </div>
+                                                            </TooltipContent>
+                                                          </Tooltip>
+                                                        </TooltipProvider>
+                                                      ) : (
+                                                        item.name
+                                                      )}
+                                                    </Badge>
+                                                  ))}
+                                                </div>
+                                              )}
+                                          </>
+                                        );
+                                      })()}
                                     </div>
                                   </div>
                                 );
@@ -688,3 +872,5 @@ export function CurrentlyWorkingOnView({
     </div>
   );
 }
+
+

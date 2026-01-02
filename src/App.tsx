@@ -43,6 +43,7 @@ import {
   fetchCombinedData,
   loadCombinedCache,
   isCombinedCacheFresh,
+  type FetchStage,
 } from "./services/tarkovApi";
 import { cn } from "@/lib/utils";
 import { Button } from "./components/ui/button";
@@ -106,9 +107,6 @@ import { NotesWidget } from "./components/NotesWidget";
 import { OnboardingModal } from "./components/OnboardingModal";
 import { LazyLoadErrorBoundary } from "./components/LazyLoadErrorBoundary";
 import { STORYLINE_QUESTS } from "@/data/storylineQuests";
-import { useChristmasTheme } from "@/hooks/use-christmas-theme";
-import { ChristmasLoading } from "./components/ChristmasLoading";
-import { Snowfall } from "./components/Snowfall";
 
 function App() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
@@ -150,6 +148,69 @@ function App() {
   const [hiddenTraders, setHiddenTraders] = useState<Set<string>>(new Set());
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const LOADING_STAGES = {
+    boot: {
+      title: "INIT::QUEST-CORE v1.0",
+      detail: "BOOTSTRAP SEQUENCE...",
+      progress: 8,
+    },
+    profiles: {
+      title: "SYS::PROFILES",
+      detail: "LOADING USER CONTEXT...",
+      progress: 16,
+    },
+    local: {
+      title: "SYS::LOCAL",
+      detail: "RESTORING SAVED PROGRESS...",
+      progress: 28,
+    },
+    prefs: {
+      title: "SYS::PREFERENCES",
+      detail: "APPLYING USER SETTINGS...",
+      progress: 38,
+    },
+    cacheCheck: {
+      title: "CACHE::CHECK",
+      detail: "VERIFYING LOCAL SNAPSHOT...",
+      progress: 48,
+    },
+    cacheApply: {
+      title: "CACHE::APPLY",
+      detail: "HYDRATING UI FROM CACHE...",
+      progress: 58,
+    },
+    request: {
+      title: "NET::REQUEST",
+      detail: "REQUESTING QUEST PAYLOAD...",
+      progress: 68,
+    },
+    parse: {
+      title: "NET::PARSE",
+      detail: "DECODING API RESPONSE...",
+      progress: 74,
+    },
+    overlayFetch: {
+      title: "NET::OVERLAY",
+      detail: "FETCHING DATA OVERLAY...",
+      progress: 80,
+    },
+    overlayApply: {
+      title: "MERGE::OVERLAY",
+      detail: "APPLYING PATCHES...",
+      progress: 86,
+    },
+    normalize: {
+      title: "MAP::NORMALIZE",
+      detail: "BUILDING MAP INDEX...",
+      progress: 92,
+    },
+    finalize: {
+      title: "SYS::FINALIZE",
+      detail: "FINALIZING SESSION...",
+      progress: 97,
+    },
+  } as const;
+  const [loadingStage, setLoadingStage] = useState(LOADING_STAGES.boot);
   const [showOnboarding, setShowOnboarding] = useState(false);
 
   const handleRefresh = useCallback(async () => {
@@ -226,7 +287,6 @@ function App() {
   );
 
   const isMobile = useIsMobile();
-  const { isChristmasTheme } = useChristmasTheme();
 
   // Always use checklist on mobile
   useEffect(() => {
@@ -644,6 +704,7 @@ function App() {
   useEffect(() => {
     const init = async () => {
       try {
+        setLoadingStage(LOADING_STAGES.profiles);
         const ensured = ensureProfiles();
         setProfiles(ensured.profiles);
         setActiveProfileId(ensured.activeId);
@@ -695,6 +756,7 @@ function App() {
           /* ignore legacy migration errors */
         }
 
+        setLoadingStage(LOADING_STAGES.local);
         taskStorage.setProfile(ensured.activeId);
         await taskStorage.init();
         const savedTasks = await taskStorage.loadCompletedTasks();
@@ -722,6 +784,7 @@ function App() {
         );
         setWorkingOnCollectorItems(savedWorkingOnItems.collectorItems);
         setWorkingOnHideoutStations(savedWorkingOnItems.hideoutStations);
+        setLoadingStage(LOADING_STAGES.prefs);
         // Load player level from user preferences (with migration from localStorage)
         const savedPrefs = await taskStorage.loadUserPreferences();
         let loadedLevel = Number(savedPrefs.playerLevel);
@@ -752,15 +815,28 @@ function App() {
           setPlayerLevel(1);
         }
 
+        setLoadingStage(LOADING_STAGES.cacheCheck);
         // Load cached API data instantly if present
         const cached = loadCombinedCache();
         if (cached) {
+          setLoadingStage(LOADING_STAGES.cacheApply);
           setAllTasks(cached.tasks.data.tasks);
           setApiCollectorItems(cached.collectorItems);
           setAchievements(cached.achievements.data.achievements);
           setHideoutStations(cached.hideoutStations.data.hideoutStations);
           setIsLoading(false);
         }
+
+        const handleFetchStage = (stage: FetchStage) => {
+          if (stage === "request") setLoadingStage(LOADING_STAGES.request);
+          if (stage === "parse") setLoadingStage(LOADING_STAGES.parse);
+          if (stage === "overlay-fetch")
+            setLoadingStage(LOADING_STAGES.overlayFetch);
+          if (stage === "overlay-apply")
+            setLoadingStage(LOADING_STAGES.overlayApply);
+          if (stage === "normalize") setLoadingStage(LOADING_STAGES.normalize);
+          if (stage === "done") setLoadingStage(LOADING_STAGES.finalize);
+        };
 
         const needsRefresh = !isCombinedCacheFresh();
         if (needsRefresh) {
@@ -771,7 +847,7 @@ function App() {
               collectorItems: collectorData,
               achievements: achievementsData,
               hideoutStations,
-            } = await fetchCombinedData();
+            } = await fetchCombinedData(handleFetchStage);
             setAllTasks(tasksData.data.tasks);
             setApiCollectorItems(collectorData);
             setAchievements(achievementsData.data.achievements);
@@ -795,7 +871,7 @@ function App() {
               collectorItems: collectorData,
               achievements: achievementsData,
               hideoutStations,
-            } = await fetchCombinedData();
+            } = await fetchCombinedData(handleFetchStage);
             setAllTasks(tasksData.data.tasks);
             setApiCollectorItems(collectorData);
             setAchievements(achievementsData.data.achievements);
@@ -1106,6 +1182,7 @@ function App() {
       const resetCollectorItems = resetAll || options.collectorItems;
       const resetAchievements = resetAll || options.achievements;
       const resetPrestiges = resetAll || options.prestiges;
+      const resetWorkingOnItems = resetAll || options.workingOnItems;
 
       // Reset state for selected areas
       if (resetNormalTasks) setCompletedTasks(new Set());
@@ -1115,6 +1192,12 @@ function App() {
       if (resetStorylineQuests) {
         setCompletedStorylineObjectives(new Set());
         setCompletedStorylineMapNodes(new Set());
+      }
+      if (resetWorkingOnItems) {
+        setWorkingOnTasks(new Set());
+        setWorkingOnStorylineObjectives(new Set());
+        setWorkingOnCollectorItems(new Set());
+        setWorkingOnHideoutStations(new Set());
       }
 
       try {
@@ -1132,6 +1215,9 @@ function App() {
         if (resetStorylineQuests) {
           await taskStorage.saveCompletedStorylineObjectives(new Set());
           await taskStorage.saveCompletedStorylineMapNodes(new Set());
+        }
+        if (resetWorkingOnItems) {
+          await taskStorage.clearWorkingOnItems();
         }
 
         // Reset prestige by saving empty entries per prestige id
@@ -1356,10 +1442,6 @@ function App() {
   }, [focusMode]);
 
   if (isLoading) {
-    if (isChristmasTheme) {
-      return <ChristmasLoading progress={66} />;
-    }
-
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="flex flex-col items-center gap-6">
@@ -1374,11 +1456,11 @@ function App() {
             scaleDistance={1.2}
             rotateYDistance={12}
           >
-            Loading... Making donuts
+            {loadingStage.title}
           </TextShimmerWave>
-          <Progress value={66} className="w-[240px] h-2" />
-          <p className="text-xs text-muted-foreground">
-            Fetching quests and items…
+          <Progress value={loadingStage.progress} className="w-[240px] h-2" />
+          <p className="text-xs text-muted-foreground font-mono uppercase tracking-[0.2em]">
+            {loadingStage.detail}
           </p>
         </div>
       </div>
@@ -1435,12 +1517,10 @@ function App() {
                     <span
                       className={cn(
                         "inline-flex text-[10px] px-2 py-0.5 rounded-full font-semibold border",
-                        isChristmasTheme
-                          ? "bg-red-600/10 text-red-600 border-red-600/20"
-                          : "bg-orange-600/10 text-orange-600 border-orange-600/20"
+                        "bg-orange-600/10 text-orange-600 border-orange-600/20"
                       )}
                     >
-                      {isChristmasTheme ? "🎄 Christmas Edition" : "BETA"}
+                      BETA
                     </span>
                     <span className="hidden md:inline-flex md:peer-data-[state=collapsed]:hidden text-[10px] px-2 py-0.5 rounded-full bg-emerald-600/10 text-emerald-600 border border-emerald-600/20">
                       Live API
@@ -1687,6 +1767,7 @@ function App() {
                           completedStorylineObjectives
                         }
                         completedHideoutItems={completedHideoutItems}
+                        playerLevel={playerLevel}
                         onToggleWorkingOnTask={handleToggleWorkingOnTask}
                         onToggleWorkingOnStorylineObjective={
                           handleToggleWorkingOnStorylineObjective
@@ -1792,7 +1873,6 @@ function App() {
         isOpen={showOnboarding}
         onClose={handleCloseOnboarding}
       />
-      <Snowfall />
     </NuqsAdapter>
   );
 }
