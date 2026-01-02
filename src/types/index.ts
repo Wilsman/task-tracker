@@ -29,13 +29,13 @@ export interface Task {
 }
 
 export interface TaskObjective {
-  description: string;
+  description?: string;
   playerLevel?: number;
   maps?: {
     name: string;
   }[];
   items?: {
-    id: string;
+    id?: string;
     name: string;
     iconLink?: string;
   }[];

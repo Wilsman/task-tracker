@@ -1,4 +1,4 @@
-import { TaskData, CollectorItemsData, HideoutStationsData, AchievementsData, Overlay, Task, TaskOverride, ObjectiveAdd, ObjectiveOverride } from '../types';
+import { TaskData, TaskObjective, CollectorItemsData, HideoutStationsData, AchievementsData, Overlay, Task, TaskOverride, ObjectiveAdd, ObjectiveOverride } from '../types';
 import localOverlay from '../../overlay-refs/overlay.json';
 
 const TARKOV_API_URL = 'https://api.tarkov.dev/graphql';
@@ -8,9 +8,8 @@ type TaskOverlayTarget = Task | CollectorItemsData['data']['task'];
 type TaskRequirement = Task['taskRequirements'][number];
 type RewardContainer = { items?: Array<{ item?: { id?: string } }> } & Record<string, unknown>;
 type ObjectiveItem = { id?: string; name: string; iconLink?: string };
-type ObjectiveWithId = (Task['objectives'] extends Array<infer O> ? O : never) & {
+type ObjectiveWithId = TaskObjective & {
   id?: string;
-  items?: ObjectiveItem[];
 };
 type ObjectiveLike = {
   description?: string;
@@ -75,8 +74,8 @@ export function applyTaskOverlay<T extends TaskOverlayTarget>(baseTask: T, overl
         : [];
       const newItems = Array.isArray(newRewards.items)
         ? newRewards.items.filter(
-            (i) => !new Set(existingItems.map((e) => e.item?.id)).has(i.item?.id)
-          )
+          (i) => !new Set(existingItems.map((e) => e.item?.id)).has(i.item?.id)
+        )
         : [];
       if (newItems.length > 0) {
         result[key] = {
@@ -96,7 +95,7 @@ export function applyTaskOverlay<T extends TaskOverlayTarget>(baseTask: T, overl
 
   // Apply objective patches (ID-keyed object)
   if (taskOverride.objectives && typeof taskOverride.objectives === 'object') {
-    result.objectives = (baseTask.objectives || []).map((obj) => {
+    result.objectives = (baseTask.objectives || []).map((obj): TaskObjective => {
       const objWithId = obj as ObjectiveWithId;
       const patch = objWithId.id ? taskOverride.objectives?.[objWithId.id] : undefined;
       return patch ? { ...obj, ...patch } : obj;
@@ -125,11 +124,11 @@ export function applyTaskOverlay<T extends TaskOverlayTarget>(baseTask: T, overl
     result.objectives = [
       ...(result.objectives || []),
       ...expanded,
-    ];
+    ] as TaskObjective[];
   }
 
   if (result.objectives) {
-    result.objectives = result.objectives.map((objective) => ({
+    result.objectives = (result.objectives as TaskObjective[]).map((objective) => ({
       ...objective,
       items: objective.items?.map(withIconLink),
     }));
