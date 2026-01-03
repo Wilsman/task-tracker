@@ -33,6 +33,7 @@ interface CollectorViewProps {
   onToggleCollectorItem: (itemName: string) => void;
   completedHideoutItems: Set<string>;
   onToggleHideoutItem: (itemKey: string) => void;
+  onSetHideoutItems: (items: Set<string>) => void;
   groupBy: GroupBy;
   hideoutStations: HideoutStation[];
   workingOnHideoutStations?: Set<string>;
@@ -47,6 +48,7 @@ export const CollectorView: React.FC<CollectorViewProps> = ({
   onToggleCollectorItem,
   completedHideoutItems,
   onToggleHideoutItem,
+  onSetHideoutItems,
   groupBy,
   hideoutStations,
   workingOnHideoutStations = new Set(),
@@ -110,13 +112,18 @@ export const CollectorView: React.FC<CollectorViewProps> = ({
     delta: number,
     maxQuantity: number
   ) => {
-    setItemQuantities((prev) => ({
-      ...prev,
-      [itemKey]: Math.max(
+    setItemQuantities((prev) => {
+      const nextQty = Math.max(
         0,
         Math.min(maxQuantity, (prev[itemKey] || 0) + delta)
-      ),
-    }));
+      );
+      const nextQuantities = { ...prev, [itemKey]: nextQty };
+      const nextCompleted = new Set(completedHideoutItems);
+      if (nextQty >= maxQuantity) nextCompleted.add(itemKey);
+      else nextCompleted.delete(itemKey);
+      onSetHideoutItems(nextCompleted);
+      return nextQuantities;
+    });
   };
 
   // Check if an item is a currency (Roubles, Euros, Dollars)
@@ -128,14 +135,31 @@ export const CollectorView: React.FC<CollectorViewProps> = ({
   const handleMarkLevelComplete = (
     stationName: string,
     levelNum: number,
-    level: { itemRequirements: { item: { name: string } }[] }
+    level: { itemRequirements: { count: number; item: { name: string } }[] }
   ) => {
-    level.itemRequirements.forEach((req) => {
-      const itemKey = `${stationName}-${levelNum}-${req.item.name}`;
-      if (!completedHideoutItems.has(itemKey)) {
-        onToggleHideoutItem(itemKey);
-      }
-    });
+    const next = new Set(completedHideoutItems);
+    const nextQuantities: Record<string, number> = {};
+    const levelItemKeys = level.itemRequirements.map(
+      (req) => `${stationName}-${levelNum}-${req.item.name}`
+    );
+    const isLevelComplete = levelItemKeys.every((key) => next.has(key));
+
+    if (isLevelComplete) {
+      level.itemRequirements.forEach((req) => {
+        const itemKey = `${stationName}-${levelNum}-${req.item.name}`;
+        next.delete(itemKey);
+        nextQuantities[itemKey] = 0;
+      });
+    } else {
+      level.itemRequirements.forEach((req) => {
+        const itemKey = `${stationName}-${levelNum}-${req.item.name}`;
+        next.add(itemKey);
+        nextQuantities[itemKey] = req.count;
+      });
+    }
+
+    setItemQuantities((prev) => ({ ...prev, ...nextQuantities }));
+    onSetHideoutItems(next);
   };
 
   // Group items based on the current view mode
@@ -386,26 +410,27 @@ export const CollectorView: React.FC<CollectorViewProps> = ({
                                   />
                                 </button>
                               )}
-                              {totalItems > 0 &&
-                                completedItems < totalItems && (
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() =>
-                                      handleMarkLevelComplete(
-                                        station.name,
-                                        level.level,
-                                        level
-                                      )
-                                    }
-                                    className="h-7 gap-1.5 text-xs"
-                                  >
-                                    <CheckCheck className="h-3.5 w-3.5" />
-                                    <span className="hidden sm:inline">
-                                      Mark All
-                                    </span>
-                                  </Button>
-                                )}
+                              {totalItems > 0 && (
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() =>
+                                    handleMarkLevelComplete(
+                                      station.name,
+                                      level.level,
+                                      level
+                                    )
+                                  }
+                                  className="h-7 gap-1.5 text-xs"
+                                >
+                                  <CheckCheck className="h-3.5 w-3.5" />
+                                  <span className="hidden sm:inline">
+                                    {completedItems === totalItems
+                                      ? "Reset All"
+                                      : "Mark All"}
+                                  </span>
+                                </Button>
+                              )}
                               <span className="text-sm text-muted-foreground">
                                 {completedItems} / {totalItems}
                               </span>
@@ -484,9 +509,22 @@ export const CollectorView: React.FC<CollectorViewProps> = ({
                                       <Checkbox
                                         id={`${station.name}-${level.level}-${req.item.name}`}
                                         checked={isCompleted}
-                                        onCheckedChange={() =>
-                                          onToggleHideoutItem(itemKey)
-                                        }
+                                        onCheckedChange={(checked) => {
+                                          const isChecked = Boolean(checked);
+                                          setItemQuantities((prev) => ({
+                                            ...prev,
+                                            [itemKey]: isChecked
+                                              ? req.count
+                                              : 0,
+                                          }));
+                                          const nextCompleted = new Set(
+                                            completedHideoutItems
+                                          );
+                                          if (isChecked)
+                                            nextCompleted.add(itemKey);
+                                          else nextCompleted.delete(itemKey);
+                                          onSetHideoutItems(nextCompleted);
+                                        }}
                                         className="h-5 w-5 flex-shrink-0 mt-1"
                                       />
                                       <label

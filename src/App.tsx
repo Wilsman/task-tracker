@@ -1050,6 +1050,21 @@ function App() {
     [completedHideoutItems, activeProfileId]
   );
 
+  const handleSetHideoutItems = useCallback(
+    async (items: Set<string>) => {
+      if (!activeProfileId) return;
+      setCompletedHideoutItems(items);
+      try {
+        taskStorage.setProfile(activeProfileId);
+        await taskStorage.init();
+        await taskStorage.saveCompletedHideoutItems(items);
+      } catch (err) {
+        console.error("Save hideout items error", err);
+      }
+    },
+    [activeProfileId]
+  );
+
   const handleToggleTaskObjective = useCallback(
     async (objectiveKey: string) => {
       if (!activeProfileId) return;
@@ -1692,6 +1707,7 @@ function App() {
                         onToggleCollectorItem={handleToggleCollectorItem}
                         completedHideoutItems={completedHideoutItems}
                         onToggleHideoutItem={handleToggleHideoutItem}
+                        onSetHideoutItems={handleSetHideoutItems}
                         groupBy={collectorGroupBy}
                         hideoutStations={hideoutStations}
                         workingOnHideoutStations={workingOnHideoutStations}
